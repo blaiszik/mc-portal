@@ -1,0 +1,297 @@
+/********************************
+    Colors
+********************************/
+.ltblue { background-color: #e9f9fd; }
+.dkblue { background-color: #317c95; color: #dceff5; }
+.dkblue h1 { color: #fff; }
+.dkblue h2 { color: #c6e4ee; }
+.dkblue h3 { color: #c6e4ee; }
+.dkblue a { color: #94e5ff; }
+
+/********************************
+    Fonts
+********************************/
+@font-face {
+    font-family: 'museosans';
+    src: url('fonts/221E91_4_0.woff') format('woff');
+    font-weight: 100 ;
+}
+@font-face {
+    font-family: 'museosans';
+    src: url('fonts/221E91_3_0.woff') format('woff');
+    font-weight: 500 ;
+}
+@font-face {
+    font-family: 'museosans';
+    src: url('fonts/221E91_1_0.woff') format('woff');
+    font-weight: 300 ;
+}
+@font-face {
+    font-family: 'museosans';
+    src: url('fonts/221E91_0_0.woff') format('woff');
+    font-weight: 700 ;
+}
+
+/********************************
+    General
+********************************/
+html, body {
+    background-color: #fff;
+    font-family: museosans,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: 200;
+    font-size: 14pt;
+    color: #809ca1;
+}
+header, section, footer {
+    overflow: hidden;
+}
+section .container,
+footer .container {
+    margin: 50px auto;
+}
+h1 {
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 20px;
+}
+h1, h2, h3, h4 { font-weight: 200; }
+h1 { color: #3c4851; }
+h2 { color: #56767c; }
+h3 { color: #56767c; }
+a {
+    color: #53b9d9;
+    text-decoration: none;
+}
+a:hover {
+    color: #53b9d9;
+}
+
+/********************************
+    Header
+********************************/
+body { /* for navbar-fixed-top */
+    padding-top: 50px;
+}
+header {
+    overflow: hidden;
+}
+header .navbar-header.col-sm-4 {
+    padding: 0;
+}
+header .navbar {
+    background-color: #fff;
+    border-bottom: solid 1px #efefef;
+    z-index: 50;
+}
+header .navbar-brand {
+    height: auto;
+    max-width: 334px;
+}
+header .navbar-toggle {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+.navbar-toggle {
+    border: solid 1px #317c95;
+    -moz-border-radius: 4px;
+}
+.navbar-toggle .icon-bar {
+    background-color: #317c95;
+}
+.navbar-toggle .icon-bar+.icon-bar {
+    margin-top: 4px;
+}
+header .navbar ul.navbar-nav {
+    margin-bottom: 0;
+}
+header .nav li a {
+    padding: 15px 20px;
+    color: #fff;
+    background-color: #317c95;
+    border-bottom: solid 1px #2d7188;
+}
+header .nav li a:hover,
+header .nav li a:focus {
+    -webkit-transition: background 0.2s;
+    transition: background 0.2s;
+    background-color: transparent;
+    background: #2d7188;
+    background: rgba(45, 113, 136, 1);
+    color: #fff;
+    text-decoration: none;
+    outline: none;
+}
+@media (min-width: 768px) {
+    body { /* for navbar-fixed-top */
+        padding-top: 60px;
+    }
+    header .navbar-header.col-sm-4 {
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+    header .nav {
+        margin-top: 25px;
+    }
+    header .nav> li {
+        padding-left: 10px;
+    }
+    header .nav> li a:before {
+        width: 3px;
+        height: 3px;
+        display: inline;
+        margin-right: 10px;
+        content:'\2022';
+        font-size: 16px;
+        color: #b2ca54;
+    }
+    header .nav> li:first-child a:before {
+        display: none;
+    }
+    header .nav> li a {
+        background-color: transparent;
+        border-bottom: 0;
+        padding: 0;
+        color: #317c95;
+        font-size: 12pt;
+        text-transform: uppercase;
+        text-decoration: none;
+    }
+    header .nav> li a:hover,
+    header .nav> li a:focus {
+        background-color: transparent;
+        color: #105192;
+    }
+}
+@media (min-width: 993px) {
+    body { /* for navbar-fixed-top */
+        padding-top: 75px;
+    }
+    header .nav {
+        margin-top: 30px;
+    }
+}
+@media (min-width: 1200px) {
+    body { /* for navbar-fixed-top */
+        padding-top: 90px;
+    }
+    header .nav {
+        margin-top: 35px;
+    }
+}
+
+
+/* *** .btn-xl *** */
+.btn-xl,.btn-group-xl>.btn{
+min-width:					9px;
+font-size:					1.75em;
+padding:					0.9rem 2rem;
+border-radius:				7px
+}
+/********************************
+    Footer
+********************************/
+footer .copyright {
+    font-size: 11pt;
+}
+footer .logo {
+    margin-bottom: 20px;
+}
+footer .logo img {
+    max-height: 60px;
+    width: auto;
+}
+footer .logo img.anl-logo {
+    margin-top: -5px;
+}
+footer .logo img.uc-logo,
+footer .logo img.ui-logo {
+    padding-top: 10px;
+}
+footer .logo img.nist-logo {
+    padding-top: 5px;
+}
+@media (min-width: 768px) {
+    footer .logo img.uc-logo,
+    footer .logo img.ui-logo {
+        padding-top: 20px;
+    }
+    footer .logo img.nist-logo {
+        padding-top: 10px;
+    }
+}
+@media (min-width: 993px) {
+    footer .logo img.uc-logo,
+    footer .logo img.ui-logo {
+        padding-top: 5px;
+    }
+}
+
+/********************************
+    Sections & Layout
+********************************/
+@media (min-width: 768px) {
+    .feature-block {
+        min-height: 400px;
+    }
+}
+section[id] { /* fixes hiding header when scrolling */
+    padding-top: 60px;
+    margin-top: -60px;
+    -webkit-background-clip: content-box;
+    background-clip: content-box;
+}
+@media (min-width: 768px) {
+    section[id] { /* fixes hiding header when scrolling */
+        padding-top: 90px;
+        margin-top: -90px;
+    }
+}
+
+/********************************
+    Funded by Section
+********************************/
+#funded {
+    background-color: #276980;
+    color: #dceff5;
+}
+#funded .container {
+    margin: 20px auto;
+}
+#funded img {
+    display: inline-block;
+        margin: 0 10px;
+    width: 30%;
+}
+@media (min-width: 374px) {
+    #funded img {
+        width: 35%;
+    }
+}
+@media (min-width: 593px) {
+    #funded img {
+        display: inline-block;
+        height: 50px;
+        width: auto;
+        margin: 0 10px;
+    }
+}
+
+/********************************
+    Getting Started Section
+********************************/
+#get-started .btn {
+    background-color: #b2ca54;
+    font-weight: 200;
+    font-size: 24px;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 15px;
+    margin: 0 15px 15px;
+}
+#get-started .btn#search-btn {
+}
+#get-started .btn img {
+    margin-right: 10px;
+    height: 25px;
+    margin-top: -3px;
+}
