@@ -2,6 +2,8 @@ from flask import (abort, flash, redirect, render_template, request,
                    session, url_for)
 import requests
 import json
+from flask import jsonify
+
 
 try:
     from urllib.parse import urlencode
@@ -16,6 +18,19 @@ from portal.utils import (load_portal_client, get_portal_tokens,
                           get_safe_redirect)
 
 
+from mdf_toolbox import toolbox
+
+creds = {
+  "app_name": "moc_form",
+  "services": ["moc"]
+}
+moc_authorizer = toolbox.login(creds)["moc"]
+
+print(moc_authorizer)
+headers = {}
+moc_authorizer.set_authorization_header(headers)
+print(headers)
+
 @app.route('/', methods=['GET'])
 def home():
     """Home page - play with it if you must!"""
@@ -26,14 +41,32 @@ def add_data():
     """Route for adding data"""
     return render_template('add_data.jinja2')
 
+@app.route('/status/<status_id>', methods=['GET'])
+def status(status_id):
+    headers = {}
+    moc_authorizer.set_authorization_header(headers)
+    r = requests.get('https://34.193.81.207:5000/status/'+status_id,
+                       headers=headers, verify=False)
+    return render_template("status.jinja2", status=r.json())
+
+
 @app.route('/api/convert', methods=['POST'])
 def convert():
     data = json.loads(request.data)
-    headers = {"Authorization": "Bearer {}".format(session['tokens']['auth.globus.org']['access_token'])}
+    headers = {}
+    moc_authorizer.set_authorization_header(headers)
     r = requests.post('https://34.193.81.207:5000/convert',
                       request.data, headers=headers, verify=False)
-    print(r.json())
-    return render_template('home.jinja2')
+    return jsonify(r.json())
+
+@app.route('/api/status/<status_id>', methods=['GET'])
+def api_status(status_id):
+    headers = {}
+    moc_authorizer.set_authorization_header(headers)
+    r = requests.get('https://34.193.81.207:5000/status/'+status_id,
+                       headers=headers, verify=False)
+    return jsonify(r.json())
+
 
 @app.route('/signup', methods=['GET'])
 def signup():
