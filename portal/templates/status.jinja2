@@ -5,17 +5,54 @@
 {%block body%}
 
 
-{{status.status_message}}
+
+<div class="container">
+  <div class="row">
+          <div class="col-md-12">
+            <h1>Dataset Status</h1>
+          </div>
+  </div>
+  <div class="row clearfix">
+    <div class="col-md-12 column">
+      {% for result in status.status_list %}
+      <div class="row clearfix">
+                  <div class="col-md-12 column">
+                      <div class="list-group">
+
+                          <div class="list-group-item">
+                              <h4 class="list-group-item-heading">
+                                  {{result.text}}
+                                  </a>
+                              </h4>
+                              <p class="list-group-item-text">
+                                {% if result.signal == "success" %}
+                                    <span class="col-md2 label label-success">{{result.signal}}</span>
+                                {% elif result.signal == "idle" %}
+                                  <span class="col-md2 label label-primary">{{result.signal}}</span>
+                                {% else %}
+                                  <span class="col-md2 label label-danger">{{result.signal}}</span>
+                                {% endif %}
+                              </p>
+                          </div>
+                      </div>
+                      </div>
+                      </div>
+        {%endfor%}
+        <div class="panel panel-warning">
+          <div class="panel-heading">
+            <h3 class="panel-title">
+             Dataset ID: {{status.status_id}}
+            </h3>
+          </div>
+        </div>
+</div>
+
+
+
+
 <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="container">
       <div id="app"></div>
-      <p style="text-align:center">
-        Powered by
-        <a href="https://github.com/mozilla-services/react-jsonschema-form">react-jsonschema-form</a>.
-        Bootstrap themes courtsesy of
-        <a href="http://bootswatch.com/">Bootswatch</a> and
-        <a href="https://github.com/aalpern/bootstrap-solarized/">bootstrap-solarized</a>.
-      </p>
   </div>
 
 
