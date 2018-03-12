@@ -43,26 +43,29 @@ def add_data():
     """Route for adding data"""
     return render_template('add_data.jinja2')
 
-@app.route('/status/<status_id>', methods=['GET'])
+@app.route('/status/<source_name>', methods=['GET'])
 @authenticated
-def status(status_id):
+def status(source_name):
     headers = {"Authorization":"Bearer {}".format(session['tokens']['mdf_dataset_submission']['access_token'])}
-    r = requests.get('https://34.193.81.207:5000/status/'+status_id,
+    r = requests.get('https://34.193.81.207:5000/status/'+source_name,
                        headers=headers, verify=False)
     return render_template("status.jinja2", status=r.json())
 
 @app.route('/api/convert', methods=['POST'])
 def convert():
     data = json.loads(request.data)
+    print(data)
     headers = {"Authorization":"Bearer {}".format(session['tokens']['mdf_dataset_submission']['access_token'])}
+    print(headers)
     r = requests.post('https://34.193.81.207:5000/convert',
                       request.data, headers=headers, verify=False)
+    print(r.json())
     return jsonify(r.json())
 
-@app.route('/api/status/<status_id>', methods=['GET'])
-def api_status(status_id):
+@app.route('/api/status/<source_name>', methods=['GET'])
+def api_status(source_name):
     headers = {"Authorization":"Bearer {}".format(session['tokens']['mdf_dataset_submission']['access_token'])}
-    r = requests.get('https://34.193.81.207:5000/status/'+status_id,
+    r = requests.get('https://34.193.81.207:5000/status/'+source_name,
                        headers=headers, verify=False)
     return jsonify(r.json())
 

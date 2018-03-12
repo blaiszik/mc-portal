@@ -46,7 +46,8 @@ const schema = {
       "title": "Data Locations",
       "items": {
         "type": "string",
-        "default": ""
+        "default": "",
+        "pattern":"^(https?|globus)://"
       }
     },
     "associated_links": {
@@ -262,6 +263,10 @@ function format_form_data(data){
       services:[],
       dc:{
           publicationYear:"2018",
+          identifier: {
+          			identifier: '10.test/1',
+          			identifierType: 'DOI'
+          		},
           publisher:"Materials Data Facility",
           titles: [],
           creators: [],
@@ -269,9 +274,7 @@ function format_form_data(data){
               resourceTypeGeneral: "Dataset"
           }
       },
-      data:{
-        globus:""
-      },
+      data:[],
       mdf: {
           landing_page: "",
       }
@@ -301,7 +304,14 @@ function format_form_data(data){
     }
 
     // Add the data location and landing page
-    moc_data.data.globus = data.data_locations[0]
+
+    // Loop through data locations and add them
+    const n_locations = data.data_locations.length
+    for (var i=0; i<n_locations; i++){
+      moc_data.data.push(data.data_locations[i])
+    }
+
+    //moc_data.data.zip = data.data_locations[0]
     moc_data.mdf.landing_page = data.landing_page
 
     return moc_data
@@ -329,7 +339,7 @@ class App extends React.Component {
     super(props);
     this.state = {step: 1,
                   submitted:false,
-                  status_id: '',
+                  source_name: '',
                   moc:{},
                   formData: {}};
   }
@@ -342,8 +352,8 @@ class App extends React.Component {
         // Make a request for a user with a given ID
         axios.post(moc_url, format_form_data(formData))
           .then((response) => {
-            console.log(response.data.status_id);
-            this.setState({submitted:response.data.success, status_id:response.data.status_id});
+            console.log(response.data.source_name);
+            this.setState({submitted:response.data.success, source_name:response.data.source_name});
             console.log(this.state);
           })
           .catch( (error) => {
@@ -360,7 +370,7 @@ class App extends React.Component {
         uiSchema={uiSchema}
         onSubmit={this.onSubmit}
         formData={this.state.formData}/>
-      <StatusView status_id={this.state.status_id} />
+      <StatusView source_name={this.state.source_name} />
       </div>
     );
   }
@@ -369,7 +379,7 @@ class App extends React.Component {
 class StatusView extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {status_id:this.props.status_id};
+    this.state = {source_name:this.props.source_name};
   }
 
   updateStatus(){
@@ -377,24 +387,24 @@ class StatusView extends React.Component {
   }
 
   render(){
-    if (this.props.status_id){
+    if (this.props.source_name){
       return (<div>
             <h1> Dataset Submitted </h1>
               <h3>
                 <div className="alert alert-success">
-                  <a className="button button-primary button-lg" href={'/status/'+this.props.status_id}>
+                  <a className="button button-primary button-lg" href={'/status/'+this.props.source_name}>
                     Re-Check Submission Status
                   </a>
                 </div>
               </h3>
-              <StatusCheck status_id={this.props.status_id} />
+              <StatusCheck source_name={this.props.source_name} />
             </div>);
     }else{
       return(<div></div>);
     }
 
     // return(<div>
-    //       <a href={'/api/status/'+this.props.status_id}>Check Submission Status</a>
+    //       <a href={'/api/status/'+this.props.source_name}>Check Submission Status</a>
     //       </div>);
   }
 };
@@ -403,13 +413,13 @@ class StatusCheck extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-                status_id:this.props.status_id,
+                source_name:this.props.source_name,
                 status_message:""
     };
 
     var moc_url = "/api/status"
-    if (this.state.status_id){
-      axios.get(moc_url+'/'+this.state.status_id)
+    if (this.state.source_name){
+      axios.get(moc_url+'/'+this.state.source_name)
         .then((response) => {
           console.log("Checking Status")
           console.log(response);

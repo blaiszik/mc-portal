@@ -24,6 +24,7 @@
                                   {{result.text}}
                                   </a>
                               </h4>
+                              <a href="{{result.link}}">{{result.link}}</a>
                               <p class="list-group-item-text">
                                 {% if result.signal == "success" %}
                                     <span class="col-md2 label label-success">{{result.signal}}</span>
@@ -33,6 +34,7 @@
                                   <span class="col-md2 label label-danger">{{result.signal}}</span>
                                 {% endif %}
                               </p>
+
                           </div>
                       </div>
                       </div>
@@ -41,13 +43,11 @@
         <div class="panel panel-warning">
           <div class="panel-heading">
             <h3 class="panel-title">
-             Dataset ID: {{status.status_id}}
+             Dataset ID: {{status.source_name}}
             </h3>
           </div>
         </div>
 </div>
-
-
 
 
 <!-- Main jumbotron for a primary marketing message or call to action -->
