@@ -11,17 +11,11 @@ const Form = JSONSchemaForm.default;
 
 const schema = {
   "type":"object",
-  "required": ["title", "authors",
-               "landing_page","data_locations"],
+  "required": ["title", "authors", "data_locations"],
   "properties": {
     "title": {
       "type": "string",
       "title": "Title"
-    },
-
-    "landing_page":{
-      "type":"string",
-      "title": "Landing Page"
     },
 
     "authors": {
@@ -310,9 +304,6 @@ function format_form_data(data){
     for (var i=0; i<n_locations; i++){
       moc_data.data.push(data.data_locations[i])
     }
-
-    //moc_data.data.zip = data.data_locations[0]
-    moc_data.mdf.landing_page = data.landing_page
 
     return moc_data
 }
