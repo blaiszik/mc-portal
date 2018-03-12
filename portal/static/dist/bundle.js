@@ -193,132 +193,6 @@
 	  }
 	};
 
-	// const log = (type) => console.log.bind(console, type);
-	//
-	// function submitData(data){
-	//
-	//   function reqListener () {
-	//     console.log(this.responseText);
-	//   }
-	//
-	//   console.log("As Received: ", data)
-	//
-	//   const moc_data = {
-	//     services:[],
-	//     dc:{
-	//         publicationYear:"2018",
-	//         publisher:"Materials Data Facility",
-	//         titles: [],
-	//         creators: [],
-	//         resourceType: {
-	//             resourceTypeGeneral: "Dataset"
-	//         }
-	//     },
-	//     data:{
-	//       globus:""
-	//     },
-	//     mdf: {
-	//         landing_page: "",
-	//     }
-	//   }
-	//
-	//   // Format the title into dc
-	//   moc_data.dc.titles.push({"title":data.formData.title})
-	//
-	//   // Format the services
-	//   // if (data.formData.services.isArray()){
-	//   //   // if (data.formData.services.includes("MDF Publish")){
-	//   //   // moc_data.services.push("globus_publish")
-	//   //   // }
-	//   //   // if (data.formData.services.includes("Citrination")){
-	//   //   //   moc_data.services.push("citrine")
-	//   //   // }
-	//   // }
-	//
-	//
-	//
-	//   // Loop through authors and format them into dc
-	//   const n_authors = data.formData.authors.length
-	//   for (var i=0; i<n_authors; i++){
-	//     moc_data.dc.creators.push({"creatorName":data.formData.authors[i]})
-	//   }
-	//
-	//   // Add the data location and landing page
-	//   moc_data.data.globus = data.formData.data_locations[0]
-	//   moc_data.mdf.landing_page = data.formData.landing_page
-	//
-	//   console.log("As Sent: ", moc_data)
-	//
-	//   //POST to the MOC server that is http proxied through the server to /api
-	//   var moc_url = "/api/convert"
-	//   var request = new XMLHttpRequest();
-	//   request.open('POST', moc_url, true);
-	//   request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-	//   request.send(JSON.stringify(moc_data));
-	// }
-
-	// class Contacts extends React.Component {
-	//   constructor(props) {
-	//     super(props);
-	//     this.state = {
-	//       submitted: "false",
-	//       formData: false,
-	//       last_event: "",
-	//       reponse: ""
-	//     };
-	//   }
-	//
-	//   //
-	//   // onFormDataChange = ({ formData }) =>
-	//   //   this.state.submitted = true;
-	//
-	//
-	//   load = data => {
-	//     console.log("abc")
-	//     console.log("def")
-	//     this.setState({submitted:data})
-	//     console.log("z")
-	//     console.log(this.state)
-	//
-	//   }
-	//
-	//
-	//     // submit = data => {
-	//     //   console.log("submit")
-	//     //   this.setState({submitted:true})
-	//     //   console.log(this.state)
-	//     //   //POST to the MOC server that is http proxied through the server to /api
-	//     //   var moc_url = "/api/convert"
-	//     //   var request = new XMLHttpRequest();
-	//     //   request.addEventListener("load", reqListener);
-	//     //   request.open('POST', moc_url, true);
-	//     //   request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-	//     //   request.send(JSON.stringify(moc_data));
-	//     // }
-	//
-	//   // onFormDataChange = ({ formData }) =>
-	//   //   this.setState({ submitted: true });
-	//
-	//   render() {
-	//     return (
-	//       <div>
-	//       <div>Submitted: {this.state.event}</div>
-	//       <Form schema={schema}
-	//       uiSchema={uiSchema}
-	//       onChange={log('change')}
-	//       onSubmit={log('submit')}
-	//       onError={log('errors')} />
-	//       </div>
-	//     );
-	//   }
-	// }
-	// Contacts.propTypes = {
-	//
-	// };
-	// Contacts.defaultProps = {
-	//
-	// };
-
 	function format_form_data(data) {
 	  var moc_data = {
 	    services: [],
@@ -335,10 +209,7 @@
 	        resourceTypeGeneral: "Dataset"
 	      }
 	    },
-	    data: [],
-	    mdf: {
-	      landing_page: ""
-	    }
+	    data: []
 
 	    // Format the title into dc
 	  };moc_data.dc.titles.push({ "title": data.title });
@@ -360,8 +231,6 @@
 	  for (var i = 0; i < n_authors; i++) {
 	    moc_data.dc.creators.push({ "creatorName": data.authors[i] });
 	  }
-
-	  // Add the data location and landing page
 
 	  // Loop through data locations and add them
 	  var n_locations = data.data_locations.length;
