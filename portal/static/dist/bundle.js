@@ -349,11 +349,10 @@
 	              _react2.default.createElement(
 	                "a",
 	                { className: "button button-primary button-lg", href: '/status/' + this.props.source_name },
-	                "Re-Check Submission Status"
+	                "Check Submission Status"
 	              )
 	            )
-	          ),
-	          _react2.default.createElement(StatusCheck, { source_name: this.props.source_name })
+	          )
 	        );
 	      } else {
 	        return _react2.default.createElement("div", null);
