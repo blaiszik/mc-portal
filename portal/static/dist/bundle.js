@@ -352,7 +352,8 @@
 	                "Check Submission Status"
 	              )
 	            )
-	          )
+	          ),
+	          _react2.default.createElement(StatusCheck, { source_name: this.props.source_name })
 	        );
 	      } else {
 	        return _react2.default.createElement("div", null);
