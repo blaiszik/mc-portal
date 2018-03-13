@@ -29,9 +29,15 @@
                                 {% if result.signal == "success" %}
                                     <span class="col-md2 label label-success">{{result.signal}}</span>
                                 {% elif result.signal == "idle" %}
-                                  <span class="col-md2 label label-primary">{{result.signal}}</span>
-                                {% else %}
+                                  <span class="col-md2 label label-default">{{result.signal}}</span>
+                                {% elif result.signal == "started" %}
+                                  <span class="col-md2 label label-info">{{result.signal}}</span>
+                                {% elif result.signal == "warning" %}
+                                  <span class="col-md2 label label-warning">{{result.signal}}</span>
+                                {% elif result.signal == "failure" %}
                                   <span class="col-md2 label label-danger">{{result.signal}}</span>
+                                {% else %}
+                                  <span class="col-md2 label label-default">{{result.signal}}</span>
                                 {% endif %}
                               </p>
 
