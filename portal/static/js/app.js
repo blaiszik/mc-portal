@@ -157,8 +157,11 @@ function format_form_data(data){
 
 
     // Add dataset description
-    moc_data.dc.descriptions.push({"description":data.description, 
+    if (data.description){
+      moc_data.dc.descriptions.push({"description":data.description, 
                                    "descriptionType":"Other"})
+    }
+    
 
     // Loop through data locations and add them
     const n_locations = data.data_locations.length

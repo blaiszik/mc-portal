@@ -219,8 +219,10 @@
 	  }
 
 	  // Add dataset description
-	  moc_data.dc.descriptions.push({ "description": data.description,
-	    "descriptionType": "Other" });
+	  if (data.description) {
+	    moc_data.dc.descriptions.push({ "description": data.description,
+	      "descriptionType": "Other" });
+	  }
 
 	  // Loop through data locations and add them
 	  var n_locations = data.data_locations.length;
