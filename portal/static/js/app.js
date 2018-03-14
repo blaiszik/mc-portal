@@ -44,6 +44,7 @@ const schema = {
         "pattern":"^(https?|globus)://"
       }
     },
+
     "associated_links": {
       "type": "array",
       "description": "List of other works associated with this dataset.",
@@ -52,6 +53,16 @@ const schema = {
         "type": "string"
       }
     },
+
+    "description": {
+      "type": "string",
+      "description": "Please provide a description for the dataset. Usage of markdown is allowed",
+      "title": "Dataset Description",
+      "items": {
+        "type": "string"
+      }
+    },
+
     "services": {
       "type": "array",
       "description": "Attempt to convert, and share this data with the selected services.",
@@ -69,11 +80,6 @@ const schema = {
 };
 
 const uiSchema = {
-  "listOfStrings": {
-    "items": {
-      "ui:emptyValue": ""
-    }
-  },
   "associated_links":{
     "items":{
       "ui:placeholder":"http://dx.doi.org/12345"
@@ -94,37 +100,17 @@ const uiSchema = {
       "ui:placeholder":"http://myhost.com/myfile.zip or globus://my_ep/my_path"
     }
   },
-  "multipleChoicesList": {
-    "ui:widget": "checkboxes"
+  "description":{
+      "ui:widget":"textarea",
+      "ui:options": {
+        "rows": 5
+      }
   },
   "services": {
     "ui:widget": "checkboxes"
-  },
-  "unorderable": {
-    "ui:options": {
-      "orderable": false
-    }
-  },
-  "unremovable": {
-    "ui:options": {
-      "removable": false
-    }
-  },
-  "noToolbar": {
-    "ui:options": {
-      "addable": false,
-      "orderable": false,
-      "removable": false
-    }
-  },
-  "fixedNoToolbar": {
-    "ui:options": {
-      "addable": false,
-      "orderable": false,
-      "removable": false
-    }
   }
 };
+
 
 function format_form_data(data){
     const moc_data = {
@@ -138,6 +124,7 @@ function format_form_data(data){
           publisher:"Materials Data Facility",
           titles: [],
           creators: [],
+          descriptions: [],
           resourceType: {
               resourceTypeGeneral: "Dataset"
           }
@@ -169,6 +156,10 @@ function format_form_data(data){
     }
 
 
+    // Add dataset description
+    moc_data.dc.descriptions.push({"description":data.description, 
+                                   "descriptionType":"Other"})
+
     // Loop through data locations and add them
     const n_locations = data.data_locations.length
     for (var i=0; i<n_locations; i++){
@@ -178,31 +169,17 @@ function format_form_data(data){
     return moc_data
 }
 
-const step1schema = {
-  title: "Step 1",
-  type: "object",
-  required: ["name"],
-  properties: {
-  	name: {type: "string", minLength: 3},
-  }
-};
-const step2schema = {
-  title: "Dataset Submitted",
-  type: "object",
-  required: ["age"],
-  properties: {
-    age: {type: "integer"}
-  }
-};
-
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {step: 1,
-                  submitted:false,
-                  source_name: '',
-                  moc:{},
-                  formData: {}};
+    this.state = {
+      step: 1,
+      submitted:false,
+      source_name: '',
+      moc:{},
+      formData: {},
+      hidden:false
+    };
   }
 
   onSubmit = ({formData}) => {
@@ -210,11 +187,13 @@ class App extends React.Component {
       console.log(JSON.stringify(format_form_data(formData), null, 2))
         //POST to the MOC server that is http proxied through the server to /api
         var moc_url = "/api/convert"
-        // Make a request for a user with a given ID
+        //Make a request for a user with a given ID
         axios.post(moc_url, format_form_data(formData))
           .then((response) => {
             console.log(response.data.source_name);
-            this.setState({submitted:response.data.success, source_name:response.data.source_name});
+            this.setState({submitted:response.data.success, 
+                           source_name:response.data.source_name,
+                           hidden:true});
             console.log(this.state);
           })
           .catch( (error) => {
@@ -226,12 +205,12 @@ class App extends React.Component {
   render() {
     return (
       <div>
-      <Form
-        schema={this.state.step === 1 ? schema : {"title":"ABC"}}
-        uiSchema={uiSchema}
-        onSubmit={this.onSubmit}
-        formData={this.state.formData}/>
-      <StatusView source_name={this.state.source_name} />
+          <Form
+            schema={this.state.step === 1 ? schema : {"title":"ABC"}}
+            uiSchema={uiSchema}
+            onSubmit={this.onSubmit}
+            formData={this.state.formData}/>
+        <StatusView source_name={this.state.source_name} />
       </div>
     );
   }
@@ -254,7 +233,7 @@ class StatusView extends React.Component {
               <h3>
                 <div className="alert alert-success">
                   <a className="button button-primary button-lg" href={'/status/'+this.props.source_name}>
-                    Re-Check Submission Status
+                    Check Submission Status
                   </a>
                 </div>
               </h3>

@@ -114,6 +114,7 @@
 	        "pattern": "^(https?|globus)://"
 	      }
 	    },
+
 	    "associated_links": {
 	      "type": "array",
 	      "description": "List of other works associated with this dataset.",
@@ -122,6 +123,16 @@
 	        "type": "string"
 	      }
 	    },
+
+	    "description": {
+	      "type": "string",
+	      "description": "Please provide a description for the dataset. Usage of markdown is allowed",
+	      "title": "Dataset Description",
+	      "items": {
+	        "type": "string"
+	      }
+	    },
+
 	    "services": {
 	      "type": "array",
 	      "description": "Attempt to convert, and share this data with the selected services.",
@@ -136,11 +147,6 @@
 	};
 
 	var uiSchema = {
-	  "listOfStrings": {
-	    "items": {
-	      "ui:emptyValue": ""
-	    }
-	  },
 	  "associated_links": {
 	    "items": {
 	      "ui:placeholder": "http://dx.doi.org/12345"
@@ -161,35 +167,14 @@
 	      "ui:placeholder": "http://myhost.com/myfile.zip or globus://my_ep/my_path"
 	    }
 	  },
-	  "multipleChoicesList": {
-	    "ui:widget": "checkboxes"
+	  "description": {
+	    "ui:widget": "textarea",
+	    "ui:options": {
+	      "rows": 5
+	    }
 	  },
 	  "services": {
 	    "ui:widget": "checkboxes"
-	  },
-	  "unorderable": {
-	    "ui:options": {
-	      "orderable": false
-	    }
-	  },
-	  "unremovable": {
-	    "ui:options": {
-	      "removable": false
-	    }
-	  },
-	  "noToolbar": {
-	    "ui:options": {
-	      "addable": false,
-	      "orderable": false,
-	      "removable": false
-	    }
-	  },
-	  "fixedNoToolbar": {
-	    "ui:options": {
-	      "addable": false,
-	      "orderable": false,
-	      "removable": false
-	    }
 	  }
 	};
 
@@ -205,6 +190,7 @@
 	      publisher: "Materials Data Facility",
 	      titles: [],
 	      creators: [],
+	      descriptions: [],
 	      resourceType: {
 	        resourceTypeGeneral: "Dataset"
 	      }
@@ -232,6 +218,10 @@
 	    moc_data.dc.creators.push({ "creatorName": data.authors[i] });
 	  }
 
+	  // Add dataset description
+	  moc_data.dc.descriptions.push({ "description": data.description,
+	    "descriptionType": "Other" });
+
 	  // Loop through data locations and add them
 	  var n_locations = data.data_locations.length;
 	  for (var i = 0; i < n_locations; i++) {
@@ -240,23 +230,6 @@
 
 	  return moc_data;
 	}
-
-	var step1schema = {
-	  title: "Step 1",
-	  type: "object",
-	  required: ["name"],
-	  properties: {
-	    name: { type: "string", minLength: 3 }
-	  }
-	};
-	var step2schema = {
-	  title: "Dataset Submitted",
-	  type: "object",
-	  required: ["age"],
-	  properties: {
-	    age: { type: "integer" }
-	  }
-	};
 
 	var App = function (_React$Component) {
 	  _inherits(App, _React$Component);
@@ -273,10 +246,12 @@
 	        console.log(JSON.stringify(format_form_data(formData), null, 2));
 	        //POST to the MOC server that is http proxied through the server to /api
 	        var moc_url = "/api/convert";
-	        // Make a request for a user with a given ID
+	        //Make a request for a user with a given ID
 	        _axios2.default.post(moc_url, format_form_data(formData)).then(function (response) {
 	          console.log(response.data.source_name);
-	          _this.setState({ submitted: response.data.success, source_name: response.data.source_name });
+	          _this.setState({ submitted: response.data.success,
+	            source_name: response.data.source_name,
+	            hidden: true });
 	          console.log(_this.state);
 	        }).catch(function (error) {
 	          console.log(error);
@@ -284,11 +259,14 @@
 	      }
 	    };
 
-	    _this.state = { step: 1,
+	    _this.state = {
+	      step: 1,
 	      submitted: false,
 	      source_name: '',
 	      moc: {},
-	      formData: {} };
+	      formData: {},
+	      hidden: false
+	    };
 	    return _this;
 	  }
 
