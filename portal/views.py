@@ -59,7 +59,7 @@ def convert():
 def api_status(source_name):
     headers = {"Authorization":"Bearer {}".format(session['tokens']['mdf_dataset_submission']['access_token'])}
     r = requests.get("{connect_service}/status/{source}".format(connect_service = connect_service, 
-                                                                source=source_name)
+                                                                source=source_name),
                         headers=headers, 
                         verify=False)
     return jsonify(r.json())
