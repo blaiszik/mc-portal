@@ -18,18 +18,7 @@ from portal.utils import (load_portal_client, get_portal_tokens,
                           get_safe_redirect)
 
 
-# from mdf_toolbox import toolbox
-#
-# creds = {
-#   "app_name": "moc_form",
-#   "services": ["moc"]
-# }
-# moc_authorizer = toolbox.login(creds)["moc"]
-#
-# print(moc_authorizer)
-# headers = {}
-# moc_authorizer.set_authorization_header(headers)
-# print(headers)
+connect_service = "https://18.233.85.14"
 
 @app.route('/', methods=['GET'])
 def home():
@@ -47,8 +36,10 @@ def add_data():
 @authenticated
 def status(source_name):
     headers = {"Authorization":"Bearer {}".format(session['tokens']['mdf_dataset_submission']['access_token'])}
-    r = requests.get('https://34.193.81.207:5000/status/'+source_name,
-                       headers=headers, verify=False)
+    r = requests.get("{connect_service}/status/{source}".format(connect_service = connect_service, 
+                                                                source=source_name),
+                        headers=headers,
+                        verify=False)
     return render_template("status.jinja2", status=r.json())
 
 @app.route('/api/convert', methods=['POST'])
@@ -57,16 +48,20 @@ def convert():
     print(data)
     headers = {"Authorization":"Bearer {}".format(session['tokens']['mdf_dataset_submission']['access_token'])}
     print(headers)
-    r = requests.post('https://34.193.81.207:5000/convert',
-                      request.data, headers=headers, verify=False)
+    r = requests.post("{connect_service}/convert/".format(connect_service = connect_service),
+                      request.data, 
+                      headers=headers, 
+                      verify=False)
     print(r.json())
     return jsonify(r.json())
 
 @app.route('/api/status/<source_name>', methods=['GET'])
 def api_status(source_name):
     headers = {"Authorization":"Bearer {}".format(session['tokens']['mdf_dataset_submission']['access_token'])}
-    r = requests.get('https://34.193.81.207:5000/status/'+source_name,
-                       headers=headers, verify=False)
+    r = requests.get("{connect_service}/status/{source}".format(connect_service = connect_service, 
+                                                                source=source_name)
+                        headers=headers, 
+                        verify=False)
     return jsonify(r.json())
 
 
@@ -107,7 +102,7 @@ def logout():
     # Destroy the session state
     session.clear()
 
-    redirect_uri = "https://connect.materialsdatafacility.org" #url_for('home', _external=True)
+    redirect_uri = url_for('home', _external=True)
 
     ga_logout_url = []
     ga_logout_url.append(app.config['GLOBUS_AUTH_LOGOUT_URI'])
@@ -130,7 +125,8 @@ def authcallback():
         return redirect(url_for('home'))
 
     # Set up our Globus Auth/OAuth2 state
-    redirect_uri = url_for('authcallback', _external=True)
+    redirect_uri = "https://connect.materialsdatafacility.org/authcallback"
+    #url_for('authcallback', _external=True)
 
     requested_scopes = ["openid", "profile", "email",
                         "https://auth.globus.org/scopes/c17f27bb-f200-486a-b785-2a25e82af505/connect"]
@@ -179,3 +175,5 @@ def authcallback():
                             next=url_for('home')))
 
         return redirect(url_for('home'))
+
+

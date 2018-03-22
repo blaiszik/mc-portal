@@ -114,7 +114,10 @@ const uiSchema = {
 
 function format_form_data(data){
     const moc_data = {
-      services:[],
+      services:{
+          globus_publish:false,
+          citrine: false
+        },
       dc:{
           publicationYear:"2018",
           identifier: {
@@ -138,16 +141,13 @@ function format_form_data(data){
     console.log(data)
     if (data.services instanceof Array){
       if (data.services.includes("MDF Publish")){
-        moc_data.services.push("globus_publish")
+        moc_data.services.globus_publish = true
        }
       if (data.services.includes("Citrination")){
-        moc_data.services.push("citrine")
+        moc_data.services.citrination = true
       }
-    }else{
-      moc_data.services = []
     }
-
-
+    
 
     // Loop through authors and format them into dc
     const n_authors = data.authors.length
