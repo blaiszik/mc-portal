@@ -71,7 +71,7 @@ const schema = {
         "type": "string",
         "enum": [
           "MDF Publish",
-          "Materials Resource Registry"
+          "Materials Resource Registry",
           "Citrination"
           ]
       },
