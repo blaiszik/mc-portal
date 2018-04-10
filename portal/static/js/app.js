@@ -71,8 +71,9 @@ const schema = {
         "type": "string",
         "enum": [
           "MDF Publish",
+          "Materials Resource Registry"
           "Citrination"
-        ]
+          ]
       },
       "uniqueItems": true
     }
@@ -116,7 +117,8 @@ function format_form_data(data){
     const moc_data = {
       services:{
           globus_publish:false,
-          citrine: false
+          citrine: false,
+          mrr:false
         },
       dc:{
           publicationYear:"2018",
@@ -132,6 +134,7 @@ function format_form_data(data){
               resourceTypeGeneral: "Dataset"
           }
       },
+      test: false,
       data:[]
     }
 
@@ -145,6 +148,9 @@ function format_form_data(data){
        }
       if (data.services.includes("Citrination")){
         moc_data.services.citrination = true
+      }
+      if (data.services.includes("Materials Resource Registry")){
+        moc_data.services.mrr = true
       }
     }
     
