@@ -139,7 +139,7 @@
 	      "title": "Register Data With",
 	      "items": {
 	        "type": "string",
-	        "enum": ["MDF Publish", "Citrination"]
+	        "enum": ["MDF Publish", "Materials Resource Registry", "Citrination"]
 	      },
 	      "uniqueItems": true
 	    }
@@ -182,7 +182,8 @@
 	  var moc_data = {
 	    services: {
 	      globus_publish: false,
-	      citrine: false
+	      citrine: false,
+	      mrr: false
 	    },
 	    dc: {
 	      publicationYear: "2018",
@@ -198,6 +199,7 @@
 	        resourceTypeGeneral: "Dataset"
 	      }
 	    },
+	    test: false,
 	    data: []
 
 	    // Format the title into dc
@@ -210,6 +212,9 @@
 	    }
 	    if (data.services.includes("Citrination")) {
 	      moc_data.services.citrination = true;
+	    }
+	    if (data.services.includes("Materials Resource Registry")) {
+	      moc_data.services.mrr = true;
 	    }
 	  }
 
