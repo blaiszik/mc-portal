@@ -211,7 +211,7 @@
 	      moc_data.services.globus_publish = true;
 	    }
 	    if (data.services.includes("Citrination")) {
-	      moc_data.services.citrination = true;
+	      moc_data.services.citrine = true;
 	    }
 	    if (data.services.includes("Materials Resource Registry")) {
 	      moc_data.services.mrr = true;
