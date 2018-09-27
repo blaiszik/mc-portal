@@ -34,8 +34,6 @@
 
     <script type="text/javascript">
       $( document ).ready(function() {
-        console.log( "ready2!" );
-        $('body').off('fu.data-api')
         form_data = {}
         function update_form_data(){
           const moc_data = {
@@ -106,18 +104,15 @@
           return moc_data
         }
 
-
       $('#authorPillbox').pillbox({"acceptKeyCodes":[13]});
       $('#institutionPillbox').pillbox({"acceptKeyCodes":[13]});
       $('#dataPillbox').pillbox({"acceptKeyCodes":[13]});
       $('#tagsPillbox').pillbox({"acceptKeyCodes":[13]});
 
-
-     function validate_pillboxes(){
-       valid = true
+      function validate_pillboxes(){
+        valid = true
 
         title = $('#titleInput').val()
-        console.log(title)
         if (!title){
           $('#titleLabel').addClass("invalid")
           valid = false
@@ -142,10 +137,9 @@
         }
 
         return valid
-
      }
 
-     function clear_form(){
+      function clear_form(){
         pillboxes  = [$("#dataPillbox"), 
                       $("#authorPillbox"), 
                       $("#tagsPillbox"), 
@@ -156,17 +150,11 @@
         }
 
         $("#titleInput").val("")
-
-     
      }
 
-
-     
       $("#submit-button").click(function(){
         form_data = update_form_data();
-        console.log("submitted")
         valid = validate_pillboxes();
-        console.log(valid)
         if (valid == true){
           console.log(form_data)
             $.ajax({
@@ -177,7 +165,9 @@
               dataType: 'json'
           }).done(function(data){
             console.log("done")
-          }).success(function(data){
+            console.log(data)
+          })
+            .success(function(data){
               console.log("success")
               console.log(data)
               $("#successAlert").addClass("visible")
@@ -187,13 +177,9 @@
             .fail(function(err){
               console.log("error")
               console.log(err)
-               
             });
         }
       })
-
-    
-    
     });
     
    
