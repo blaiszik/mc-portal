@@ -106,33 +106,11 @@
           return moc_data
         }
 
+
       $('#authorPillbox').pillbox({"acceptKeyCodes":[13]});
-      $('#authorPillbox').on('added.fu.pillbox edited.fu.pillbox removed.fu.pillbox', 
-                                          function pillboxChanged() {
-                                          update_form_data();
-                                            $('#authorInput').val( JSON.stringify( $('#authorPillbox').pillbox('items') )  );
-                                            console.log($('#authorInput').val());});
-
       $('#institutionPillbox').pillbox({"acceptKeyCodes":[13]});
-      $('#institutionPillbox').on('added.fu.pillbox edited.fu.pillbox removed.fu.pillbox', 
-                                          function pillboxChanged() {
-                                          update_form_data();
-                                            $('#institutionInput').val( JSON.stringify( $('#institutionPillbox').pillbox('items') )  );
-                                            console.log($('#institutionInput').val());});
-
       $('#dataPillbox').pillbox({"acceptKeyCodes":[13]});
-      $('#dataPillbox').on('added.fu.pillbox edited.fu.pillbox removed.fu.pillbox', 
-                                          function pillboxChanged() {
-                                            update_form_data();
-                                            $('#dataInput').val( JSON.stringify( $('#dataPillbox').pillbox('items') )  );
-                                            console.log($('#dataInput').val());});
-
-      $('#tagsPillbox').pillbox({"acceptKeyCodes":[13, 186]});
-      $('#tagsPillbox').on('added.fu.pillbox edited.fu.pillbox removed.fu.pillbox', 
-                                          function pillboxChanged() {
-                                            update_form_data();
-                                            $('#tagsInput').val( JSON.stringify( $('#tagsPillbox').pillbox('items') )  );
-                                            console.log($('#tagsInput').val());});
+      $('#tagsPillbox').pillbox({"acceptKeyCodes":[13]});
 
 
      function validate_pillboxes(){
@@ -198,11 +176,10 @@
               data: JSON.stringify(form_data),
               dataType: 'json'
           }).done(function(data){
-          console.log("done")
+            console.log("done")
           }).success(function(data){
               console.log("success")
               console.log(data)
-              $("#successLink").attr("href", "https://www.w3schools.com/jquery/");
               $("#successAlert").addClass("visible")
               $("#successAlert").removeClass("invisible")
               clear_form()
