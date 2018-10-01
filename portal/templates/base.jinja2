@@ -172,7 +172,7 @@
               console.log(data)
               $("#successAlert").addClass("visible")
               $("#successAlert").removeClass("invisible")
-              $("#successLink").attr("href", data.source_id)
+              $("#successLink").attr("href", 'status/'+data.source_id)
               clear_form()
           })
             .fail(function(err){
