@@ -18,7 +18,7 @@ from portal.utils import (load_portal_client, get_portal_tokens,
                           get_safe_redirect)
 
 
-connect_service = "https://18.233.85.14"
+connect_service = "https://connect.materialsdatafacility.org"
 
 @app.route('/', methods=['GET'])
 def home():
@@ -27,7 +27,7 @@ def home():
     return render_template('home.jinja2')
 
 @app.route('/add', methods=['GET'])
-@authenticated
+#@authenticated
 def add_data():
     """Route for adding data"""
     return render_template('add_data.jinja2')
@@ -46,14 +46,15 @@ def status(source_name):
 def convert():
     data = json.loads(request.data)
     print(data)
-    headers = {"Authorization":"Bearer {}".format(session['tokens']['mdf_dataset_submission']['access_token'])}
-    print(headers)
-    r = requests.post("{connect_service}/convert/".format(connect_service = connect_service),
-                      request.data, 
-                      headers=headers, 
-                      verify=False)
-    print(r.json())
-    return jsonify(r.json())
+    #headers = {"Authorization":"Bearer {}".format(session['tokens']['mdf_dataset_submission']['access_token'])}
+    #print(headers)
+    # r = requests.post("{connect_service}/convert/".format(connect_service = connect_service),
+    #                   request.data, 
+    #                   headers=headers, 
+    #                   verify=False)
+    # print(r.json())
+    # return jsonify(r.json())
+    return jsonify({"test":data})
 
 @app.route('/api/status/<source_name>', methods=['GET'])
 def api_status(source_name):
