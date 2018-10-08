@@ -1,0 +1,39 @@
+{% extends "base.jinja2" %}
+
+{% block title %}Publish From Box{% endblock %}
+
+{% block body %}
+
+    <h1>Sign In</h1>
+    <form action="" method="post" novalidate>
+        {{ form.auth() }}
+        {{ form.file_id() }}
+        <table>
+            <tr>
+                <td>{{ form.password.label }}</td>
+                <td>{{ form.password(size=32) }}</td>
+            </tr>
+            <tr>
+                <td>{{ form.name.label }}</td>
+                <td>{{ form.name(size=32) }}</td>
+
+            </tr>
+        </table>
+        <p>
+        <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+        <p>{{ form.submit() }}</p>
+    </form>
+
+<!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="container">
+      <div id="app"></div>
+   </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react-dom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js"></script>
+<script src="https://unpkg.com/react-jsonschema-form/dist/react-jsonschema-form.js"></script>
+
+<script src={{url_for('static', filename='dist/bundle.js')}}></script>
+
+{% endblock %}

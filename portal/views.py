@@ -4,6 +4,7 @@ import requests
 import json
 from flask import jsonify
 
+from portal.forms import BoxSubmitForm
 
 try:
     from urllib.parse import urlencode
@@ -17,6 +18,7 @@ from portal.decorators import authenticated
 from portal.utils import (load_portal_client, get_portal_tokens,
                           get_safe_redirect)
 
+from boxsdk import Client, OAuth2
 
 connect_service = "https://18.233.85.14"
 
@@ -63,6 +65,44 @@ def api_status(source_name):
                         headers=headers, 
                         verify=False)
     return jsonify(r.json())
+
+@app.route('/publish/box', methods=['POST', 'GETcd co'
+                                            'sdsddsdsdsdsds'])
+def publish_box():
+    data = request.form
+    print(data)
+    oauth = OAuth2(
+        client_id='61f7edsvpek2ohzfjw9ft7swde9zim2w',
+        client_secret='TcoYuwIZGNEOPDIhI4uqyNophOrqWNJZ'
+    )
+
+    access_token, refresh_token = oauth.authenticate(data['auth'])
+    box_client = Client(oauth)
+    user = box_client.user(data["user_id"]).get()
+    print(user["name"])
+    file = box_client.file(data["file_id"])
+    form = BoxSubmitForm()
+    form.name.data = user["name"]
+
+    # return render_template("box_publish.jinja2", form=form)
+    return render_template("add_data.jinja2", form=form)
+
+@app.route('/publish/box_prelim', methods=['POST'])
+def publish_box_prelim():
+    data = request.form
+    print(data)
+    # return render_template('box_publish.jinja2')
+    return """
+    <html>
+    <script>if (top.location!= self.location) {
+   top.location = "/authcallback";
+}
+    </script>
+    <head>
+    <h1> Hello world </h1>
+    </head>
+    </html
+    """
 
 
 @app.route('/signup', methods=['GET'])
@@ -114,18 +154,24 @@ def logout():
     return redirect(''.join(ga_logout_url))
 
 
-@app.route('/authcallback', methods=['GET'])
+@app.route('/authcallback', methods=['GET', 'POST'])
 def authcallback():
     """Handles the interaction with Globus Auth."""
     # If we're coming back from Globus Auth in an error state, the error
     # will be in the "error" query string parameter.
+    print("\n\n\n--------------")
+    in_box_integration = request.headers['Referer'].endswith("box_prelim")
+
+    print("request.headers "+str(request.headers['Referer']))
+    print("So "+str(in_box_integration))
+
     if 'error' in request.args:
         flash("You could not be logged into the portal: " +
               request.args.get('error_description', request.args['error']))
         return redirect(url_for('home'))
 
     # Set up our Globus Auth/OAuth2 state
-    redirect_uri = "https://connect.materialsdatafacility.org/authcallback"
+    redirect_uri = "https://f071ee2c.ngrok.io/authcallback"
     #url_for('authcallback', _external=True)
 
     requested_scopes = ["openid", "profile", "email",
@@ -163,6 +209,12 @@ def authcallback():
         )
 
         profile = None
+        if in_box_integration:
+            next_stop = url_for('home')+"publish/box"
+        else:
+            next_stop = url_for('home')
+
+        print("Going to "+next_stop)
 
         if profile:
             name, email, institution = profile
@@ -171,8 +223,7 @@ def authcallback():
             session['email'] = email
             session['institution'] = institution
         else:
-            return redirect(url_for('home',
-                            next=url_for('home')))
+            return redirect(next_stop)
 
         return redirect(url_for('home'))
 
