@@ -20,7 +20,7 @@ from portal.utils import (load_portal_client, get_portal_tokens,
 
 from boxsdk import Client, OAuth2
 
-connect_service = "https://18.233.85.14"
+connect_service = "https://api.materialsdatafacility.org"
 
 @app.route('/', methods=['GET'])
 def home():
@@ -29,7 +29,7 @@ def home():
     return render_template('home.jinja2')
 
 @app.route('/add', methods=['GET'])
-@authenticated
+#@authenticated
 def add_data():
     """Route for adding data"""
     return render_template('add_data.jinja2')
@@ -52,8 +52,7 @@ def convert():
     print(headers)
     r = requests.post("{connect_service}/convert/".format(connect_service = connect_service),
                       request.data, 
-                      headers=headers, 
-                      verify=False)
+                      headers=headers)
     print(r.json())
     return jsonify(r.json())
 
@@ -62,8 +61,7 @@ def api_status(source_name):
     headers = {"Authorization":"Bearer {}".format(session['tokens']['mdf_dataset_submission']['access_token'])}
     r = requests.get("{connect_service}/status/{source}".format(connect_service = connect_service, 
                                                                 source=source_name),
-                        headers=headers, 
-                        verify=False)
+                        headers=headers)
     return jsonify(r.json())
 
 @app.route('/publish/box', methods=['POST', 'GETcd co'
