@@ -1,3 +1,4 @@
+from boxsdk import OAuth2, Client
 from flask import (abort, flash, redirect, render_template, request,
                    session, url_for)
 import requests
@@ -18,9 +19,8 @@ from portal.decorators import authenticated
 from portal.utils import (load_portal_client, get_portal_tokens,
                           get_safe_redirect)
 
-from boxsdk import Client, OAuth2
 
-connect_service = "https://api.materialsdatafacility.org"
+connect_service = "https://18.233.85.14"
 
 @app.route('/', methods=['GET'])
 def home():
@@ -29,7 +29,7 @@ def home():
     return render_template('home.jinja2')
 
 @app.route('/add', methods=['GET'])
-#@authenticated
+@authenticated
 def add_data():
     """Route for adding data"""
     return render_template('add_data.jinja2')
@@ -52,7 +52,8 @@ def convert():
     print(headers)
     r = requests.post("{connect_service}/convert/".format(connect_service = connect_service),
                       request.data, 
-                      headers=headers)
+                      headers=headers, 
+                      verify=False)
     print(r.json())
     return jsonify(r.json())
 
@@ -61,46 +62,9 @@ def api_status(source_name):
     headers = {"Authorization":"Bearer {}".format(session['tokens']['mdf_dataset_submission']['access_token'])}
     r = requests.get("{connect_service}/status/{source}".format(connect_service = connect_service, 
                                                                 source=source_name),
-                        headers=headers)
+                        headers=headers, 
+                        verify=False)
     return jsonify(r.json())
-
-@app.route('/publish/box', methods=['POST', 'GETcd co'
-                                            'sdsddsdsdsdsds'])
-def publish_box():
-    data = request.form
-    print(data)
-    oauth = OAuth2(
-        client_id='61f7edsvpek2ohzfjw9ft7swde9zim2w',
-        client_secret='TcoYuwIZGNEOPDIhI4uqyNophOrqWNJZ'
-    )
-
-    access_token, refresh_token = oauth.authenticate(data['auth'])
-    box_client = Client(oauth)
-    user = box_client.user(data["user_id"]).get()
-    print(user["name"])
-    file = box_client.file(data["file_id"])
-    form = BoxSubmitForm()
-    form.name.data = user["name"]
-
-    # return render_template("box_publish.jinja2", form=form)
-    return render_template("add_data.jinja2", form=form)
-
-@app.route('/publish/box_prelim', methods=['POST'])
-def publish_box_prelim():
-    data = request.form
-    print(data)
-    # return render_template('box_publish.jinja2')
-    return """
-    <html>
-    <script>if (top.location!= self.location) {
-   top.location = "/authcallback";
-}
-    </script>
-    <head>
-    <h1> Hello world </h1>
-    </head>
-    </html
-    """
 
 
 @app.route('/signup', methods=['GET'])
@@ -152,16 +116,59 @@ def logout():
     return redirect(''.join(ga_logout_url))
 
 
-@app.route('/authcallback', methods=['GET', 'POST'])
+@app.route('/publish/box', methods=['POST', 'GET'])
+def publish_box():
+    data = request.form
+    print(data)
+
+    if not session.get('is_authenticated'):
+        return redirect(
+            url_for('authcallback', next=request.url, _scheme="https",
+                    _external=True,
+                    box_integration=True,
+                    box_auth = data['auth'],
+                    box_file_id = data['file_id'],
+                    box_user_id = data['user_id']
+                    ))
+
+    oauth = OAuth2(
+        client_id='61f7edsvpek2ohzfjw9ft7swde9zim2w',
+        client_secret='TcoYuwIZGNEOPDIhI4uqyNophOrqWNJZ'
+    )
+
+    box_auth = data.get("auth", request.args.get("box_auth"))
+    box_file_id = data.get("file_id", request.args.get("file_id"))
+    box_user_id = data.get("user_id", request.args.get("user_id"))
+
+    access_token, refresh_token = oauth.authenticate(box_auth)
+    box_client = Client(oauth)
+    user = box_client.user(box_user_id).get()
+    print(user["name"])
+    # file = box_client.file(box_file_id).get()
+    file=box_client.folder(box_file_id).get()
+    form = BoxSubmitForm()
+    form.name.data = user["name"]
+    form.titleInput.data = file["name"]
+    return render_template('submit_box.jinja2', form=form)
+
+@app.route('/authcallback', methods=['GET'])
 def authcallback():
     """Handles the interaction with Globus Auth."""
     # If we're coming back from Globus Auth in an error state, the error
     # will be in the "error" query string parameter.
-    print("\n\n\n--------------")
-    in_box_integration = request.headers['Referer'].endswith("box_prelim")
 
-    print("request.headers "+str(request.headers['Referer']))
-    print("So "+str(in_box_integration))
+    in_box_integration = request.args.get("box_integration", False)
+
+    if in_box_integration:
+        state = {
+            "auth": request.args.get("box_auth"),
+            "file_id": request.args.get("box_file_id"),
+            "user_id": request.args.get("box_user_id")
+        }
+    else:
+        state = {}
+
+
 
     if 'error' in request.args:
         flash("You could not be logged into the portal: " +
@@ -169,7 +176,9 @@ def authcallback():
         return redirect(url_for('home'))
 
     # Set up our Globus Auth/OAuth2 state
-    redirect_uri = "https://f071ee2c.ngrok.io/authcallback"
+    # redirect_uri = "https://connect.materialsdatafacility.org/authcallback"
+    redirect_uri = "https://a4a0ee44.ngrok.io/authcallback?in_box="+str(in_box_integration)
+
     #url_for('authcallback', _external=True)
 
     requested_scopes = ["openid", "profile", "email",
@@ -177,7 +186,7 @@ def authcallback():
 
     client = load_portal_client()
     client.oauth2_start_flow(requested_scopes=requested_scopes,
-                            redirect_uri=redirect_uri)
+                            redirect_uri=redirect_uri, state=json.dumps(state))
 
     # If there's no "code" query string parameter, we're in this route
     # starting a Globus Auth login flow.
@@ -206,23 +215,18 @@ def authcallback():
             primary_identity=id_token.get('sub'),
         )
 
-        profile = None
         if in_box_integration:
-            next_stop = url_for('home')+"publish/box"
+            state = request.args.get("state")
+            s = json.loads(state)
+
+            next_stop = url_for('publish/box', _scheme="https",
+                                _external=True,
+                                box_auth=s['auth'],
+                                box_file_id=s['file_id'],
+                                box_user_id=s['user_id'])
         else:
-            next_stop = url_for('home')
+            next_stop = url_for('home', _scheme="https", _external=True)
 
-        print("Going to "+next_stop)
-
-        if profile:
-            name, email, institution = profile
-
-            session['name'] = name
-            session['email'] = email
-            session['institution'] = institution
-        else:
-            return redirect(next_stop)
-
-        return redirect(url_for('home'))
+        return redirect(next_stop)
 
 

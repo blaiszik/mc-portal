@@ -9,11 +9,13 @@
 <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="container fuelux">
 <form class="was-validated">
+    {{ form.hidden_tag() }}
+    {{ form.auth() }} {{ form.file_id }}
   <!-- Title -->
   <div class="form-group form-group-lg">
     <label id="titleLabel" for="textinput" class="control-label col-sm-2">Title *</label>
     <div class="col-sm-10">
-      <input type="text" class="form-control is-valid" id="titleInput" placeholder="My Dataset Title" required>
+      {{ form.titleInput(class_="form-control is-valid", placeholder_="My Dataset Title") }}
       <p class="help-block"></p>
     </div>
   </div>
@@ -27,7 +29,7 @@
           <ul class="clearfix pill-group">
             <li class="pillbox-input-wrap btn-group">
               <a class="pillbox-more">and <span class="pillbox-more-count"></span> more...</a>
-              <input type="text" class="form-control dropdown-toggle pillbox-add-item" placeholder="add author">
+                {{ form.name(class_="form-control dropdown-toggle pillbox-add-item", placeholder_="add author") }}
               <button type="button" class="dropdown-toggle sr-only">
                 <span class="caret"></span>
                 <span class="sr-only">Toggle Dropdown</span>
@@ -62,31 +64,6 @@
   </div>
   <!--  /Institutions -->
 
-
-
-  <!-- Data Locations -->
-  <div class="form-group">
-    <label id="dataLabel" for="dataPillbox" class="control-label col-sm-2">Data Locations *</label>
-    <div class="col-sm-10">
-    <div class="pillbox" id="dataPillbox">
-          <ul class="clearfix pill-group">
-            <li class="pillbox-input-wrap btn-group">
-              <a class="pillbox-more">and <span class="pillbox-more-count"></span> more...</a>
-              <input type="text" class="form-control dropdown-toggle pillbox-add-item" placeholder="add location">
-              <button type="button" class="dropdown-toggle sr-only">
-                <span class="caret"></span>
-                <span class="sr-only">Toggle Dropdown</span>
-              </button>
-              <ul class="suggest dropdown-menu" role="menu" data-toggle="dropdown" data-flip="auto"></ul>
-            </li>
-          </ul>
-        </div>
-      <p class="help-block">Add data locations: http://myhost.com/myfile.zip or globus://my_ep/my_path</p>
-    </div>
-  </div>
-  <!-- /Data Locations -->
-
-
   <!-- Tags -->
   <div class="form-group">
     <label for="tagsPillbox" class="control-label col-sm-2">Tags</label>
@@ -119,7 +96,7 @@
   </div>
   <!-- /Tags -->
 
-
+  
 <!-- Services -->
 <div class="form-group">
   <label for="checkboxes" class="control-label col-sm-2">Sync Data</label>
@@ -183,7 +160,7 @@
   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
   <h3> <strong>Success:</strong> Dataset has been submitted.</h3>
   <div class="row">
-    <div class="col-md-2">
+    <div class="col-md-2"> 
           <a id="successLink" class="btn btn-success btn-lg" href="">Track Progress</a></h4>
     </div>
     <div class="col-md-4 col-md-2">
