@@ -125,7 +125,7 @@ def publish_box():
         return redirect(
             url_for('authcallback', next=request.url, _scheme="https",
                     _external=True,
-                    box_integration=True,
+                    in_box=True,
                     box_auth = data['auth'],
                     box_file_id = data['file_id'],
                     box_user_id = data['user_id']
@@ -157,7 +157,7 @@ def authcallback():
     # If we're coming back from Globus Auth in an error state, the error
     # will be in the "error" query string parameter.
 
-    in_box_integration = request.args.get("box_integration", False)
+    in_box_integration = request.args.get("in_box", False)
 
     if in_box_integration:
         state = {
@@ -177,7 +177,9 @@ def authcallback():
 
     # Set up our Globus Auth/OAuth2 state
     # redirect_uri = "https://connect.materialsdatafacility.org/authcallback"
-    redirect_uri = "https://a4a0ee44.ngrok.io/authcallback?in_box="+str(in_box_integration)
+    redirect_uri = url_for('authcallback', _scheme="https",_external=True,
+                           in_box=in_box_integration)
+
 
     #url_for('authcallback', _external=True)
 
@@ -185,6 +187,9 @@ def authcallback():
                         "https://auth.globus.org/scopes/c17f27bb-f200-486a-b785-2a25e82af505/connect"]
 
     client = load_portal_client()
+    print(str(client))
+    print("redirect to "+redirect_uri)
+    print("scopes "+str(requested_scopes))
     client.oauth2_start_flow(requested_scopes=requested_scopes,
                             redirect_uri=redirect_uri, state=json.dumps(state))
 
@@ -201,6 +206,7 @@ def authcallback():
         # If we do have a "code" param, we're coming back from Globus Auth
         # and can start the process of exchanging an auth code for a token.
         code = request.args.get('code')
+        print("CODE:%s:"%code)
         tokens = client.oauth2_exchange_code_for_tokens(code)
         print(tokens)
 
@@ -219,7 +225,7 @@ def authcallback():
             state = request.args.get("state")
             s = json.loads(state)
 
-            next_stop = url_for('publish/box', _scheme="https",
+            next_stop = url_for('publish_box', _scheme="https",
                                 _external=True,
                                 box_auth=s['auth'],
                                 box_file_id=s['file_id'],
