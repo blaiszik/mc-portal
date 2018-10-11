@@ -4,13 +4,42 @@
 
 {%block body%}
 
-<h1> Add a New Dataset </h1>
+    {% if form.is_explicit_data_location %}
+        <h1> Add a New Dataset </h1>
+    {% else %}
+        <h1> Publish Box Dataset </h1>
+    {% endif %}
 
-<!-- Main jumbotron for a primary marketing message or call to action -->
+    <script type="text/javascript">
+      function collectPillBoxValues(pillBox) {
+          result = ""
+          items = pillBox.pillbox("items")
+          for (var i = 0, l = items.length; i < l; i++) {
+              if(i > 0) {
+                  result = result + "\t";
+              }
+              result = result + items[i].text;
+          }
+          return result
+      }
+
+      function transferPillBoxValues() {
+          $("#authors").val(collectPillBoxValues($('#authorPillbox')))
+          $("#institutions").val(collectPillBoxValues($('#institutionPillbox')))
+
+          {% if form.is_explicit_data_location %}
+              $("#data_locations").val(collectPillBoxValues($('#dataPillbox')))
+          {% endif %}
+          return true;
+      }
+    </script>
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="container fuelux">
-<form class="was-validated">
-    {{ form.hidden_tag() }}
-    {{ form.auth() }} {{ form.file_id }}
+<form method="post" action="{{ form.form_action }}" onsubmit="transferPillBoxValues()">
+    {{ form.auth() }} {{ form.file_id }} {{ form.authors }} {{ form.institutions }} {{ form.data_locations }}
+    {{ form.csrf_token }}
+
   <!-- Title -->
   <div class="form-group form-group-lg">
     <label id="titleLabel" for="textinput" class="control-label col-sm-2">Title *</label>
@@ -27,9 +56,15 @@
     <div class="col-sm-10">
     <div class="pillbox" id="authorPillbox">
           <ul class="clearfix pill-group">
-            <li class="pillbox-input-wrap btn-group">
+              <li class="btn btn-default pill">
+                  <span>{{ form.authors.data }}</span>
+                  <span class="glyphicon glyphicon-close">
+			        <span class="sr-only">Remove</span>
+		          </span>
+              </li>
+              <li class="pillbox-input-wrap btn-group">
               <a class="pillbox-more">and <span class="pillbox-more-count"></span> more...</a>
-                {{ form.name(class_="form-control dropdown-toggle pillbox-add-item", placeholder_="add author") }}
+              <input type="text" class="form-control dropdown-toggle pillbox-add-item" placeholder="add author">
               <button type="button" class="dropdown-toggle sr-only">
                 <span class="caret"></span>
                 <span class="sr-only">Toggle Dropdown</span>
@@ -64,6 +99,43 @@
   </div>
   <!--  /Institutions -->
 
+    <!-- Publication Year -->
+  <div class="form-group form-group-lg">
+    <label id="titleLabel" for="textinput" class="control-label col-sm-2">Publication Year *</label>
+    <div class="col-sm-10">
+      {{ form.publication_year(class_="form-control is-valid", placeholder_="Year") }}
+      <p class="help-block"></p>
+    </div>
+  </div>
+    <!-- Publication Year -->
+
+    {% if form.is_explicit_data_location %}
+      <!-- Data Locations -->
+  <div class="form-group">
+    <label id="dataLabel" for="dataPillbox" class="control-label col-sm-2">Data Locations *</label>
+    <div class="col-sm-10">
+    <div class="pillbox" id="dataPillbox">
+          <ul class="clearfix pill-group">
+            <li class="pillbox-input-wrap btn-group">
+              <a class="pillbox-more">and <span class="pillbox-more-count"></span> more...</a>
+              <input type="text" class="form-control dropdown-toggle pillbox-add-item" placeholder="add location">
+              <button type="button" class="dropdown-toggle sr-only">
+                <span class="caret"></span>
+                <span class="sr-only">Toggle Dropdown</span>
+              </button>
+              <ul class="suggest dropdown-menu" role="menu" data-toggle="dropdown" data-flip="auto"></ul>
+            </li>
+          </ul>
+        </div>
+      <p class="help-block">Add data locations: http://myhost.com/myfile.zip or globus://my_ep/my_path</p>
+    </div>
+  </div>
+  <!-- /Data Locations -->
+    {% endif %}
+
+
+
+
   <!-- Tags -->
   <div class="form-group">
     <label for="tagsPillbox" class="control-label col-sm-2">Tags</label>
@@ -90,7 +162,7 @@
   <div class="form-group">
     <label for="tagsPillbox" class="control-label col-sm-2">Description</label>
     <div class="col-sm-10">
-              <textarea class="form-control" rows="5" id="descriptionInput"></textarea>
+        {{ form.description(rows="5", class="form-control") }}
       <p class="help-block">Add a dataset description. Feel free to use <a href="https://help.github.com/articles/basic-writing-and-formatting-syntax/" target="_blank">markdown</a>.</p>
     </div>
   </div>
@@ -120,17 +192,16 @@
   </div>
 </div>
 <!-- /Services -->
-</form>
 
-
-
-<form>
-
-<!-- Submit Button -->
+    <!-- Submit Button -->
 <div class="form-group">
             {{ form.submit(class_="btn btn-primary btn-lg")  }}
 </div>
+
 </form>
+
+
+
 
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
   <div class="panel panel-default">
