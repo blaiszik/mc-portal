@@ -7,9 +7,6 @@ def authenticated(fn):
     @wraps(fn)
     def decorated_function(*args, **kwargs):
         if not session.get('is_authenticated'):
-
-            #Check if token is still valid
-
             return redirect(url_for('login', next=request.url))
 
         if request.path == '/logout':

@@ -1,65 +1,65 @@
-from flask import (abort, flash, redirect, render_template, request,
+from flask import (flash, jsonify, redirect, render_template, request,
                    session, url_for)
 import requests
-import json
-from flask import jsonify
-
-
-try:
-    from urllib.parse import urlencode
-except:
-    from urllib import urlencode
-
-from globus_sdk import RefreshTokenAuthorizer
 
 from portal import app
 from portal.decorators import authenticated
-from portal.utils import (load_portal_client, get_portal_tokens,
-                          get_safe_redirect)
+from portal.utils import load_portal_client
+# from portal.utils import (load_portal_client, get_portal_tokens,
+#                          get_safe_redirect)
 
 
 connect_service = "https://api.materialsdatafacility.org"
 
+
 @app.route('/', methods=['GET'])
 def home():
     """Home page - play with it if you must!"""
-    #print(session['tokens'])
     return render_template('home.jinja2')
 
+
 @app.route('/add', methods=['GET'])
-#@authenticated
+@authenticated
 def add_data():
     """Route for adding data"""
     return render_template('add_data.jinja2')
 
+
 @app.route('/status/<source_name>', methods=['GET'])
 @authenticated
 def status(source_name):
-    headers = {"Authorization":"Bearer {}".format(session['tokens']['mdf_dataset_submission']['access_token'])}
-    r = requests.get("{connect_service}/status/{source}".format(connect_service = connect_service, 
+    headers = {
+        "Authorization": ("Bearer {}"
+                          .format(session['tokens']['mdf_dataset_submission']['access_token']))
+    }
+    r = requests.get("{connect_service}/status/{source}".format(connect_service=connect_service,
                                                                 source=source_name),
-                        headers=headers,
-                        verify=False)
+                     headers=headers,
+                     verify=False)
     return render_template("status.jinja2", status=r.json())
+
 
 @app.route('/api/convert', methods=['POST'])
 def convert():
-    data = json.loads(request.data)
-    print(data)
-    headers = {"Authorization":"Bearer {}".format(session['tokens']['mdf_dataset_submission']['access_token'])}
-    print(headers)
-    r = requests.post("{connect_service}/convert/".format(connect_service = connect_service),
-                      request.data, 
+    headers = {
+        "Authorization": ("Bearer {}"
+                          .format(session['tokens']['mdf_dataset_submission']['access_token']))
+    }
+    r = requests.post("{connect_service}/convert/".format(connect_service=connect_service),
+                      request.data,
                       headers=headers)
-    print(r.json())
     return jsonify(r.json())
+
 
 @app.route('/api/status/<source_name>', methods=['GET'])
 def api_status(source_name):
-    headers = {"Authorization":"Bearer {}".format(session['tokens']['mdf_dataset_submission']['access_token'])}
-    r = requests.get("{connect_service}/status/{source}".format(connect_service = connect_service, 
+    headers = {
+        "Authorization": ("Bearer {}"
+                          .format(session['tokens']['mdf_dataset_submission']['access_token']))
+    }
+    r = requests.get("{connect_service}/status/{source}".format(connect_service=connect_service,
                                                                 source=source_name),
-                        headers=headers)
+                     headers=headers)
     return jsonify(r.json())
 
 
@@ -123,15 +123,15 @@ def authcallback():
         return redirect(url_for('home'))
 
     # Set up our Globus Auth/OAuth2 state
-    redirect_uri = "https://connect.materialsdatafacility.org/authcallback"
-    #url_for('authcallback', _external=True)
+    redirect_uri = url_for('authcallback', _external=True)
 
     requested_scopes = ["openid", "profile", "email",
-                        "https://auth.globus.org/scopes/c17f27bb-f200-486a-b785-2a25e82af505/connect"]
+                        ("https://auth.globus.org/scopes/"
+                         "c17f27bb-f200-486a-b785-2a25e82af505/connect")]
 
     client = load_portal_client()
     client.oauth2_start_flow(requested_scopes=requested_scopes,
-                            redirect_uri=redirect_uri)
+                             redirect_uri=redirect_uri)
 
     # If there's no "code" query string parameter, we're in this route
     # starting a Globus Auth login flow.
@@ -147,7 +147,6 @@ def authcallback():
         # and can start the process of exchanging an auth code for a token.
         code = request.args.get('code')
         tokens = client.oauth2_exchange_code_for_tokens(code)
-        print(tokens)
 
         id_token = tokens.decode_id_token(client)
         session.update(
@@ -173,5 +172,3 @@ def authcallback():
                             next=url_for('home')))
 
         return redirect(url_for('home'))
-
-

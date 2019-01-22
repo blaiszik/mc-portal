@@ -1,11 +1,9 @@
 from flask import request
-from threading import Lock
-
 import globus_sdk
-
+from threading import Lock
 try:
     from urllib.parse import urlparse, urljoin
-except:
+except ImportError:
     from urlparse import urlparse, urljoin
 
 from portal import app
@@ -58,7 +56,6 @@ def get_portal_tokens(
         client = load_portal_client()
         tokens = client.oauth2_client_credentials_tokens(
             requested_scopes=scope_string)
-
 
         print(tokens.by_resource_server.items())
         # walk all resource servers in the token response (includes the
