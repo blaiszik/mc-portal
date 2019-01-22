@@ -4,8 +4,6 @@
 ##### Install Dependencies
 
 `pip install -r requirements.txt`
-`cd static`
-`npm install`
 
 
 ##### Running the Portal App

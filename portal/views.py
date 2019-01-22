@@ -1,5 +1,6 @@
-from flask import (flash, jsonify, redirect, render_template, request,
-                   session, url_for)
+import json
+
+from flask import flash, jsonify, redirect, render_template, request, session, url_for
 import globus_sdk
 import requests
 
@@ -27,11 +28,18 @@ def status(source_name):
         "Authorization": ("Bearer {}"
                           .format(session['tokens']['mdf_dataset_submission']['access_token']))
     }
-    r = requests.get("{url}/status/{source}".format(url=app.config["CONNECT_SERVICE"],
-                                                    source=source_name),
-                     headers=headers,
-                     verify=False)
-    return render_template("status.jinja2", status=r.json())
+    res = requests.get("{url}/status/{source}".format(url=app.config["CONNECT_SERVICE"],
+                                                      source=source_name),
+                       headers=headers,
+                       verify=False)
+    try:
+        json_res = res.json()
+    except json.JSONDecodeError:
+        json_res = {
+            "success": False,
+            "error": res.content
+        }
+    return render_template("status.jinja2", status=json_res)
 
 
 @app.route('/api/convert', methods=['POST'])
@@ -40,10 +48,17 @@ def convert():
         "Authorization": ("Bearer {}"
                           .format(session['tokens']['mdf_dataset_submission']['access_token']))
     }
-    r = requests.post("{url}/convert/".format(url=app.config["CONNECT_SERVICE"]),
-                      request.data,
-                      headers=headers)
-    return jsonify(r.json())
+    res = requests.post("{url}/convert/".format(url=app.config["CONNECT_SERVICE"]),
+                        request.data,
+                        headers=headers)
+    try:
+        json_res = res.json()
+    except json.JSONDecodeError:
+        json_res = {
+            "success": False,
+            "error": res.content
+        }
+    return jsonify(json_res)
 
 
 @app.route('/api/status/<source_name>', methods=['GET'])
@@ -52,10 +67,17 @@ def api_status(source_name):
         "Authorization": ("Bearer {}"
                           .format(session['tokens']['mdf_dataset_submission']['access_token']))
     }
-    r = requests.get("{url}/status/{source}".format(url=app.config["CONNECT_SERVICE"],
-                                                    source=source_name),
-                     headers=headers)
-    return jsonify(r.json())
+    res = requests.get("{url}/status/{source}".format(url=app.config["CONNECT_SERVICE"],
+                                                      source=source_name),
+                       headers=headers)
+    try:
+        json_res = res.json()
+    except json.JSONDecodeError:
+        json_res = {
+            "success": False,
+            "error": res.content
+        }
+    return jsonify(json_res)
 
 
 @app.route('/signup', methods=['GET'])
