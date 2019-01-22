@@ -1,15 +1,10 @@
 from flask import (flash, jsonify, redirect, render_template, request,
                    session, url_for)
+import globus_sdk
 import requests
 
 from portal import app
 from portal.decorators import authenticated
-from portal.utils import load_portal_client
-# from portal.utils import (load_portal_client, get_portal_tokens,
-#                          get_safe_redirect)
-
-
-connect_service = "https://api.materialsdatafacility.org"
 
 
 @app.route('/', methods=['GET'])
@@ -32,8 +27,8 @@ def status(source_name):
         "Authorization": ("Bearer {}"
                           .format(session['tokens']['mdf_dataset_submission']['access_token']))
     }
-    r = requests.get("{connect_service}/status/{source}".format(connect_service=connect_service,
-                                                                source=source_name),
+    r = requests.get("{url}/status/{source}".format(url=app.config["CONNECT_SERVICE"],
+                                                    source=source_name),
                      headers=headers,
                      verify=False)
     return render_template("status.jinja2", status=r.json())
@@ -45,7 +40,7 @@ def convert():
         "Authorization": ("Bearer {}"
                           .format(session['tokens']['mdf_dataset_submission']['access_token']))
     }
-    r = requests.post("{connect_service}/convert/".format(connect_service=connect_service),
+    r = requests.post("{url}/convert/".format(url=app.config["CONNECT_SERVICE"]),
                       request.data,
                       headers=headers)
     return jsonify(r.json())
@@ -57,8 +52,8 @@ def api_status(source_name):
         "Authorization": ("Bearer {}"
                           .format(session['tokens']['mdf_dataset_submission']['access_token']))
     }
-    r = requests.get("{connect_service}/status/{source}".format(connect_service=connect_service,
-                                                                source=source_name),
+    r = requests.get("{url}/status/{source}".format(url=app.config["CONNECT_SERVICE"],
+                                                    source=source_name),
                      headers=headers)
     return jsonify(r.json())
 
@@ -83,7 +78,8 @@ def logout():
     - Destroy the session state.
     - Redirect the user to the Globus Auth logout page.
     """
-    client = load_portal_client()
+    client = globus_sdk.ConfidentialAppAuthClient(
+                app.config['PORTAL_CLIENT_ID'], app.config['PORTAL_CLIENT_SECRET'])
 
     # Revoke the tokens with Globus Auth
     for token, token_type in (
@@ -129,7 +125,8 @@ def authcallback():
                         ("https://auth.globus.org/scopes/"
                          "c17f27bb-f200-486a-b785-2a25e82af505/connect")]
 
-    client = load_portal_client()
+    client = globus_sdk.ConfidentialAppAuthClient(
+                app.config['PORTAL_CLIENT_ID'], app.config['PORTAL_CLIENT_SECRET'])
     client.oauth2_start_flow(requested_scopes=requested_scopes,
                              redirect_uri=redirect_uri)
 

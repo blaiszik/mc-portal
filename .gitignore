@@ -3,7 +3,7 @@
 **/__pycache__
 
 # Private configs
-portal/portal.conf
+*portal.conf
 ssl/*
 
 # Administrative files
