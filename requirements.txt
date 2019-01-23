@@ -1,3 +1,4 @@
 Flask>=0.12.1
-pygal>=2.1.1
 globus-sdk>=1.4.1
+mdf_connect_client>=0.3.0
+pygal>=2.1.1

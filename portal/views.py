@@ -1,11 +1,34 @@
 import json
+import logging
 
-from flask import flash, jsonify, redirect, render_template, request, session, url_for
+from flask import (flash, Flask, jsonify, redirect, render_template,
+                   request, session, url_for)
 import globus_sdk
+import mdf_connect_client
 import requests
 
-from portal import app
 from portal.decorators import authenticated
+
+
+app = Flask(__name__)
+app.config.from_pyfile("portal.conf")
+app.url_map.strict_slashes = False
+
+# Set up root logger
+logger = logging.getLogger("mc_portal")
+logger.setLevel(app.config["LOG_LEVEL"])
+logger.propagate = False
+# Set up formatters
+logfile_formatter = logging.Formatter("[{asctime}] [{levelname}] {name}: {message}",
+                                      style='{',
+                                      datefmt="%Y-%m-%d %H:%M:%S")
+# Set up handlers
+logfile_handler = logging.FileHandler(app.config["LOG_FILE"], mode='a')
+logfile_handler.setFormatter(logfile_formatter)
+
+logger.addHandler(logfile_handler)
+
+logger.info("\n\n==========Connect Portal started==========\n")
 
 
 @app.route('/', methods=['GET'])
@@ -44,25 +67,111 @@ def status(source_name):
 
 @app.route('/api/convert', methods=['POST'])
 def convert():
-    headers = {
-        "Authorization": ("Bearer {}"
-                          .format(session['tokens']['mdf_dataset_submission']['access_token']))
-    }
-    res = requests.post("{url}/convert/".format(url=app.config["CONNECT_SERVICE"]),
-                        request.data,
-                        headers=headers)
+    # Make MDFCC
     try:
-        json_res = res.json()
-    except json.JSONDecodeError:
-        json_res = {
+        logger.debug("Creating MDFCC for submission")
+        auth_client = globus_sdk.ConfidentialAppAuthClient(
+                       app.config['PORTAL_CLIENT_ID'], app.config['PORTAL_CLIENT_SECRET'])
+        mdf_authorizer = globus_sdk.RefreshTokenAuthorizer(
+                                        session["tokens"]["mdf_dataset_submission"]
+                                               ["refresh_token"],
+                                        auth_client)
+        mdfcc = mdf_connect_client.MDFConnectClient(service_instance=app.config["MDFCC_SERVICE"],
+                                                    authorizer=mdf_authorizer)
+    except Exception as e:
+        logger.error("API Convert MDFCC init: {}".format(e))
+        return (jsonify({
             "success": False,
-            "error": res.content
-        }
-    return jsonify(json_res)
+            "error": "Unable to initialize dataset submission client."
+        }), 500)
+
+    try:
+        logger.debug("Assembling submission")
+        metadata = request.get_json()
+        if metadata.get("dc"):
+            mdfcc.create_dc_block(**metadata["dc"])
+        if metadata.get("acl"):
+            mdfcc.set_acl(metadata["acl"])
+        if metadata.get("source_name"):
+            mdfcc.set_source_name(metadata["source_name"])
+        if metadata.get("repositories"):
+            mdfcc.add_repositories(metadata["respositories"])
+        if metadata.get("projects"):
+            mdfcc.set_project_block(**metadata["projects"])
+        if metadata.get("mrr"):
+            mdfcc.create_mrr_block(metadata["mrr"])
+        if metadata.get("custom"):
+            mdfcc.set_custom_block(metadata["custom"])
+        if metadata.get("custom_descriptions") or metadata.get("custom_desc"):
+            mdfcc.set_custom_descriptions(metadata.get("custom_descriptions",
+                                                       metadata["custom_desc"]))
+        if metadata.get("data"):
+           mdfcc.add_data(metadata["data"])
+        if metadata.get("index"):
+            if not isinstance(metadata["index"], list):
+                metadata["index"] = [metadata["index"]]
+            for index in metadata["index"]:
+                mdfcc.add_index(**index)
+        if metadata.get("conversion_config"):
+            mdfcc.set_conversion_config(metadata["conversion_config"])
+        if metadata.get("service") or metadata.get("services"):
+            services = metadata.get("services", []) + metadata.get("service", [])
+            for serv in services:
+                mdfcc.add_service(**serv)
+        mdfcc.set_test(metadata.get("test", False))
+    except Exception as e:
+        logger.error("API Convert assembly: {}".format(e))
+        return (jsonify({
+            "success": False,
+            "error": "Dataset submission invalid: {}".format(e)
+        }), 400)
+
+    try:
+        res = mdfcc.submit_dataset()
+    except Exception as e:
+        logger.error("API Convert submission: {}".format(e))
+        return (jsonify({
+            "success": False,
+            "error": "Submission to MDF Connect failed: {}".format(e)
+        }), 500)
+
+    return (jsonify(res), res["status_code"])
 
 
 @app.route('/api/status/<source_name>', methods=['GET'])
 def api_status(source_name):
+    # Make MDFCC
+    try:
+        logger.debug("Creating MDFCC for status")
+        auth_client = globus_sdk.ConfidentialAppAuthClient(
+                       app.config['PORTAL_CLIENT_ID'], app.config['PORTAL_CLIENT_SECRET'])
+        mdf_authorizer = globus_sdk.RefreshTokenAuthorizer(
+                                        session["tokens"]["mdf_dataset_submission"]
+                                               ["refresh_token"],
+                                        auth_client)
+        mdfcc = mdf_connect_client.MDFConnectClient(service_instance=app.config["MDFCC_SERVICE"],
+                                                    authorizer=mdf_authorizer)
+    except Exception as e:
+        logger.error("API Status MDFCC init: {}".format(e))
+        return (jsonify({
+            "success": False,
+            "error": "Unable to initialize client."
+        }), 500)
+
+    try:
+        logger.debug("Requesting status")
+        json_res = mdfcc.check_status(source_name, raw=True)
+        status_code = json_res.pop("status_code")
+    except Exception as e:
+        logger.error("API Status request: {}".format(e))
+        return (jsonify({
+            "success": False,
+            "error": "Status request failed."
+        }), 500)
+
+    return (jsonify(json_res), status_code)
+
+    '''
     headers = {
         "Authorization": ("Bearer {}"
                           .format(session['tokens']['mdf_dataset_submission']['access_token']))
@@ -78,6 +187,7 @@ def api_status(source_name):
             "error": res.content
         }
     return jsonify(json_res)
+    '''
 
 
 @app.route('/signup', methods=['GET'])
@@ -100,7 +210,7 @@ def logout():
     - Destroy the session state.
     - Redirect the user to the Globus Auth logout page.
     """
-    client = globus_sdk.ConfidentialAppAuthClient(
+    auth_client = globus_sdk.ConfidentialAppAuthClient(
                 app.config['PORTAL_CLIENT_ID'], app.config['PORTAL_CLIENT_SECRET'])
 
     # Revoke the tokens with Globus Auth
@@ -112,7 +222,7 @@ def logout():
             for ty in ('access_token', 'refresh_token')
             # only where the relevant token is actually present
             if token_info[ty] is not None):
-        client.oauth2_revoke_token(
+        auth_client.oauth2_revoke_token(
             token, additional_params={'token_type_hint': token_type})
 
     # Destroy the session state
@@ -133,61 +243,69 @@ def logout():
 @app.route('/authcallback', methods=['GET'])
 def authcallback():
     """Handles the interaction with Globus Auth."""
-    # If we're coming back from Globus Auth in an error state, the error
-    # will be in the "error" query string parameter.
-    if 'error' in request.args:
-        flash("You could not be logged into the portal: " +
-              request.args.get('error_description', request.args['error']))
+    try:
+        # If we're coming back from Globus Auth in an error state, the error
+        # will be in the "error" query string parameter.
+        if 'error' in request.args:
+            err_text = request.args.get('error_description', request.args['error'])
+            logger.debug("Authcallback error: {}".format(err_text))
+            flash("You could not be logged into the portal: {}".format(err_text))
+            return redirect(url_for('home'))
+
+        # Set up our Globus Auth/OAuth2 state
+        redirect_uri = url_for('authcallback', _external=True)
+
+        requested_scopes = ["openid", "profile", "email",
+                            ("https://auth.globus.org/scopes/"
+                             "c17f27bb-f200-486a-b785-2a25e82af505/connect")]
+
+        auth_client = globus_sdk.ConfidentialAppAuthClient(
+                       app.config['PORTAL_CLIENT_ID'], app.config['PORTAL_CLIENT_SECRET'])
+        auth_client.oauth2_start_flow(requested_scopes=requested_scopes, redirect_uri=redirect_uri,
+                                      refresh_tokens=True)
+    except Exception as e:
+        flash("Sorry, we've run into an error logging you in.")
+        logger.error("Authcallback init: {}".format(e))
         return redirect(url_for('home'))
-
-    # Set up our Globus Auth/OAuth2 state
-    redirect_uri = url_for('authcallback', _external=True)
-
-    requested_scopes = ["openid", "profile", "email",
-                        ("https://auth.globus.org/scopes/"
-                         "c17f27bb-f200-486a-b785-2a25e82af505/connect")]
-
-    client = globus_sdk.ConfidentialAppAuthClient(
-                app.config['PORTAL_CLIENT_ID'], app.config['PORTAL_CLIENT_SECRET'])
-    client.oauth2_start_flow(requested_scopes=requested_scopes,
-                             redirect_uri=redirect_uri)
 
     # If there's no "code" query string parameter, we're in this route
     # starting a Globus Auth login flow.
     if 'code' not in request.args:
-        additional_authorize_params = (
-            {'signup': 1} if request.args.get('signup') else {})
+        try:
+            logger.debug("Starting Auth login flow")
+            additional_authorize_params = (
+                {'signup': 1} if request.args.get('signup') else {})
 
-        auth_uri = client.oauth2_get_authorize_url(
-            additional_params=additional_authorize_params)
-        return redirect(auth_uri)
+            auth_uri = auth_client.oauth2_get_authorize_url(
+                            additional_params=additional_authorize_params)
+            return redirect(auth_uri)
+        except Exception as e:
+            flash("Sorry, we've run into an error logging you in with Globus Auth.")
+            logger.error("Authcallback no code: {}".format(e))
+            return redirect(url_for('home'))
     else:
-        # If we do have a "code" param, we're coming back from Globus Auth
-        # and can start the process of exchanging an auth code for a token.
-        code = request.args.get('code')
-        tokens = client.oauth2_exchange_code_for_tokens(code)
+        try:
+            # If we do have a "code" param, we're coming back from Globus Auth
+            # and can start the process of exchanging an auth code for a token.
+            logger.debug("Returning from Auth, fetching tokens")
+            code = request.args.get('code')
+            token_response = auth_client.oauth2_exchange_code_for_tokens(code)
+            id_token = token_response.decode_id_token(auth_client)
+            tokens = token_response.by_resource_server
 
-        id_token = tokens.decode_id_token(client)
-        session.update(
-            tokens=tokens.by_resource_server,
-            is_authenticated=True,
-            name=id_token.get('name', ''),
-            email=id_token.get('email', ''),
-            institution=id_token.get('institution', ''),
-            primary_username=id_token.get('preferred_username'),
-            primary_identity=id_token.get('sub'),
-        )
+            session.update(
+                tokens=tokens,
+                is_authenticated=True,
+                name=id_token.get('name', ''),
+                email=id_token.get('email', ''),
+                institution=id_token.get('institution', ''),
+                primary_username=id_token.get('preferred_username'),
+                primary_identity=id_token.get('sub'),
+            )
+        except Exception as e:
+            flash("Sorry, we were unable to authenticate you with Globus Auth.")
+            logger.error("Authcallback return tokens: {}".format(e))
+            return redirect(url_for('home'))
 
-        profile = None
-
-        if profile:
-            name, email, institution = profile
-
-            session['name'] = name
-            session['email'] = email
-            session['institution'] = institution
-        else:
-            return redirect(url_for('home',
-                            next=url_for('home')))
-
+        logger.debug("Authcallback success")
         return redirect(url_for('home'))
