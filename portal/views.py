@@ -229,16 +229,14 @@ def authcallback():
             return redirect(url_for('home'))
 
         # Set up our Globus Auth/OAuth2 state
-        redirect_uri = url_for('authcallback', _external=True)
-
         requested_scopes = ["openid", "profile", "email",
                             ("https://auth.globus.org/scopes/"
                              "c17f27bb-f200-486a-b785-2a25e82af505/connect")]
 
         auth_client = globus_sdk.ConfidentialAppAuthClient(
                        app.config['PORTAL_CLIENT_ID'], app.config['PORTAL_CLIENT_SECRET'])
-        auth_client.oauth2_start_flow(requested_scopes=requested_scopes, redirect_uri=redirect_uri,
-                                      refresh_tokens=True)
+        auth_client.oauth2_start_flow(requested_scopes=requested_scopes,
+                                      redirect_uri=app.config["REDIRECT_URI"], refresh_tokens=True)
     except Exception as e:
         flash("Sorry, we've run into an error logging you in.")
         logger.error("Authcallback init: {}".format(repr(e)))
