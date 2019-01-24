@@ -1,11 +1,9 @@
-import json
 import logging
 
 from flask import (flash, Flask, jsonify, redirect, render_template,
                    request, session, url_for)
 import globus_sdk
 import mdf_connect_client
-import requests
 
 from portal.decorators import authenticated
 
@@ -47,23 +45,6 @@ def add_data():
 @app.route('/status/<source_name>', methods=['GET'])
 @authenticated
 def status(source_name):
-    '''
-    headers = {
-        "Authorization": ("Bearer {}"
-                          .format(session['tokens']['mdf_dataset_submission']['access_token']))
-    }
-    res = requests.get("{url}/status/{source}".format(url=app.config["CONNECT_SERVICE"],
-                                                      source=source_name),
-                       headers=headers,
-                       verify=False)
-    try:
-        json_res = res.json()
-    except json.JSONDecodeError:
-        json_res = {
-            "success": False,
-            "error": res.content
-        }
-    '''
     # Make MDFCC
     try:
         logger.debug("Creating MDFCC for status")
@@ -85,7 +66,6 @@ def status(source_name):
         try:
             logger.debug("Requesting status")
             json_res = mdfcc.check_status(source_name, raw=True)
-            status_code = json_res.pop("status_code")
         except Exception as e:
             logger.error("Status request: {}".format(repr(e)))
             json_res = {
@@ -139,7 +119,7 @@ def convert():
             mdfcc.set_custom_descriptions(metadata.get("custom_descriptions",
                                                        metadata.get("custom_desc", {})))
         if metadata.get("data"):
-           mdfcc.add_data(metadata["data"])
+            mdfcc.add_data(metadata["data"])
         if metadata.get("index"):
             if not isinstance(metadata["index"], list):
                 metadata["index"] = [metadata["index"]]
@@ -180,6 +160,7 @@ def convert():
     return (jsonify(res), res["status_code"])
 
 
+'''
 @app.route('/api/status/<source_name>', methods=['GET'])
 def api_status(source_name):
     # Make MDFCC
@@ -212,24 +193,7 @@ def api_status(source_name):
         }), 500)
 
     return (jsonify(json_res), status_code)
-
-    '''
-    headers = {
-        "Authorization": ("Bearer {}"
-                          .format(session['tokens']['mdf_dataset_submission']['access_token']))
-    }
-    res = requests.get("{url}/status/{source}".format(url=app.config["CONNECT_SERVICE"],
-                                                      source=source_name),
-                       headers=headers)
-    try:
-        json_res = res.json()
-    except json.JSONDecodeError:
-        json_res = {
-            "success": False,
-            "error": res.content
-        }
-    return jsonify(json_res)
-    '''
+'''
 
 
 @app.route('/signup', methods=['GET'])
@@ -252,31 +216,37 @@ def logout():
     - Destroy the session state.
     - Redirect the user to the Globus Auth logout page.
     """
-    auth_client = globus_sdk.ConfidentialAppAuthClient(
-                app.config['PORTAL_CLIENT_ID'], app.config['PORTAL_CLIENT_SECRET'])
+    logger.debug("Logging user out")
 
-    # Revoke the tokens with Globus Auth
-    for token, token_type in (
-            (token_info[ty], ty)
-            # get all of the token info dicts
-            for token_info in session['tokens'].values()
-            # cross product with the set of token types
-            for ty in ('access_token', 'refresh_token')
-            # only where the relevant token is actually present
-            if token_info[ty] is not None):
-        auth_client.oauth2_revoke_token(
-            token, additional_params={'token_type_hint': token_type})
+    try:
+        auth_client = globus_sdk.ConfidentialAppAuthClient(
+                    app.config['PORTAL_CLIENT_ID'], app.config['PORTAL_CLIENT_SECRET'])
 
-    # Destroy the session state
-    session.clear()
+        # Revoke the tokens with Globus Auth
+        for token, token_type in (
+                (token_info[ty], ty)
+                # get all of the token info dicts
+                for token_info in session['tokens'].values()
+                # cross product with the set of token types
+                for ty in ('access_token', 'refresh_token')
+                # only where the relevant token is actually present
+                if token_info[ty] is not None):
+            auth_client.oauth2_revoke_token(
+                token, additional_params={'token_type_hint': token_type})
 
-    redirect_uri = url_for('home', _external=True)
+        # Destroy the session state
+        session.clear()
 
-    ga_logout_url = []
-    ga_logout_url.append(app.config['GLOBUS_AUTH_LOGOUT_URI'])
-    ga_logout_url.append('?client={}'.format(app.config['PORTAL_CLIENT_ID']))
-    ga_logout_url.append('&redirect_uri={}'.format(redirect_uri))
-    ga_logout_url.append('&redirect_name=Globus Sample Data Portal')
+        redirect_uri = url_for('home', _external=True)
+
+        ga_logout_url = []
+        ga_logout_url.append(app.config['GLOBUS_AUTH_LOGOUT_URI'])
+        ga_logout_url.append('?client={}'.format(app.config['PORTAL_CLIENT_ID']))
+        ga_logout_url.append('&redirect_uri={}'.format(redirect_uri))
+        ga_logout_url.append('&redirect_name=Globus Sample Data Portal')
+    except Exception as e:
+        logger.error("Unable to logout user: {}".format(repr(e)))
+        flash("Unable to log you out of Globus.")
 
     # Redirect the user to the Globus Auth logout page
     return redirect(''.join(ga_logout_url))
