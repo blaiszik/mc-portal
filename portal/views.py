@@ -47,6 +47,7 @@ def add_data():
 @app.route('/status/<source_name>', methods=['GET'])
 @authenticated
 def status(source_name):
+    '''
     headers = {
         "Authorization": ("Bearer {}"
                           .format(session['tokens']['mdf_dataset_submission']['access_token']))
@@ -62,7 +63,38 @@ def status(source_name):
             "success": False,
             "error": res.content
         }
-    return render_template("status.jinja2", status=json_res)
+    '''
+    # Make MDFCC
+    try:
+        logger.debug("Creating MDFCC for status")
+        auth_client = globus_sdk.ConfidentialAppAuthClient(
+                       app.config['PORTAL_CLIENT_ID'], app.config['PORTAL_CLIENT_SECRET'])
+        mdf_authorizer = globus_sdk.RefreshTokenAuthorizer(
+                                        session["tokens"]["mdf_dataset_submission"]
+                                               ["refresh_token"],
+                                        auth_client)
+        mdfcc = mdf_connect_client.MDFConnectClient(service_instance=app.config["MDFCC_SERVICE"],
+                                                    authorizer=mdf_authorizer)
+    except Exception as e:
+        logger.error("Status MDFCC init: {}".format(repr(e)))
+        json_res = {
+            "success": False,
+            "error": "Unable to initialize client."
+        }
+    else:
+        try:
+            logger.debug("Requesting status")
+            json_res = mdfcc.check_status(source_name, raw=True)
+            status_code = json_res.pop("status_code")
+        except Exception as e:
+            logger.error("Status request: {}".format(repr(e)))
+            json_res = {
+                "success": False,
+                "error": "Status request failed."
+            }
+
+    # return (jsonify(json_res), status_code)
+    return render_template("status.jinja2", status_res=json_res)
 
 
 @app.route('/api/convert', methods=['POST'])
@@ -96,15 +128,16 @@ def convert():
             mdfcc.set_source_name(metadata["source_name"])
         if metadata.get("repositories"):
             mdfcc.add_repositories(metadata["respositories"])
-        if metadata.get("projects"):
-            mdfcc.set_project_block(**metadata["projects"])
+        if metadata.get("projects") or metadata.get("project"):
+            proj = metadata.get("projects", metadata.get("project", {}))
+            mdfcc.set_project_block(**proj)
         if metadata.get("mrr"):
             mdfcc.create_mrr_block(metadata["mrr"])
         if metadata.get("custom"):
             mdfcc.set_custom_block(metadata["custom"])
         if metadata.get("custom_descriptions") or metadata.get("custom_desc"):
             mdfcc.set_custom_descriptions(metadata.get("custom_descriptions",
-                                                       metadata["custom_desc"]))
+                                                       metadata.get("custom_desc", {})))
         if metadata.get("data"):
            mdfcc.add_data(metadata["data"])
         if metadata.get("index"):
@@ -115,12 +148,21 @@ def convert():
         if metadata.get("conversion_config"):
             mdfcc.set_conversion_config(metadata["conversion_config"])
         if metadata.get("service") or metadata.get("services"):
-            services = metadata.get("services", []) + metadata.get("service", [])
-            for serv in services:
-                mdfcc.add_service(**serv)
+            # services must be either:
+            # 1) list of dict, each dict contains args for an add_service() call
+            # 2) one dict, each key is a service, each value is bool/dict of service options
+            services = metadata.get("services", metadata.get("service", {}))
+            if isinstance(services, list):
+                for serv in services:
+                    mdfcc.add_service(**serv)
+            elif isinstance(services, dict):
+                for key, val in services.items():
+                    mdfcc.add_service(key, val)
+            else:
+                raise TypeError("Invalid service entry ({}): {}".format(type(services), services))
         mdfcc.set_test(metadata.get("test", False))
     except Exception as e:
-        logger.error("API Convert assembly: {}".format(e))
+        logger.error("API Convert assembly: {}".format(repr(e)))
         return (jsonify({
             "success": False,
             "error": "Dataset submission invalid: {}".format(e)
@@ -129,7 +171,7 @@ def convert():
     try:
         res = mdfcc.submit_dataset()
     except Exception as e:
-        logger.error("API Convert submission: {}".format(e))
+        logger.error("API Convert submission: {}".format(repr(e)))
         return (jsonify({
             "success": False,
             "error": "Submission to MDF Connect failed: {}".format(e)
@@ -163,7 +205,7 @@ def api_status(source_name):
         json_res = mdfcc.check_status(source_name, raw=True)
         status_code = json_res.pop("status_code")
     except Exception as e:
-        logger.error("API Status request: {}".format(e))
+        logger.error("API Status request: {}".format(repr(e)))
         return (jsonify({
             "success": False,
             "error": "Status request failed."
@@ -265,7 +307,7 @@ def authcallback():
                                       refresh_tokens=True)
     except Exception as e:
         flash("Sorry, we've run into an error logging you in.")
-        logger.error("Authcallback init: {}".format(e))
+        logger.error("Authcallback init: {}".format(repr(e)))
         return redirect(url_for('home'))
 
     # If there's no "code" query string parameter, we're in this route
@@ -281,7 +323,7 @@ def authcallback():
             return redirect(auth_uri)
         except Exception as e:
             flash("Sorry, we've run into an error logging you in with Globus Auth.")
-            logger.error("Authcallback no code: {}".format(e))
+            logger.error("Authcallback no code: {}".format(repr(e)))
             return redirect(url_for('home'))
     else:
         try:
@@ -304,7 +346,7 @@ def authcallback():
             )
         except Exception as e:
             flash("Sorry, we were unable to authenticate you with Globus Auth.")
-            logger.error("Authcallback return tokens: {}".format(e))
+            logger.error("Authcallback return tokens: {}".format(repr(e)))
             return redirect(url_for('home'))
 
         logger.debug("Authcallback success")
