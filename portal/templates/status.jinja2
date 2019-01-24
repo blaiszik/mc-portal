@@ -10,11 +10,16 @@
   <div class="row">
           <div class="col-md-12">
             <h1>Dataset Status</h1>
+            {% if status_res.success == true %}
+                <h3>Status for submission: {{status_res.status.source_id}}</h3>
+            {% else %}
+                <h3>Status unavailable for submission: {{status_res.status.source_id}}</h3>
+            {% endif %}
           </div>
   </div>
   <div class="row clearfix">
     <div class="col-md-12 column">
-      {% for result in status.status_list %}
+      {% for result in status_res.status.status_list %}
       <div class="row clearfix">
                   <div class="col-md-12 column">
                       <div class="list-group">
@@ -49,7 +54,7 @@
         <div class="panel panel-warning">
           <div class="panel-heading">
             <h3 class="panel-title">
-             Dataset ID: {{status.source_name}}
+             Dataset ID: {{status_res.status.source_id}}
             </h3>
           </div>
         </div>
