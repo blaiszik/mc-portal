@@ -13,10 +13,11 @@
             {% if status_res.success == true %}
                 <h3>Status for submission: {{status_res.status.source_id}}</h3>
             {% else %}
-                <h3>Status unavailable for submission: {{status_res.status.source_id}}</h3>
+                <h3>Status unavailable for submission</h3>
             {% endif %}
           </div>
   </div>
+  {% if status_res.success == true %}
   <div class="row clearfix">
     <div class="col-md-12 column">
       {% for result in status_res.status.status_list %}
@@ -58,6 +59,9 @@
             </h3>
           </div>
         </div>
+    </div>
+  </div>
+  {% endif %}
 </div>
 
 
