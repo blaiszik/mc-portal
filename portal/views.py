@@ -160,42 +160,6 @@ def convert():
     return (jsonify(res), res["status_code"])
 
 
-'''
-@app.route('/api/status/<source_name>', methods=['GET'])
-def api_status(source_name):
-    # Make MDFCC
-    try:
-        logger.debug("Creating MDFCC for status")
-        auth_client = globus_sdk.ConfidentialAppAuthClient(
-                       app.config['PORTAL_CLIENT_ID'], app.config['PORTAL_CLIENT_SECRET'])
-        mdf_authorizer = globus_sdk.RefreshTokenAuthorizer(
-                                        session["tokens"]["mdf_dataset_submission"]
-                                               ["refresh_token"],
-                                        auth_client)
-        mdfcc = mdf_connect_client.MDFConnectClient(service_instance=app.config["MDFCC_SERVICE"],
-                                                    authorizer=mdf_authorizer)
-    except Exception as e:
-        logger.error("API Status MDFCC init: {}".format(e))
-        return (jsonify({
-            "success": False,
-            "error": "Unable to initialize client."
-        }), 500)
-
-    try:
-        logger.debug("Requesting status")
-        json_res = mdfcc.check_status(source_name, raw=True)
-        status_code = json_res.pop("status_code")
-    except Exception as e:
-        logger.error("API Status request: {}".format(repr(e)))
-        return (jsonify({
-            "success": False,
-            "error": "Status request failed."
-        }), 500)
-
-    return (jsonify(json_res), status_code)
-'''
-
-
 @app.route('/signup', methods=['GET'])
 def signup():
     """Send the user to Globus Auth with signup=1."""
