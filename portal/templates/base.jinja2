@@ -30,12 +30,22 @@
       .invalid {
         color: red;
       }
+
+      .is-hidden{
+        display: none
+      }
+
+      .is-shown{
+        display: block
+      }
     </style>
 
     <script type="text/javascript">
       $( document ).ready(function() {
         form_data = {}
-        function update_form_data(){
+
+
+          function update_form_data(){
           const moc_data = {
             dc: {
                 title: $('#titleInput').val(),
@@ -135,7 +145,6 @@
                       $("#authorPillbox"), 
                       $("#tagsPillbox"), 
                       $("#institutionPillbox")]
-
         for (var i = 0, l = pillboxes.length; i < l; i++) {
           pillboxes[i].pillbox('removeItems');
         }
@@ -146,7 +155,9 @@
       $("#submit-button").click(function(){
         form_data = update_form_data();
         valid = validate_pillboxes();
+
         if (valid == true){
+          $("#progress-spinner").removeClass("hidden")
           console.log(form_data)
             $.ajax({
               url: '/api/convert',
@@ -155,39 +166,54 @@
               data: JSON.stringify(form_data),
               dataType: 'json'
           }).done(function(data){
-            console.log("done")
-            console.log(data)
+              console.log("done")
+              console.log(data)
+              $("#progress-spinner").addClass("hidden")
           })
             .success(function(data){
               console.log("success")
               console.log(data)
-              $("#successAlert").addClass("visible")
-              $("#successAlert").removeClass("invisible")
+              $("#success-alert").removeClass("hidden")
+              $("#progress-spinner").addClass("hidden")
               $("#successLink").attr("href", 'status/'+data.source_id)
               clear_form()
           })
             .fail(function(err){
               console.log("error")
               console.log(err)
-              $("#failureAlert").addClass("visible")
-              $("#failureAlert").removeClass("invisible")
+              $("#failure-alert").removeClass("hidden")
+              $("#review-alert").addClass("hidden")
             });
         }
-      })
+      });
+
+       $("#next-button").click(function(){
+        console.log("next")
+        form_data = update_form_data();
+        valid = validate_pillboxes();
+        if (valid == true){
+          console.log("valid")
+          $("#review-alert").removeClass("hidden")
+          $("#submit-button").removeClass("hidden")
+          $("#next-button").addClass("hidden")
+
+        }else{
+          console.log("invalid")
+        }
+      });
+
     });
-    
-   
-    </script>
+</script>
 
 
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
-<link href="//www.fuelcdn.com/fuelux/3.13.0/css/fuelux.min.css" rel="stylesheet">
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+<link href="//www.fuelcdn.com/fuelux/3.16.6/css/fuelux.min.css" rel="stylesheet">
 
 <!-- jQuery -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-<script src="//www.fuelcdn.com/fuelux/3.13.0/js/fuelux.min.js"></script>
+<script src="//www.fuelcdn.com/fuelux/3.16.6/js/fuelux.min.js"></script>
 
   
   </head>
