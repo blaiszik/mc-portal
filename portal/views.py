@@ -36,7 +36,7 @@ def home():
 
 
 @app.route('/add', methods=['GET'])
-@authenticated
+#@authenticated
 def add_data():
     """Route for adding data"""
     return render_template('add_data.jinja2')
