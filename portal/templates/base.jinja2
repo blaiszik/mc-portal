@@ -30,76 +30,77 @@
       .invalid {
         color: red;
       }
+
+      .is-hidden{
+        display: none
+      }
+
+      .is-shown{
+        display: block
+      }
     </style>
 
     <script type="text/javascript">
       $( document ).ready(function() {
         form_data = {}
-        function update_form_data(){
-          const moc_data = {
-            services:{
-                globus_publish:false,
-                citrine: false,
-                mrr:false
-              },
-            dc:{
-                publicationYear:"2018",
-                identifier: {
-                      identifier: '10.test/1',
-                      identifierType: 'DOI'
-                    },
-                publisher:"Materials Data Facility",
-                subjects: [],
-                titles: [],
-                creators: [],
-                descriptions: [],
-                resourceType: {
-                    resourceTypeGeneral: "Dataset"
-                }
-            },
-            test: true,
-            data:[]
-          }
 
-          // Format the title into dc
-          moc_data.dc.titles.push({"title":$('#titleInput').val()}) 
+
+          function update_form_data(){
+          const moc_data = {
+            dc: {
+                title: $('#titleInput').val(),
+                authors: [],
+                affiliations: [],
+                // publisher
+                // publication_year
+                // resource_type
+                description: $('#descriptionPillbox').val(),
+                // dataset_doi
+                // related_dois
+                subjects: []
+            },
+            acl: ["public"],
+            // source_name: "",
+            // repositories: [""],
+            // projects: {...},
+            // mrr: {...},
+            // custom: {...},
+            // custom_descriptions: {...},
+            data: [],
+            // index: [{...}],
+            // conversion_config: {...},
+            services: {
+                globus_publish: $("#publishCheck").is(":checked"),
+                citrine: $("#citrinationCheck").is(":checked"),
+                mrr: $("#mrrCheck").is(":checked")
+            },
+            test: true
+          }
 
           // Format the authors
           authors = $('#authorPillbox').pillbox('items')
           for (var i = 0, l = authors.length; i < l; i++) {
-            moc_data.dc.creators.push({"creatorName":authors[i].text})
+            moc_data.dc.authors.push(authors[i].text)
+          }
+
+          // Format the affiliations
+          affiliations = $('#insitutionPillbox').pillbox('items')
+          for (var i = 0, l = affiliations.length; i < l; i++) {
+            moc_data.dc.affiliations.push(affiliations[i].text)
+          }
+
+          // Format the tags/subjects
+          tags = $('#tagsPillbox').pillbox('items')
+          for (var i = 0, l = tags.length; i < l; i++) {
+            moc_data.dc.subjects.push(tags[i].text)
           }
 
           // Format the data locations
           data_locations = $('#dataPillbox').pillbox('items')
           for (var i = 0, l = data_locations.length; i < l; i++) {
-            console.log(data_locations[i].text);
             moc_data.data.push(data_locations[i].text)
           }
 
-          // Format the institutions
-          institutions = $('#insitutionPillbox').pillbox('items')
-          for (var i = 0, l = institutions.length; i < l; i++) {
-            console.log(institutions[i].text);
-            moc_data.data.push(institutions[i].text)
-          }
-
-          // Format the tags
-          tags = $('#tagsPillbox').pillbox('items')
-          for (var i = 0, l = tags.length; i < l; i++) {
-            moc_data.dc.subjects.push({"subject":tags[i].text})
-          }
-
-          // Format the services
-          if ($("#publishCheck").is(":checked")){
-            moc_data.services.globus_publish = true
-          } 
-          if ($("#mrrCheck").is(":checked")){
-            moc_data.services.mrr = true
-          }  
-          if ($("#citrinationCheck").is(":checked")){
-            moc_data.services.citrine = true
-          }  
           console.log(moc_data)
           return moc_data
         }
@@ -144,7 +145,6 @@
                       $("#authorPillbox"), 
                       $("#tagsPillbox"), 
                       $("#institutionPillbox")]
-
         for (var i = 0, l = pillboxes.length; i < l; i++) {
           pillboxes[i].pillbox('removeItems');
         }
@@ -155,7 +155,9 @@
       $("#submit-button").click(function(){
         form_data = update_form_data();
         valid = validate_pillboxes();
+
         if (valid == true){
+          $("#progress-spinner").removeClass("hidden")
           console.log(form_data)
             $.ajax({
               url: '/api/convert',
@@ -164,37 +166,54 @@
               data: JSON.stringify(form_data),
               dataType: 'json'
           }).done(function(data){
-            console.log("done")
-            console.log(data)
+              console.log("done")
+              console.log(data)
+              $("#progress-spinner").addClass("hidden")
           })
             .success(function(data){
               console.log("success")
               console.log(data)
-              $("#successAlert").addClass("visible")
-              $("#successAlert").removeClass("invisible")
+              $("#success-alert").removeClass("hidden")
+              $("#progress-spinner").addClass("hidden")
               $("#successLink").attr("href", 'status/'+data.source_id)
               clear_form()
           })
             .fail(function(err){
               console.log("error")
               console.log(err)
+              $("#failure-alert").removeClass("hidden")
+              $("#review-alert").addClass("hidden")
             });
         }
-      })
+      });
+
+       $("#next-button").click(function(){
+        console.log("next")
+        form_data = update_form_data();
+        valid = validate_pillboxes();
+        if (valid == true){
+          console.log("valid")
+          $("#review-alert").removeClass("hidden")
+          $("#submit-button").removeClass("hidden")
+          $("#next-button").addClass("hidden")
+
+        }else{
+          console.log("invalid")
+        }
+      });
+
     });
-    
-   
-    </script>
+</script>
 
 
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
-<link href="//www.fuelcdn.com/fuelux/3.13.0/css/fuelux.min.css" rel="stylesheet">
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+<link href="//www.fuelcdn.com/fuelux/3.16.6/css/fuelux.min.css" rel="stylesheet">
 
 <!-- jQuery -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-<script src="//www.fuelcdn.com/fuelux/3.13.0/js/fuelux.min.js"></script>
+<script src="//www.fuelcdn.com/fuelux/3.16.6/js/fuelux.min.js"></script>
 
   
   </head>

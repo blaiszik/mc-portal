@@ -1,3 +1,18 @@
+# Python cache
+*.pyc
+**/__pycache__
+
+# Private configs
+*portal.conf
+ssl/*
+
+# Administrative files
+*.swp
+*.swo
+
+# Deprecated files
+**/deprecated/
+
 # Logs
 logs
 *.log
@@ -56,4 +71,3 @@ typings/
 
 # dotenv environment variables file
 .env
-

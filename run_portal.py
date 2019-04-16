@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
-from portal import app
+from portal.views import app
 
 if __name__ == '__main__':
-    app.run(host='localhost',
+    app.run(host='0.0.0.0',
             ssl_context=('./ssl/server.crt', './ssl/server.key'))
