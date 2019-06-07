@@ -1,76 +1,91 @@
-{%extends "base.jinja2"%}
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+</head>
+<body>
+<div id="app">
+    <v-container>
+        <v-app id="inspire">
+                <v-toolbar color="" :dark=false>
+                        <img 
+                            src="https://connect.materialsdatafacility.org/static/img/MDF-logo@2x.png"
+                            height="50">
+                        
+                            <v-toolbar-title>MDF Connect</v-toolbar-title>
+                        <v-spacer></v-spacer>
+                        <v-btn >
+                          Browse Datasets
+                        </v-btn>
+                        <v-btn >
+                          My Submissions
+                        </v-btn>
+                        
+                      </v-toolbar>
 
-{%block title%}Status{%endblock%}
+            <v-content>
+                <v-layout left-justify>
+                    <v-flex xs20 sm12>
+                        <v-toolbar color="primary" dark>
+                            <v-toolbar-title>Dataset Status</v-toolbar-title>
+                            <v-spacer></v-spacer>
+                        </v-toolbar>
+                        <v-container fluid fill-width>
+                         {% if status_res.success == true %}
+                            <h3>Status for submission: {{status_res.status.source_id}}</h3>
+                        {% else %}
+                            <h3>Status unavailable for submission</h3>
+                        {% endif %}
 
-{%block body%}
-
-
-
-<div class="container">
-  <div class="row">
-          <div class="col-md-12">
-            <h1>Dataset Status</h1>
-            {% if status_res.success == true %}
-                <h3>Status for submission: {{status_res.status.source_id}}</h3>
-            {% else %}
-                <h3>Status unavailable for submission</h3>
-            {% endif %}
-          </div>
-  </div>
   {% if status_res.success == true %}
-  <div class="row clearfix">
-    <div class="col-md-12 column">
-      {% for result in status_res.status.status_list %}
-      <div class="row clearfix">
-                  <div class="col-md-12 column">
-                      <div class="list-group">
 
-                          <div class="list-group-item">
-                              <h4 class="list-group-item-heading">
-                                  {{result.text}}
-                                  </a>
-                              </h4>
-                              <a href="{{result.link}}">{{result.link}}</a>
-                              <p class="list-group-item-text">
-                                {% if result.signal == "success" %}
-                                    <span class="col-md2 label label-success">{{result.signal}}</span>
-                                {% elif result.signal == "idle" %}
-                                  <span class="col-md2 label label-default">{{result.signal}}</span>
-                                {% elif result.signal == "started" %}
-                                  <span class="col-md2 label label-info">{{result.signal}}</span>
-                                {% elif result.signal == "warning" %}
-                                  <span class="col-md2 label label-warning">{{result.signal}}</span>
-                                {% elif result.signal == "failure" %}
-                                  <span class="col-md2 label label-danger">{{result.signal}}</span>
-                                {% else %}
-                                  <span class="col-md2 label label-default">{{result.signal}}</span>
-                                {% endif %}
-                              </p>
-
-                          </div>
-                      </div>
-                      </div>
-                      </div>
-        {%endfor%}
-        <div class="panel panel-warning">
-          <div class="panel-heading">
-            <h3 class="panel-title">
-             Dataset ID: {{status_res.status.source_id}}
-            </h3>
-          </div>
-        </div>
-    </div>
-  </div>
+  {% for result in status_res.status.status_list %}
+  <v-card>
+  <v-card-title> {{result.text}}</v-card-title>
+  <v-card-actions>
+   {% if result.signal == "success" %}
+      <v-chip label outline color="green">{{result.signal}}</v-chip>
+  {% elif result.signal == "idle" %}
+    <v-chip label outline dark> {{result.signal}}</v-chip>
+  {% elif result.signal == "started" %}
+    <v-chip label outline color="blue">{{result.signal}}</v-chip>
+  {% elif result.signal == "warning" %}
+    <v-chip label outline color="orange">{{result.signal}}</v-chip>
+  {% elif result.signal == "failure" %}
+    <v-chip label outline color="red">{{result.signal}}</v-chip>
+  {% else %}
+    <v-chip label outline dark">{{result.signal}}</v-chip>
   {% endif %}
-</div>
+  <a href="{{result.link}}">{{result.link}}</a>
+
+  </v-card-actions>
+  </v-card>
+  
+
+  {% endfor %}
+  {% endif %}
 
 
-<!-- Main jumbotron for a primary marketing message or call to action -->
-    <div class="container">
-      <div id="app"></div>
-  </div>
+                        </v-container>
 
+        </v-app>
+    </div>
+    </v-content>
+    </v-container>
 
+    <script>
+        new Vue({
+          el: "#app",
+          data: () => ({test:123})
+        })
+       
+    </script>
 
+</body>
 
-{%endblock%}
+</html>
