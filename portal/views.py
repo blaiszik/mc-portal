@@ -119,7 +119,7 @@ def convert():
             mdfcc.set_custom_descriptions(metadata.get("custom_descriptions",
                                                        metadata.get("custom_desc", {})))
         if metadata.get("data"):
-            mdfcc.add_data_sources(metadata["data"])
+            mdfcc.add_data_source(metadata["data"])
         if metadata.get("index"):
             if not isinstance(metadata["index"], list):
                 metadata["index"] = [metadata["index"]]
