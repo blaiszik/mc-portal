@@ -7,6 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
     <script src="https://unpkg.com/marked@0.3.6"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 </head>
 <body>
@@ -18,32 +19,23 @@
                         <img 
                             src="https://connect.materialsdatafacility.org/static/img/MDF-logo@2x.png"
                             height="50">
-                        
-                            <v-toolbar-title>MDF Connect</v-toolbar-title>
                         <v-spacer></v-spacer>
-                        <v-btn >
-                          Browse Datasets
-                        </v-btn>
-                        <v-btn >
-                          My Submissions
-                        </v-btn>
-                        
-                      </v-toolbar>
-
+                        <v-btn> Browse Dataset </v-btn>
+                        <v-btn> My Submissions </v-btn>
+                </v-toolbar>
             <v-content>
                 <v-layout left-justify>
                     <v-flex xs20 sm12>
                         <v-toolbar color="primary" dark>
                             <v-toolbar-title>Describe Your Dataset</v-toolbar-title>
-                            <v-spacer></v-spacer>
                         </v-toolbar>
                         <v-container fluid fill-width>
                             <v-form ref="form" v-model="state.valid" lazy-validation>
                                 <!-- Title Elements -->
                                 <v-text-field v-model="form.dc.title" :rules="rules.title" label="Title" required>
                                 </v-text-field>
-                                <v-spacer></v-spacer>
-                                 <v-spacer></v-spacer>
+                                <!-- END Title Elements -->
+
 
                                 <!-- Author Elements -->
                                 Add authors in the form of Einstein, Albert or Marie S. Curie. Press 'Enter/Return' or ';'' to create a new entry.
@@ -55,10 +47,12 @@
                                         </v-chip>
                                     </template>
                                 </v-combobox>
+                                <!-- END Author Elements -->
+
 
                                 <!-- Affiliation Elements -->
-                                Add affiliations. Press 'Enter/Return' or ';'' to create a new entry or select from the pre-filled options.
-                                <v-combobox v-model="form.dc.affiliations" :delimiters="[';']" :rules="rules.combo" :items="options.affiliations"
+                                Add affiliations. Press 'Enter/Return', ',', or ';'' to create a new entry or select from the pre-filled options.
+                                <v-combobox v-model="form.dc.affiliations" :delimiters="[';',',']" :rules="rules.combo" :items="options.affiliations"
                                     label="Affiliations" required chips clearable solo multiple>
                                     <template v-slot:selection="data">
                                         <v-chip outline color="primary" :selected="data.selected" close
@@ -67,14 +61,15 @@
                                         </v-chip>
                                     </template>
                                 </v-combobox>
+                                <!-- END Affiliation Elements -->
+
 
                                 <!-- Data Location Elements -->
                                 Add data locations: http://myhost.com/myfile.zip or globus://my_ep/my_path
-                                <v-btn outline color="grey">
-                                        <a href="https://app.globus.org/file-manager" target="_blank" >Find data location with Globus</a>
+                                <v-btn outline color="primary" href="https://app.globus.org/file-manager" target="_blank">
+                                    Find data location with Globus
                                 </v-btn>
-                                
-                                <v-combobox v-model="form.data" :rules="rules.combo" :delimiters="[';']" label="Data locations" chips clearable solo multiple>
+                                <v-combobox v-model="form.data" :rules="rules.combo" :delimiters="[';',',']" label="Data locations" chips clearable solo multiple>
                                     <template v-slot:selection="data">
                                         <v-chip outline color="primary" :selected="data.selected" close
                                             @input="remove_data(data.item)">
@@ -82,9 +77,11 @@
                                         </v-chip>
                                     </template>
                                 </v-combobox>
+                                <!-- END Data Elements -->
+
 
                                 <!-- Tag Elements -->
-                                Add tags. Press 'Enter/Return' or ';'' to create a new entry or select from the pre-filled options.
+                                Add tags. Press 'Enter/Return', ',' or ';' to create a new entry or select from the pre-filled options.
                                 <v-combobox v-model="form.dc.subjects" :delimiters="[',',';']" label="Tags" chips :items="options.subjects"
                                     clearable solo multiple>
                                     <template v-slot:selection="data">
@@ -94,11 +91,19 @@
                                         </v-chip>
                                     </template>
                                 </v-combobox>
+                                <!-- END Tag Elements -->
+
+
                                 <!-- Description Elements -->
                                 <v-textarea name="input-7-1" v-model="form.dc.description" box
                                     label="Dataset description (accepts markdown)" auto-grow value=""
-                                    @input="update_markdown"></v-textarea>
+                                    @input="update_markdown">
+                                </v-textarea>
+                                <!-- END Description Elements -->
+
+
                 </v-layout>
+
 
                 <!-- Choose Data Destination Elements -->
                 <div>
@@ -106,7 +111,6 @@
                         <v-flex xs20 sm12>
                             <v-toolbar color="primary" dark>
                                 <v-toolbar-title>Choose Data Destinations</v-toolbar-title>
-                                <v-spacer></v-spacer>
                             </v-toolbar>
                             <v-card>
                                 <v-container fluid grid-list-sm>
@@ -123,11 +127,9 @@
                                                     <v-layout fill-height>
                                                         <v-flex xs12 align-end flexbox>
                                                             <p>{{card.desc}}  </p>
-
                                                         </v-flex>
                                                     </v-layout>
                                                 </v-container>
-
                                                 <v-card-actions>
                                                     <v-checkbox v-model="form.services[card.value]" :label="card.label"
                                                         :value="!form.services[card.value]"></v-checkbox>
@@ -139,9 +141,12 @@
                             </v-card>
                         </v-flex>
                 </div>
+                <!-- END Choose Data Destination Title Elements -->
+
+
             </v-form>
 
-
+            <!-- Warning Elements -->
                 <v-layout left-justify>
                     <v-flex xs20 sm12>
                         <v-toolbar color="primary" dark>
@@ -201,11 +206,9 @@
                                     color="primary"
                                     v-if="state.spinner"
                                 ></v-progress-circular>
-                                
                             </v-card-actions>
                         </v-card>
                       
-
                     <div v-if="state.response">
                             <v-layout left-justify>
                                 <v-flex xs20 sm12>
@@ -227,22 +230,20 @@
                                 v-if="state.submit_success && state.response !== null"
                                 :value="true"
                                 color="success"
-                                icon="priority_high"
                                 outline
                               >
-                              
-                              <a :href="/status/+state.submission_id">
-                              Track the status of your submission
-                              </a>
-                              {{this.state.response}}
+                            <h1> Success! </h1>
+                             <v-btn color="success" :href="/status/+state.response.data.source_id">
+                               Track the status of your submission
+                            </v-btn>
                               </v-alert>
                                 </v-flex>
                             </v-layout>
                     </div>
-                        
-  <v-toolbar color="primary" dark>
+                    
+                    <!-- Advanced Options Elements -->
+                     <v-toolbar color="primary" dark>
                             <v-toolbar-title>Advanced Options</v-toolbar-title>
-                            
                             <v-spacer></v-spacer>
                         </v-toolbar>
                         <v-checkbox v-model="form.test" label="Test Submission"
@@ -251,13 +252,19 @@
                         :value=false></v-checkbox>
                         <v-checkbox v-model="state.debug" label="Debug Mode"
                         :value=false></v-checkbox>
+                    <!-- END Advanced Options Elements -->
+                    
+
+                    <!-- Debug Elements -->
                     <div id="debug" v-if="state.debug">
                     <v-toolbar color="primary" dark>
                             <v-toolbar-title>Debug</v-toolbar-title>
                     </v-toolbar>
                             {{form}}
                     </div>
-                        
+                    <!-- END Debug Elements -->
+
+
                     </v-flex>
                 </v-layout>
                 <v-container>
@@ -267,150 +274,8 @@
     </v-content>
     </v-container>
 
+<script src="./static/js/dataset_form.js"></script>
 
-
-
-
-    <script>
-        new Vue({
-            el: '#app',
-            data: () => ({
-                options: {
-                    "subjects": ["simulation", "experiment", "machine learning", "microscopy", 
-                                 "DFT", "QMCPack", "QMC", "Monte Carlo", 
-                                 "EBSD", "metals", "polymers", "composites"],
-                    "affiliations": ["University of Chicago", "Northwestern University",
-                        "Argonne National Laboratory", "University of Illinois at Urbana-Champaign"
-                    ],
-                    "services": [{
-                            title: 'MDF Publish',
-                            desc: "MDF Publish is a service that enables users to receive a citable identifier (e.g., DOI) and to automatically move data to long-term storage for ease of access by other users. ",
-                            flex: 12,
-                            label: "",
-                            img: "https://materialsdatafacility.org/images/MDF-logo@2x.png",
-                            value: "mdf_publish"
-                        },
-                        {
-                            title: 'Materials Resource Registry',
-desc:"This system allows for the registration of materials resources, bridging the gap between existing resources and the end users. The Materials Resource Registry functions as a centrally located service, making the registered information available for research to the materials community.",                            flex: 12,
-                            label: "",
-                            img:"https://materials.registry.nist.gov/static/img/NIST_logo.svg",
-                            value: "mrr"
-                        },
-                        {
-                            title: 'Citrination',
-                            desc:"The platform enables researchers to share open data in a findable, accessible, interoperable, and reusable format, at no cost. They also have the option to keep their data completely confidential..The Open Citrination Platform is complimentary for university and select non-profit researchers.",
-                            flex: 12,
-                            label: "",
-                            img:"https://1hrkl410nh36441q7v2112ft-wpengine.netdna-ssl.com/wp-content/uploads/2018/07/Citrine-informatics-logo.svg",
-                            value: "citrination"
-                        }
-                    ]
-                },
-                rules: {
-                    "title": [v => !!v || 'Title is required'],
-                    "combo": [v => !!v.length || 'This field is required']
-                },
-                form: {
-                    "dc": {
-                        "authors": [],
-                        "affiliations": [],
-                        "description": "",
-                        "title": "",
-                        "subjects": []
-                    },
-                    "services":{
-                        "mdf_publish": false,
-                        "mrr": false,
-                        "citrination": false
-                    },
-                    acl: "public",
-                    data: [],
-                    test: true,
-                    passthrough: false
-                },
-                state: {
-                    "spinner":false,
-                    "valid": true,
-                    "submit_success":false,
-                    "submission_id":null,
-                    "items": [],
-                    "markdown": "",
-                    "response":null,
-                    "debug":false
-                }
-            }),
-
-            methods: {
-                validate() {
-                    if (this.$refs.form.validate()) {
-                        this.snackbar = true
-                    }
-                },
-                remove_author(item) {
-                    this.form.dc.authors.splice(this.form.dc.authors.indexOf(item), 1)
-                    this.form.dc.authors = [...this.form.dc.authors]
-                },
-                remove_affiliation(item) {
-                    this.form.dc.affiliations.splice(this.form.dc.affiliations.indexOf(item), 1)
-                    this.form.dc.affiliations = [...this.form.dc.affiliations]
-                },
-                remove_data(item) {
-                    this.form.data.splice(this.form.data.indexOf(item), 1)
-                    this.form.data = [...this.form.data]
-                },
-                remove_tag(item) {
-                    this.form.dc.subjects.splice(this.form.dc.subjects.indexOf(item), 1)
-                    this.form.dc.subjects = [...this.form.dc.subjects]
-                },
-                reset() {
-                    this.$refs.form.reset()
-                },
-                resetValidation() {
-                    this.$refs.form.resetValidation()
-                },
-                update_markdown(v) {
-                    console.log(v)
-                    this.state.markdown = marked(v, {
-                        sanitize: true
-                    })
-                    console.log(this.state.markdown)
-                },
-                submit_dataset(v) {
-                    var self = this;
-                    if(self.$refs.form.validate()){
-                        self.state.spinner = true
-                        // Make a request for a user with a given ID
-                        console.log(this.form)
-                        axios.post('/api/convert', this.form)
-                            .then(function (response) {
-                                // handle success
-                                console.log(response);
-                                self.state.submit_success = true
-                                self.state.submission_id = response.source_id
-                                self.state.response = response
-                                self.state.spinner = false
-                            })
-                            .catch(function (error) {
-                                // handle error
-                                self.state.submit_success = false
-                                self.state.spinner = false
-                                console.log(error);
-                            })
-                            .then(function () {
-                                console.log("always")
-                                console.log(self)
-                                // always executed
-                            });
-                    }else{
-                        self.state.valid = false
-                        console.log("INVALID")
-                    }
-                   
-                }
-            }
-        })
-    </script>
 {% endraw %}
 
 </body>
