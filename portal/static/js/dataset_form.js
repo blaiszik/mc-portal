@@ -29,7 +29,7 @@ desc:"This system allows for the registration of materials resources, bridging t
                     flex: 12,
                     label: "",
                     img:"https://1hrkl410nh36441q7v2112ft-wpengine.netdna-ssl.com/wp-content/uploads/2018/07/Citrine-informatics-logo.svg",
-                    value: "citrination"
+                    value: "citrine"
                 }
             ]
         },
@@ -132,7 +132,30 @@ desc:"This system allows for the registration of materials resources, bridging t
                 self.state.valid = false
                 console.log("INVALID")
             }
-           
+        },
+        fill_dummy_data(){
+
+            function makeid(length) {
+                var result           = '';
+                var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                var charactersLength = characters.length;
+                for ( var i = 0; i < length; i++ ) {
+                   result += characters.charAt(Math.floor(Math.random() * charactersLength));
+                }
+                return result;
+             }
+
+            this.form = { 
+                "dc": { "authors": [ "Einstein, Albert", "Marie S. Curie" ], 
+                "affiliations": [ "ETH Zurich", "University of Paris" ], 
+                "description": "", 
+                "title": "Test Dataset "+makeid(10), 
+                "subjects": [ "experiment" ] }, 
+                "services": { "mdf_publish": false, "mrr": false, "citrine": false }, 
+                "acl": "public", "data": [ "https://app.globus.org/file-manager?origin_id=e38ee745-6d04-11e5-ba46-22000b92c6ec&origin_path=%2Fcitrine_mdf_demo%2Falloy.pbe%2FAg%2FAg.F4%2F" ],
+                "test": true,
+                "passthrough": true
+             }
         }
     }
 })
