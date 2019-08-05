@@ -2,9 +2,9 @@
 <html>
 <head>
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/vuetify/1.5.16/vuetify.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vuetify/1.5.16/vuetify.js"></script>
     <script src="https://unpkg.com/marked@0.3.6"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
@@ -17,10 +17,10 @@
         <v-app id="inspire">
                 <v-toolbar color="" :dark=false>
                         <img 
-                            src="https://connect.materialsdatafacility.org/static/img/MDF-logo@2x.png"
+                            src="https://materialsdatafacility.org/images/MDF-logo@2x.png"
                             height="50">
                         <v-spacer></v-spacer>
-                        <v-btn> Browse Dataset </v-btn>
+                        <v-btn href="https://petreldata.net/mdf/?q=*&filter-match-any.mdf.resource_type=dataset"> Browse Datasets </v-btn>
                         <v-btn> My Submissions </v-btn>
                 </v-toolbar>
             <v-content>
@@ -223,7 +223,9 @@
                                 icon="priority_high"
                                 outline
                               >
-                                Submission failed, please contact support.
+                                Submission failed, please contact support with the information below.
+                                <div>{{state.response.status}} - {{state.response.statusText}}</div>
+                                <div> {{state.response.data.error}} </div>
                               </v-alert>
 
                               <v-alert

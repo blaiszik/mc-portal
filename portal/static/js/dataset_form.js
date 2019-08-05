@@ -4,9 +4,9 @@ new Vue({
         options: {
             "subjects": ["simulation", "experiment", "machine learning", "microscopy", 
                          "DFT", "QMCPack", "QMC", "Monte Carlo", 
-                         "EBSD", "metals", "polymers", "composites"],
+                         "EBSD", "metals", "polymers", "composites", "ceramics"],
             "affiliations": ["University of Chicago", "Northwestern University",
-                "Argonne National Laboratory", "University of Illinois at Urbana-Champaign"
+                "Argonne National Laboratory", "University of Illinois at Urbana-Champaign", "North Carolina State", "Oak Ridge National Laboratory"
             ],
             "services": [{
                     title: 'MDF Publish',
@@ -48,7 +48,7 @@ desc:"This system allows for the registration of materials resources, bridging t
             "services":{
                 "mdf_publish": false,
                 "mrr": false,
-                "citrination": false
+                "citrine": false
             },
             acl: "public",
             data: [],
@@ -111,6 +111,7 @@ desc:"This system allows for the registration of materials resources, bridging t
                 axios.post('/api/convert', this.form)
                     .then(function (response) {
                         // handle success
+                        console.log("Success")
                         console.log(response);
                         self.state.submit_success = true
                         self.state.submission_id = response.source_id
@@ -119,9 +120,11 @@ desc:"This system allows for the registration of materials resources, bridging t
                     })
                     .catch(function (error) {
                         // handle error
+                        console.log("Error")
                         self.state.submit_success = false
                         self.state.spinner = false
-                        console.log(error);
+                        self.state.response = error.response
+                        console.log(error.response);
                     })
                     .then(function () {
                         console.log("always")

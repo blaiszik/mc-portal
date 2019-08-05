@@ -80,6 +80,11 @@ def status(source_name):
 @app.route('/api/convert', methods=['POST'])
 def convert():
     # Make MDFCC
+    logger.debug(request.get_json())
+    logger.debug(request.get_json().get('test'))
+    logger.debug(request.get_json().get('passthrough'))
+
+
     try:
         logger.debug("Creating MDFCC for submission")
         auth_client = globus_sdk.ConfidentialAppAuthClient(
@@ -140,7 +145,9 @@ def convert():
                     mdfcc.add_service(key, val)
             else:
                 raise TypeError("Invalid service entry ({}): {}".format(type(services), services))
+        mdfcc.set_passthrough(metadata.get("passthrough", False))
         mdfcc.set_test(metadata.get("test", False))
+        mdfcc.add_organization("MDF Open")
     except Exception as e:
         logger.error("API Convert assembly: {}".format(repr(e)))
         return (jsonify({
@@ -150,6 +157,8 @@ def convert():
 
     try:
         res = mdfcc.submit_dataset()
+        logger.debug("== Dataset Submission ==")
+        logger.debug(res)
     except Exception as e:
         logger.error("API Convert submission: {}".format(repr(e)))
         return (jsonify({
@@ -202,6 +211,7 @@ def logout():
         session.clear()
 
         redirect_uri = url_for('home', _external=True)
+        print(redirect_uri)
 
         ga_logout_url = []
         ga_logout_url.append(app.config['GLOBUS_AUTH_LOGOUT_URI'])
