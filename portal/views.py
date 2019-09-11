@@ -4,6 +4,7 @@ from flask import (flash, Flask, jsonify, redirect, render_template,
                    request, session, url_for)
 import globus_sdk
 import mdf_connect_client
+import json
 
 from portal.decorators import authenticated
 
@@ -77,6 +78,42 @@ def status(source_name):
     return render_template("status.jinja2", status_res=json_res)
 
 
+@app.route('/curate/', methods=['GET'])
+@authenticated
+def curate():
+    return render_template('curate.jinja2')
+
+    # # Make MDFCC
+    # try:
+    #     logger.debug("Creating MDFCC for status")
+    #     auth_client = globus_sdk.ConfidentialAppAuthClient(
+    #                    app.config['PORTAL_CLIENT_ID'], app.config['PORTAL_CLIENT_SECRET'])
+    #     mdf_authorizer = globus_sdk.RefreshTokenAuthorizer(
+    #                                     session["tokens"]["mdf_dataset_submission"]
+    #                                            ["refresh_token"],
+    #                                     auth_client)
+    #     mdfcc = mdf_connect_client.MDFConnectClient(service_instance=app.config["MDFCC_SERVICE"],
+    #                                                 authorizer=mdf_authorizer)
+    # except Exception as e:
+    #     logger.error("Status MDFCC init: {}".format(repr(e)))
+    #     json_res = {
+    #         "success": False,
+    #         "error": "Unable to initialize client."
+    #     }
+    # else:
+    #     try:
+    #         logger.debug("Requesting status")
+    #         json_res = mdfcc.check_status(source_name, raw=True)
+    #     except Exception as e:
+    #         logger.error("Status request: {}".format(repr(e)))
+    #         json_res = {
+    #             "success": False,
+    #             "error": "Status request failed."
+    #         }
+
+    # # return (jsonify(json_res), status_code)
+    # return render_template("status.jinja2", status_res=json_res)
+
 @app.route('/api/convert', methods=['POST'])
 def convert():
     # Make MDFCC
@@ -147,7 +184,7 @@ def convert():
                 raise TypeError("Invalid service entry ({}): {}".format(type(services), services))
         mdfcc.set_passthrough(metadata.get("passthrough", False))
         mdfcc.set_test(metadata.get("test", False))
-        mdfcc.add_organization("MDF Open")
+        mdfcc.add_organization(metadata.get("organizations", "AFRL Additive Manufacturing Challenge"))
     except Exception as e:
         logger.error("API Convert assembly: {}".format(repr(e)))
         return (jsonify({
@@ -156,7 +193,8 @@ def convert():
         }), 400)
 
     try:
-        res = mdfcc.submit_dataset()
+        logger.debug(json.dumps(mdfcc.get_submission()))
+        res = mdfcc.submit_dataset(metadata.get("update", False))
         logger.debug("== Dataset Submission ==")
         logger.debug(res)
     except Exception as e:

@@ -33,10 +33,29 @@
                     <v-flex xs20 sm12>
                         <v-toolbar color="primary" dark>
                             <v-toolbar-title>Dataset Status</v-toolbar-title>
+      
                             <v-spacer></v-spacer>
                         </v-toolbar>
                         <v-container fluid fill-width>
+                        <v-chip
+                                  class="ma-2"
+                                  color="primary"
+                                  text-color="white"
+                                  label
+                                >
+                                  Active
+                                </v-chip>
+
+                                <v-chip
+                                  class="ma-2"
+                                  color="red"
+                                  text-color="white"
+                                  label
+                                >
+                                  Inactive
+                                </v-chip>
                          {% if status_res.success == true %}
+                                
                             <h3>Status for submission: {{status_res.status.source_id}}</h3>
                         {% else %}
                             <h3>Status unavailable for submission</h3>
@@ -85,7 +104,7 @@
         })
        
     </script>
-
+{{ status_res }}
 </body>
 
 </html>

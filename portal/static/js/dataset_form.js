@@ -8,6 +8,11 @@ new Vue({
             "affiliations": ["University of Chicago", "Northwestern University",
                 "Argonne National Laboratory", "University of Illinois at Urbana-Champaign", "North Carolina State", "Oak Ridge National Laboratory"
             ],
+            "organizations": ["MDF Open", 
+                              "Center for Hierarchical Materials Design (CHiMaD)", 
+                              "Center for Predictive Simulation of Functional Materials (CPSFM)",
+                              "AFRL Additive Manufacturing Challenge"
+                            ],
             "services": [{
                     title: 'MDF Publish',
                     desc: "MDF Publish is a service that enables users to receive a citable identifier (e.g., DOI) and to automatically move data to long-term storage for ease of access by other users. ",
@@ -50,6 +55,7 @@ desc:"This system allows for the registration of materials resources, bridging t
                 "mrr": false,
                 "citrine": false
             },
+            organizations: ["MDF Open"],
             acl: "public",
             data: [],
             test: true,
@@ -80,6 +86,10 @@ desc:"This system allows for the registration of materials resources, bridging t
         remove_affiliation(item) {
             this.form.dc.affiliations.splice(this.form.dc.affiliations.indexOf(item), 1)
             this.form.dc.affiliations = [...this.form.dc.affiliations]
+        },
+        remove_organization(item) {
+            this.form.organizations.splice(this.form.organizations.indexOf(item), 1)
+            this.form.organizations = [...this.form.organizations]
         },
         remove_data(item) {
             this.form.data.splice(this.form.data.indexOf(item), 1)
@@ -149,15 +159,24 @@ desc:"This system allows for the registration of materials resources, bridging t
              }
 
             this.form = { 
-                "dc": { "authors": [ "Einstein, Albert", "Marie S. Curie" ], 
-                "affiliations": [ "ETH Zurich", "University of Paris" ], 
-                "description": "", 
-                "title": "Test Dataset "+makeid(10), 
-                "subjects": [ "experiment" ] }, 
-                "services": { "mdf_publish": false, "mrr": false, "citrine": false }, 
-                "acl": "public", "data": [ "https://app.globus.org/file-manager?origin_id=e38ee745-6d04-11e5-ba46-22000b92c6ec&origin_path=%2Fcitrine_mdf_demo%2Falloy.pbe%2FAg%2FAg.F4%2F" ],
-                "test": true,
-                "passthrough": true
+                "dc": {
+                    "authors": ["Shade, Paul A.", "Musinski, William D.", "Shah, Megna N.", "Uchic, Michael D.", "Donegan, Sean P.", "Chapman, Michael G.", "Park, Jun-Sang", "Bernier, Joel V.", "Kenesei, Peter", "Menasche, David B.", "Obstalecki, Mark", "Schwalbach, Edwin J.", "Miller, Jonathan D.", "Groeber, Michael A.", "Cox, Marie E."],
+                    "affiliations": ["Air Force Research Laboratory", "Argonne National Laboratory", "The Ohio State University"],
+                    "description": "",
+                    "title": "AFRL AM Modeling Challenge Series: Challenge 4 Data Package",
+                    "subjects": ["experiment", "additive manufacturing", "challenge", "metals", "alloys", "HEDM", "IN625", "microscopy", "microstructure"]
+                },
+                "services": {
+                    "mdf_publish": true,
+                    "mrr": false,
+                    "citrine": false
+                },
+                "organizations": ["AFRL Additive Manufacturing Challenge"],
+                "acl": "public",
+                "data": ["https://app.globus.org/file-manager?origin_id=e38ee745-6d04-11e5-ba46-22000b92c6ec&origin_path=%2Ffourman%2FMIDAS%2FChallenge%204%20Structure%20to%20Properties%20Micro%2F"],
+                "test": false,
+                "passthrough": true,
+                update: false
              }
         }
     }

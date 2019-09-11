@@ -101,6 +101,18 @@
                                 </v-textarea>
                                 <!-- END Description Elements -->
 
+                                  <!-- Organization Elements -->
+                                Add organization. Organizations act as a template for how your dataset with be handled.
+                                 <v-select v-model="form.organizations" :items="options.organizations"
+                                attach
+                                chips
+                                label="Organizations"
+                                multiple
+                                ></v-select>
+                                
+                         
+                                <!-- END Affiliation Elements -->
+
 
                 </v-layout>
 
@@ -123,16 +135,17 @@
                                                 <v-spacer></v-spacer>
                                                 <v-img :src="card.img" max-width="200" ></v-img>
                                             </v-card-title>
-                                                <v-container fill-height fluid pa-2>
-                                                    <v-layout fill-height>
+                                                <v-container fluid pa-2>
+                                                    <v-layout >
                                                         <v-flex xs12 align-end flexbox>
-                                                            <p>{{card.desc}}  </p>
+                                                            <p>{{card.desc}}</p>
+                                                             <v-checkbox v-model="form.services[card.value]" :label="card.label"
+                                                        :value="!form.services[card.value]"></v-checkbox>
                                                         </v-flex>
                                                     </v-layout>
                                                 </v-container>
                                                 <v-card-actions>
-                                                    <v-checkbox v-model="form.services[card.value]" :label="card.label"
-                                                        :value="!form.services[card.value]"></v-checkbox>
+                                                   
                                                 </v-card-actions>
                                             </v-card>
                                         </v-flex>
@@ -248,6 +261,8 @@
                             <v-toolbar-title>Advanced Options</v-toolbar-title>
                             <v-spacer></v-spacer>
                         </v-toolbar>
+                        <v-checkbox v-model="form.update" label="Submit New Version"
+                        :value=false></v-checkbox>
                         <v-checkbox v-model="form.test" label="Test Submission"
                         :value=false></v-checkbox>
                         <v-checkbox v-model="form.passthrough" label="Skip Data Extraction"
