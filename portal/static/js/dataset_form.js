@@ -158,26 +158,26 @@ desc:"This system allows for the registration of materials resources, bridging t
                 return result;
              }
 
-            this.form = { 
-                "dc": {
-                    "authors": ["Shade, Paul A.", "Musinski, William D.", "Shah, Megna N.", "Uchic, Michael D.", "Donegan, Sean P.", "Chapman, Michael G.", "Park, Jun-Sang", "Bernier, Joel V.", "Kenesei, Peter", "Menasche, David B.", "Obstalecki, Mark", "Schwalbach, Edwin J.", "Miller, Jonathan D.", "Groeber, Michael A.", "Cox, Marie E."],
-                    "affiliations": ["Air Force Research Laboratory", "Argonne National Laboratory", "The Ohio State University"],
-                    "description": "",
-                    "title": "AFRL AM Modeling Challenge Series: Challenge 4 Data Package",
-                    "subjects": ["experiment", "additive manufacturing", "challenge", "metals", "alloys", "HEDM", "IN625", "microscopy", "microstructure"]
-                },
-                "services": {
-                    "mdf_publish": true,
-                    "mrr": false,
-                    "citrine": false
-                },
-                "organizations": ["AFRL Additive Manufacturing Challenge"],
-                "acl": "public",
-                "data": ["https://app.globus.org/file-manager?origin_id=e38ee745-6d04-11e5-ba46-22000b92c6ec&origin_path=%2Ffourman%2FMIDAS%2FChallenge%204%20Structure%20to%20Properties%20Micro%2F"],
-                "test": false,
-                "passthrough": true,
-                update: false
-             }
+            // Dummy form
+            this.form = {
+                "dc": { 
+                    "authors": [ "Einstein, Albert", "Marie S. Curie" ], 
+	                "affiliations": [ "ETH Zurich", "University of Paris" ], 
+	                "description": "", 
+	                "title": "Test Dataset "+makeid(10), 
+	                "subjects": [ "experiment", "relativity" ] }, 
+	                "services": { 
+                        "mdf_publish": true, 
+                        "mrr": false, 
+                        "citrine": false 
+                    }, 
+                    "acl": "public",
+                    "data": [ "https://app.globus.org/file-manager?origin_id=e38ee745-6d04-11e5-ba46-22000b92c6ec&origin_path=%2Fcitrine_mdf_demo%2Falloy.pbe%2FAg%2FAg.F4%2F" ],
+	                "test": true,
+                    "passthrough": true,
+                    "update":false
+            }
+            // END Dummy form
         }
     }
 })
