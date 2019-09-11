@@ -37,6 +37,7 @@
                             <v-spacer></v-spacer>
                         </v-toolbar>
                         <v-container fluid fill-width>
+                        {% if status_res.status.active == true %}
                         <v-chip
                                   class="ma-2"
                                   color="primary"
@@ -45,7 +46,7 @@
                                 >
                                   Active
                                 </v-chip>
-
+                        {% else %}
                                 <v-chip
                                   class="ma-2"
                                   color="red"
@@ -54,6 +55,8 @@
                                 >
                                   Inactive
                                 </v-chip>
+                        {% endif %}
+
                          {% if status_res.success == true %}
                                 
                             <h3>Status for submission: {{status_res.status.source_id}}</h3>
