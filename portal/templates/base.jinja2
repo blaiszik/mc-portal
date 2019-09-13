@@ -15,7 +15,39 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     {# BS 3 #}
+     <style>
+ @font-face {
+	font-family: 'museosans';
+	src: url("{{ url_for('static', filename='/fonts/221E91_4_0.woff') }}") format('woff');
+	font-weight: 100 ;
+}
+@font-face {
+	font-family: 'museosans';
+	src: url("{{ url_for('static', filename='/fonts/221E91_3_0.woff') }}") format('woff');
+	font-weight: 500 ;
+}
+@font-face {
+	font-family: 'museosans';
+	src: url("{{ url_for('static', filename='/fonts/221E91_1_0.woff') }}") format('woff');
+	font-weight: 300 ;
+}
+@font-face {
+	font-family: 'museosans';
+	src: url("{{ url_for('static', filename='/fonts/221E91_0_0.woff') }}") format('woff');
+	font-weight: 700 ;
+}
 
+body {
+    font-family: museosans,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: 500;
+    padding-top: 0px;
+    font-size: 16px;
+}
+
+
+
+
+ </style>
 
   </head>
 
