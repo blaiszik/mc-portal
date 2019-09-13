@@ -12,197 +12,19 @@
     {# CSS files #}
 
     {# BS 4 #}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     {# BS 3 #}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/mdf-style.css')}}" />
-
-    {# Custom Fonts #}
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
-
-    {# JavaScript files #}
-    <script type="text/javascript" src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
-    <script type="text/javascript" src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
-    <script type="text/javascript" src="https://cdnjs.com/libraries/1000hz-bootstrap-validator"></script>
-
-    <style>
-      .invalid {
-        color: red;
-      }
-    </style>
-
-    <script type="text/javascript">
-      $( document ).ready(function() {
-        form_data = {}
-        function update_form_data(){
-          const moc_data = {
-            dc: {
-                title: $('#titleInput').val(),
-                authors: [],
-                affiliations: [],
-                // publisher
-                // publication_year
-                // resource_type
-                description: $('#descriptionPillbox').val(),
-                // dataset_doi
-                // related_dois
-                subjects: []
-            },
-            acl: ["public"],
-            // source_name: "",
-            // repositories: [""],
-            // projects: {...},
-            // mrr: {...},
-            // custom: {...},
-            // custom_descriptions: {...},
-            data: [],
-            // index: [{...}],
-            // conversion_config: {...},
-            services: {
-                globus_publish: $("#publishCheck").is(":checked"),
-                citrine: $("#citrinationCheck").is(":checked"),
-                mrr: $("#mrrCheck").is(":checked")
-            },
-            test: true
-          }
-
-          // Format the authors
-          authors = $('#authorPillbox').pillbox('items')
-          for (var i = 0, l = authors.length; i < l; i++) {
-            moc_data.dc.authors.push(authors[i].text)
-          }
-
-          // Format the affiliations
-          affiliations = $('#insitutionPillbox').pillbox('items')
-          for (var i = 0, l = affiliations.length; i < l; i++) {
-            moc_data.dc.affiliations.push(affiliations[i].text)
-          }
-
-          // Format the tags/subjects
-          tags = $('#tagsPillbox').pillbox('items')
-          for (var i = 0, l = tags.length; i < l; i++) {
-            moc_data.dc.subjects.push(tags[i].text)
-          }
-
-          // Format the data locations
-          data_locations = $('#dataPillbox').pillbox('items')
-          for (var i = 0, l = data_locations.length; i < l; i++) {
-            moc_data.data.push(data_locations[i].text)
-          }
-
-          console.log(moc_data)
-          return moc_data
-        }
-
-      $('#authorPillbox').pillbox({"acceptKeyCodes":[13]});
-      $('#institutionPillbox').pillbox({"acceptKeyCodes":[13]});
-      $('#dataPillbox').pillbox({"acceptKeyCodes":[13]});
-      $('#tagsPillbox').pillbox({"acceptKeyCodes":[13]});
-
-      function validate_pillboxes(){
-        valid = true
-
-        title = $('#titleInput').val()
-        if (!title){
-          $('#titleLabel').addClass("invalid")
-          valid = false
-        }else{
-          $('#titleLabel').removeClass("invalid")
-        }
-
-        authors = $('#authorPillbox').pillbox('items')
-        if (authors.length == 0 ){
-          $('#authorLabel').addClass("invalid")
-          valid = false
-        }else{
-          $('#authorLabel').removeClass("invalid")
-        }
-
-        data_locations = $('#dataPillbox').pillbox('items')
-        if (data_locations.length == 0 ){
-          $('#dataLabel').addClass("invalid")
-          valid = false
-        }else{
-          $('#dataLabel').removeClass("invalid")
-        }
-
-        return valid
-     }
-
-      function clear_form(){
-        pillboxes  = [$("#dataPillbox"), 
-                      $("#authorPillbox"), 
-                      $("#tagsPillbox"), 
-                      $("#institutionPillbox")]
-
-        for (var i = 0, l = pillboxes.length; i < l; i++) {
-          pillboxes[i].pillbox('removeItems');
-        }
-
-        $("#titleInput").val("")
-     }
-
-      $("#submit-button").click(function(){
-        form_data = update_form_data();
-        valid = validate_pillboxes();
-        if (valid == true){
-          console.log(form_data)
-            $.ajax({
-              url: '/api/convert',
-              type: 'POST',
-              contentType: 'application/json',
-              data: JSON.stringify(form_data),
-              dataType: 'json'
-          }).done(function(data){
-            console.log("done")
-            console.log(data)
-          })
-            .success(function(data){
-              console.log("success")
-              console.log(data)
-              $("#successAlert").addClass("visible")
-              $("#successAlert").removeClass("invisible")
-              $("#successLink").attr("href", 'status/'+data.source_id)
-              clear_form()
-          })
-            .fail(function(err){
-              console.log("error")
-              console.log(err)
-              $("#failureAlert").addClass("visible")
-              $("#failureAlert").removeClass("invisible")
-            });
-        }
-      })
-    });
-    
-   
-    </script>
 
 
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
-<link href="//www.fuelcdn.com/fuelux/3.13.0/css/fuelux.min.css" rel="stylesheet">
-
-<!-- jQuery -->
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-<script src="//www.fuelcdn.com/fuelux/3.13.0/js/fuelux.min.js"></script>
-
-  
   </head>
 
-  {%include 'header.jinja2'%}
   <body>
-
-
+    {%include 'header.jinja2'%}
 
     <!-- Page body -->
     {%block body%}
     {%endblock%}
-
-    <!-- Page footer -->
-    {%include 'footer.jinja2'%}
 
   </body>
 </html>

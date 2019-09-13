@@ -3,6 +3,8 @@
 <head>
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/vuetify/1.5.16/vuetify.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vuetify/1.5.16/vuetify.js"></script>
     <script src="https://unpkg.com/marked@0.3.6"></script>
@@ -11,17 +13,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 </head>
 <body>
+{%include 'header.jinja2'%}
 {% raw %}
 <div id="app">
     <v-container>
         <v-app id="inspire">
                 <v-toolbar color="" :dark=false>
-                        <img 
-                            src="https://materialsdatafacility.org/images/MDF-logo@2x.png"
-                            height="50">
-                        <v-spacer></v-spacer>
                         <v-btn href="https://petreldata.net/mdf/?q=*&filter-match-any.mdf.resource_type=dataset"> Browse Datasets </v-btn>
-                        <v-btn> My Submissions </v-btn>
+                        
                 </v-toolbar>
             <v-content>
                 <v-layout left-justify>

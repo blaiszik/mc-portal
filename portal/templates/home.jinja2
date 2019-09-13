@@ -4,152 +4,175 @@
 
 {%block body%}
 
-<div class="container-fluid"></div>
-<!-- Main jumbotron for a primary marketing message or call to action
--->
-<div class="container">
-    <div class="jumbotron">
-        <div class="container">
-             <h1>MDF Connect</h1>
-             <p>It has never been easier to share your data with the community. Deposit data once, send to partner services. </p>
-             <p>Tell your research story.</hp>
-            <p><a class="btn btn-primary btn-xl" href="/add" role="button">Become a Contributor</a>
-            </p>
-        </div>
-    </div>
-</div>
-<section id="features">
-    <div class="container">
-      <h1> How to Get Started </h1>
-        <div class="row">
-        <div class="col-sm-6 col-md-4 feature-block">
-            <div class="row">
-              <div class="col-xs-6 col-xs-offset-3">
-                <img srcset="/static/img/publication-icon@2x.png 288w, /static/img/publication-icon@1x.png 144w" src="/static/img/publication-icon@1x.png" id="publication_icon" alt="Publication icon" class="img-responsive" />
-              </div>
-              <div class="col-xs-12">
-                <h2>1 - Collect Your Data</h2>
-                <p>
-                  Collect the data into your preferred file structure, preferably in openly accessible formats.
-                   Feel free to nest files as deeply as necessary for your use case, our indexers will find them!
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-6 col-md-4 feature-block">
-            <div class="row">
-              <div class="col-xs-6 col-xs-offset-3">
-                <img srcset="/static/img/metadata-icon@2x.png 288w, /static/img/metadata-icon@1x.png 144w" src="/static/img/metadata-icon@1x.png" id="metadata_icon" alt="Metadata icon" class="img-responsive" />
-              </div>
-              <div class="col-xs-12">
-                <h2>2 - Describe Your Data</h2>
-                <p>
-                  Describe your dataset using the MDF Connect form, and add any additional descriptions
-                  to a README or README.md file in the base directory.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-6 col-md-4 feature-block">
-            <div class="row">
-              <div class="col-xs-6 col-xs-offset-3">
-                <img srcset="/static/img/workflow-icon@2x.png 288w, /static/img/workflow-icon@1x.png 144w" src="/static/img/workflow-icon@1x.png" id="access_icon" alt="Access icon" class="img-responsive" />
-              </div>
-              <div class="col-xs-12">
-                <h2>3 - Submit Data</h2>
-                <p>
-                  Select where you want your dataset deposited and let us handle the rest.
-                </p>
-                <p><a class="btn btn-primary btn-l" href="/add" role="button">Become a Contributor</a></p>
-              </div>
-            </div>
-          </div>
-            </div>
-        </div>
-    </div>
-</section>
-<section class="ltblue">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                 <h1> Featured Datasets </h1>
-                 <div class="row">
-                  <div class="col-sm-6 col-md-3">
-                    <div class="thumbnail">
-                      <div class="caption">
-                      <h4>Accelerated Discovery of Metallic Glasses through Iteration of Machine Learning and High-Throughput Experiments</h4>
-                      <p><i>Fang et al.</i></p>
-                      <p><a href="http://dx.doi.org/10.18126/M2B06M" class="btn btn-xs btn-success" role="button">See Dataset</a></p>
-                      </div>
+ <div id="hero-03">
+            <div class="container d-flex flex-column" style="min-height: 30vh;">
+                <div class="row my-auto">
+                    <div class="col-lg-6 col-md-12 col-sm-12 my-lg-auto py-3 my-3 text-center text-lg-left">
+                        <h1 class="display-4 mt-2 font-weight-normal"> MDF Connect</h1>
+
+                            <div class="mb-2">
+                                <h5>Actions</h5>
+                                <a class="btn btn-outline-dark mr-2" href="/add">Become a Contributor</a>
+                              <a class="btn btn-outline-dark mr-2" href="https://petreldata.net/mdf/?q=*&filter-match-any.mdf.resource_type=dataset">
+                                                Browse Published Data
+                                </a>
+                            </div>
+                            <!-- <div class="mb-2">
+                                <h5>Documentation</h5>
+                                <a class="btn btn-outline-dark mr-2" href="">MDF Slide Deck</a>
+                            </div> -->
+
                     </div>
-                  </div>
-                  <div class="col-sm-6 col-md-3">
-                    <div class="thumbnail">
-                      <div class="caption">
-                      <h4>Spatially Heterogeneous Dynamics in a Metallic Glass Forming Liquid Imaged by Electron Correlation Microscopy</h4>
-                      <p><i>Zhang et al.</i></p>
-                      <p><a href="http://dx.doi.org/10.18126/M2GW5F" class="btn btn-xs btn-success" role="button">See Dataset</a></p>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-sm-6 col-md-3">
-                    <div class="thumbnail">
-                      <div class="caption">
-                      <h4>Dataset for Electronic properties of doped and defective NiO -- a Quantum Monte Carlo study</h4>
-                      <p><i>Shin et al.</i></p>
-                      <p><a href="http://dx.doi.org/10.18126/M2HW64" class="btn btn-xs btn-success" role="button">See Dataset</a></p>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-sm-6 col-md-3">
-                    <div class="thumbnail">
-                      <div class="caption">
-                        <h4>Coherent Band Excitations in CePd3</h4>
-                        <p><i>Osborn et al.</i></p>
-                        <p><a href="http://dx.doi.org/10.18126/M2C914" class="btn btn-xs btn-success" role="button">See Dataset</a></p>
-                      </div>
+                    <div class="col-lg-4 col-md-6 col-sm-12 my-auto mx-auto p-4">
+                        <img class="pt-4 w-100 my-5" src="{{url_for('static', filename='img/MDF-logo@2x.png')}}">
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
-
-<section class="dkblue">
-    <div class="container">
-        <div class="row">
-        <h1> Advantages of MDF Connect </h1>
         
-        <h2> Get credit for your research with added citations </h2>
-        <p> test</p>
+        <div class="py-5 bg-light" id="content-publish">
+                <div class="container py-1">
+                <h2 class="display-4 mb-2">Publish Data</h2>
+                    <div class="row mb-1">
+                        <div class="col-lg-4 col-md-6 col-sm-12 pt-2">
+                            <img class="mb-3" src="{{url_for('static', filename='icons/primary/numbers-1.svg')}}" height="64px">
+                            <h3 class="h5 mb-2 mr-4">Sign up and Join <span><img src="{{url_for('static', filename='icons/primary/business-44.svg')}}" class="mb-1" height="32px"> </span></h3>
+                            <p> Sign up for free Globus account using existing credentials. Join group for access to data publication capabilities. </p>
 
-        <h2> Deposit data in one location, send to many </h2>
-        <p> test</p>
+                            <ul class="list-unstyled mb-2">
+                                <li class="mb-2">
+                                    <i class="fa fa-chevron-circle-right mr-2"></i>
+                                    <a class="btn btn-lg btn-outline-dark mr-2" href="https://www.globus.org/SignUp">
+                                        Create a Free Account
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fa fa-chevron-circle-right mr-2"></i>
+                                    <a class="btn btn-lg btn-outline-dark mr-2" href="https://app.globus.org/groups/1c562600-1083-11e6-846d-22000ab80e73/about">
+                                        Join this Group</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-4 col-md-6 col-sm-12 pt-2">
+                            <img class="mb-3" src="{{url_for('static', filename='icons/primary/numbers-2.svg')}}" height="64px">
+                            <h3 class="h5 mb-2 mr-4">Collect<span> <img src="{{url_for('static', filename='icons/primary/science-20.svg')}}" class="mb-1" height="32px"> </span></h3>
+                            <p> Collect the data into your preferred file structure, preferably in openly accessible formats. Feel free to nest files as deeply as necessary for your use case, our indexers will find them! </p>
+                            <ul class="list-unstyled mb-2">
+                                <li class="mb-2">
+                                    <i class="fa fa-chevron-circle-right mr-2"></i>
+                                    <a class="btn btn-lg btn-outline-dark mr-2" href="https://www.globus.org/app/endpoints/create-gcp">
+                                        Set up an endpoint</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-4 col-md-6 col-sm-12 text-left pt-2">
+                            <img class="mb-3" src="{{url_for('static', filename='icons/primary/numbers-3.svg')}}" height="64px">
+                            <h3 class="h5 mb-2 mr-4">Publish <img src="{{url_for('static', filename='icons/primary/science-27.svg')}}" class="mb-1" height="32px"> </span></h3>
+                            <p> Follow instructions in the form to publish your dataset.  </p>
+                            <ul class="list-unstyled mb-2">
+                                <li class="mb-2">
+                                        <ul class="list-unstyled mb-5">
+                                                <i class="fa fa-chevron-circle-right mr-2"></i>
+                                                <div>
+                                                <a class="btn btn-lg btn-outline-dark" href="/add">
+                                                Publish Your Data</a></div>
+                                                <div class="mt-2"><a class="btn btn-lg btn-outline-dark" href="https://github.com/materials-data-facility/connect_client">
+                                                Python Tools</a></div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+               
+                <hr>
+                    <div class="row mb-1">
+                            <div class="col-lg-4 col-md-10 col-sm-12 mx-auto text-left">
+                                <h3 class="h5 mb-1">Publish Large Datasets </h3>
+                                <p class="mb-0 text-secondary">
+                                    From kilobytes to terabytes, our data publication service can help you make your data available to the world.
+                                </p>
+                            </div>
+                            <div class="col-lg-4 col-md-10 col-sm-12 mx-auto text-left">
+                                <h3 class="h5 mb-1">Get an Identifier</h3>
+                                <p class="mb-1 text-secondary">When you publish your dataset, receive a permanent identifier (e.g., DOI) to make citing your work simple.</p>
+                            </div>
+                            <div class="col-lg-4 col-md-10 col-sm-12 mx-auto text-left">
+                                <h3 class="h5 mb-1">Simplify Discovery and Access</h3>
+                                <p class="mb-0 text-secondary">
+                                    Researchers will be able to find datasets through the MDF services and through Google Scholar.
+                                    Dataset contents can be accessed via Globus or web (HTTPS).  
+                                </p>
+                            </div>
+                    </div>
+                  
+                </div>
+                
+            </div>
+        
+            <div class="py-2 bg-transparent" id="content-stats">
+                <div class="container py-2">
+                <h2 class="display-4 mb-3">MDF Stats</h2>
+                    <div class="row pb-5 mt-5 mb-4">
+                        <div class="col-lg-4 col-md-8 col-sm-12 text-center my-4 mx-auto">
+                            <h3 class="display-3 mb-2">>120</h3>
+                            <p class="text-secondary lead">Datasets</p>
+                        </div>
+                        <div class="col-lg-4 col-md-8 col-sm-12 text-center my-4 mx-auto">
+                            <h3 class="display-3 mb-2">>35 TB</h3>
+                            <p class="text-secondary lead">Materials Data Published</p>
+                        </div>
+                        <div class="col-lg-4 col-md-8 col-sm-12 text-center my-4 mx-auto">
+                            <h3 class="display-3 mb-2">>100</h3>
+                            <p class="text-secondary lead">Data Sources Indexed</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        <h2> Solve your data management problems </h2>
-        <p> test</p>
 
-        <h2> Become a data superstar </h2>
-        <p> test</p>
+            <div class="py-2 bg-light" id="content-citation">
+                <div class="container py-2">
+                    <h2 class="display-4 mb-3">How to Cite</h2>
+                    <p>
+                        If you find MDF useful in your research, please cite the following papers:
+                        <ul>
+                        <li>
+                         Blaiszik, B., K. Chard, J. Pruyne, R. Ananthakrishnan, S. Tuecke, and I. Foster. "The Materials Data Facility: Data services to advance materials science research." JOM 68, no. 8 (2016): 2045-2052.
+                         <a href="https://link.springer.com/article/10.1007%2Fs11837-016-2001-3">(link)</a>
+                         </li>
+                         <li>
+                         Blaiszik, B, L. Ward, M. Schwarting, J. Gaff, R. Chard, D. Pike, K. Chard, and I. Foster. "A Data Ecosystem to Support Machine Learning in Materials Science." arXiv preprint arXiv:1904.10423 (2019).
+                        <a href="https://arxiv.org/abs/1904.10423">(link)</a>
+                         </li>
+                    </p>
+                </div>
+            </div>
+
+           
+            <div class="py-2 bg-transparent" id="content-support">
+                    <div class="container py-2">
+                    <h2 class="display-4 mb-3">Support</h2>
+                    <h4> CHiMaD Phase I </h4>
+                    <p>
+                    This work was performed under financial assistance award 70NANB14H012 from U.S. Department of Commerce, National Institute of Standards and Technology as part of the Center for Hierarchical Material Design (CHiMaD).                    
+                    </p>
+                    <h4> CHiMaD Phase II</h4>
+                    <p>
+                    This work was performed under the following financial assistance award 70NANB19H005 from U.S. Department of Commerce, National Institute of Standards and Technology as part of the Center for Hierarchical Materials Design (CHiMaD).
+                    </p>
+                    </div>
+            </div>
+
+
+
+            <footer>
+            <!-- Copyright -->
+        <div class="footer-copyright text-center py-3">
+            © 2019 Copyright: University of Chicago
         </div>
-    </div>
-</section>
+        <!-- Copyright -->
+        </footer>
+        <!-- Footer -->
 
 
-<section>
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                 <h1> Support </h1>
-This work was performed under financial assistance award 70NANB14H012
-                from U.S. Department of Commerce, National Institute of Standards and Technology
-                as part of the Center for Hierarchical Material Design (CHiMaD). This work
-                was also supported by the National Science Foundation as part of the Midwest
-                Big Data Hub under NSF Award Number: 1636950 &quot;BD Spokes: SPOKE: MIDWEST:
-                Collaborative: Integrative Materials Design (IMaD): Leverage, Innovate,
-                and Disseminate&quot;.</div>
-        </div>
-    </div>
-</section>
 
 {%endblock%}
