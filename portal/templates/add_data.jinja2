@@ -93,6 +93,20 @@
                                 </v-combobox>
                                 <!-- END Tag Elements -->
 
+                                 <!-- Contact  Elements -->
+                                Add dataset contacts
+
+                                <v-combobox v-model="form.contacts" :rules="rules.combo" :delimiters="[';',',']" label="Contact information" chips clearable solo multiple>
+                                    <template v-slot:selection="data">
+                                        <v-chip outline color="primary" :selected="data.selected" close
+                                            @input="remove_data(data.item)">
+                                            <strong>{{ data.item }}</strong>&nbsp;
+                                        </v-chip>
+                                    </template>
+                                </v-combobox>
+                                <!-- END Data Elements -->
+
+
 
                                 <!-- Description Elements -->
                                 <v-textarea name="input-7-1" v-model="form.dc.description" box

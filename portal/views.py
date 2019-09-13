@@ -162,6 +162,20 @@ def convert():
                                                        metadata.get("custom_desc", {})))
         if metadata.get("data"):
             mdfcc.add_data_source(metadata["data"])
+        
+        if metadata.get("contacts"):
+            def format_contacts(contacts):
+                formatted_contacts = []
+                if type(contacts) is list:
+                    formatted_contacts = [{"contributorName":str(c), "contributorType":"contactPerson"} for c in contacts]
+                else:
+                    formatted_contacts = []
+                return formatted_contacts
+            contacts = {"contributors":format_contacts(metadata.get("contacts"))}
+            logger.error(contacts)
+            logger.error(metadata.get("contacts"))
+            mdfcc.dc.update(contacts)
+
         if metadata.get("index"):
             if not isinstance(metadata["index"], list):
                 metadata["index"] = [metadata["index"]]

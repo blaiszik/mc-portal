@@ -65,6 +65,7 @@ desc:"This system allows for the registration of materials resources, bridging t
                 "mrr": false,
                 "citrine": false
             },
+            contacts:[],
             organizations: ["MDF Open"],
             acl: "public",
             data: [],
@@ -104,6 +105,10 @@ desc:"This system allows for the registration of materials resources, bridging t
         remove_data(item) {
             this.form.data.splice(this.form.data.indexOf(item), 1)
             this.form.data = [...this.form.data]
+        },
+        remove_contact(item) {
+            this.form.contact.splice(this.form.contact.indexOf(item), 1)
+            this.form.contact = [...this.form.contact]
         },
         remove_tag(item) {
             this.form.dc.subjects.splice(this.form.dc.subjects.indexOf(item), 1)
@@ -181,6 +186,8 @@ desc:"This system allows for the registration of materials resources, bridging t
                         "mrr": false, 
                         "citrine": false 
                     }, 
+                    "contacts":["Albert Einstein <albert@ethz.ch>", 
+                                "Marie Curie <mariec@uparis.fr>"],
                     "acl": "public",
                     "data": [ "https://app.globus.org/file-manager?origin_id=e38ee745-6d04-11e5-ba46-22000b92c6ec&origin_path=%2Fcitrine_mdf_demo%2Falloy.pbe%2FAg%2FAg.F4%2F" ],
 	                "test": true,
