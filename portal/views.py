@@ -167,7 +167,7 @@ def convert():
             def format_contacts(contacts):
                 formatted_contacts = []
                 if type(contacts) is list:
-                    formatted_contacts = [{"contributorName":str(c), "contributorType":"contactPerson"} for c in contacts]
+                    formatted_contacts = [{"contributorName":str(c), "contributorType":"ContactPerson"} for c in contacts]
                 else:
                     formatted_contacts = []
                 return formatted_contacts
