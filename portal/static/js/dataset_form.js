@@ -107,8 +107,8 @@ desc:"This system allows for the registration of materials resources, bridging t
             this.form.data = [...this.form.data]
         },
         remove_contact(item) {
-            this.form.contact.splice(this.form.contact.indexOf(item), 1)
-            this.form.contact = [...this.form.contact]
+            this.form.contacts.splice(this.form.contacts.indexOf(item), 1)
+            this.form.contacts = [...this.form.contacts]
         },
         remove_tag(item) {
             this.form.dc.subjects.splice(this.form.dc.subjects.indexOf(item), 1)
@@ -174,6 +174,7 @@ desc:"This system allows for the registration of materials resources, bridging t
              }
 
             // Dummy form
+            // Dummy form
             this.form = {
                 "dc": { 
                     "authors": [ "Einstein, Albert", "Marie S. Curie" ], 
@@ -192,6 +193,27 @@ desc:"This system allows for the registration of materials resources, bridging t
                     "data": [ "https://app.globus.org/file-manager?origin_id=e38ee745-6d04-11e5-ba46-22000b92c6ec&origin_path=%2Fcitrine_mdf_demo%2Falloy.pbe%2FAg%2FAg.F4%2F" ],
 	                "test": true,
                     "passthrough": true,
+                    "update":false
+            }
+
+            this.form = {
+                "dc": { 
+                    "authors": [ "Emily Mayer", "Clayton S. Talbot", "Nunez, Victoria"], 
+	                "affiliations": [ "University of Chicago", "Argonne National Laboratory" ], 
+	                "description": "", 
+	                "title": "In Situ Observation Dendrite Formation in Cu-Sn Alloys", 
+	                "subjects": [ "experiment", "machine learning","metals and alloys"] }, 
+	                "services": { 
+                        "mdf_publish": true, 
+                        "mrr": false, 
+                        "citrine": false 
+                    }, 
+                    "contacts":["Victoria Nunez <nunez.xyz@uchicago.edu>"],
+                    "acl": "public",
+                    "data": [ "https://app.globus.org/file-manager?origin_id=e38ee745-6d04-11e5-ba46-22000b92c6ec&origin_path=%2Fcitrine_mdf_demo%2Falloy.pbe%2FAg%2FAg.F4%2F" ],
+                    "organizations":"MDF Open",
+                    "test": true,
+                    "passthrough": false,
                     "update":false
             }
             // END Dummy form

@@ -98,7 +98,7 @@
                                 <v-combobox v-model="form.contacts" :rules="rules.combo" :delimiters="[';',',']" label="Contact information" chips clearable solo multiple>
                                     <template v-slot:selection="data">
                                         <v-chip outline color="primary" :selected="data.selected" close
-                                            @input="remove_data(data.item)">
+                                            @input="remove_contact(data.item)">
                                             <strong>{{ data.item }}</strong>&nbsp;
                                         </v-chip>
                                     </template>
