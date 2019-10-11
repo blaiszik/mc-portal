@@ -9,6 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vuetify/1.5.16/vuetify.js"></script>
     <script src="https://unpkg.com/marked@0.3.6"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 </head>
@@ -41,7 +42,7 @@
                                 <v-combobox v-model="form.dc.authors" :delimiters="[';']" :rules="rules.combo" label="Authors" chips clearable solo multiple>
                                     <template v-slot:selection="data">
                                         <v-chip outline color="primary" :selected="data.selected" close
-                                            @input="remove_author(data.item)">
+                                            @input="remove_item(data.item, 'form.dc.authors')">
                                             <strong>{{ data.item }}</strong>&nbsp;
                                         </v-chip>
                                     </template>
@@ -55,7 +56,7 @@
                                     label="Affiliations" required chips clearable solo multiple>
                                     <template v-slot:selection="data">
                                         <v-chip outline color="primary" :selected="data.selected" close
-                                            @input="remove_affiliation(data.item)">
+                                            @input="remove_item(data.item, 'form.dc.affiliations')">
                                             <strong>{{ data.item }}</strong>&nbsp;
                                         </v-chip>
                                     </template>
@@ -71,7 +72,7 @@
                                 <v-combobox v-model="form.data" :rules="rules.combo" :delimiters="[';',',']" label="Data locations" chips clearable solo multiple>
                                     <template v-slot:selection="data">
                                         <v-chip outline color="primary" :selected="data.selected" close
-                                            @input="remove_data(data.item)">
+                                            @input="remove_item(data.item, 'form.data')">
                                             <strong>{{ data.item }}</strong>&nbsp;
                                         </v-chip>
                                     </template>
@@ -85,7 +86,7 @@
                                     clearable solo multiple>
                                     <template v-slot:selection="data">
                                         <v-chip outline label color="primary" :selected="data.selected" close
-                                            @input="remove_tag(data.item)">
+                                            @input="remove_item(data.item, 'form.dc.subjects')">
                                             <strong>{{ data.item }}</strong>&nbsp;
                                         </v-chip>
                                     </template>
@@ -98,7 +99,7 @@
                                 <v-combobox v-model="form.contacts" :rules="rules.combo" :delimiters="[';',',']" label="Contact information" chips clearable solo multiple>
                                     <template v-slot:selection="data">
                                         <v-chip outline color="primary" :selected="data.selected" close
-                                            @input="remove_contact(data.item)">
+                                            @input="remove_item(data.item, 'form.contacts')">
                                             <strong>{{ data.item }}</strong>&nbsp;
                                         </v-chip>
                                     </template>

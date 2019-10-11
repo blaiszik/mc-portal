@@ -90,35 +90,12 @@ desc:"This system allows for the registration of materials resources, bridging t
                 this.snackbar = true
             }
         },
-        remove_author(item) {
-            this.form.dc.authors.splice(this.form.dc.authors.indexOf(item), 1)
-            this.form.dc.authors = [...this.form.dc.authors]
-        },
-        remove_affiliation(item) {
-            this.form.dc.affiliations.splice(this.form.dc.affiliations.indexOf(item), 1)
-            this.form.dc.affiliations = [...this.form.dc.affiliations]
-        },
-        remove_organization(item) {
-            this.form.organizations.splice(this.form.organizations.indexOf(item), 1)
-            this.form.organizations = [...this.form.organizations]
-        },
-        remove_data(item) {
-            this.form.data.splice(this.form.data.indexOf(item), 1)
-            this.form.data = [...this.form.data]
-        },
-        remove_contact(item) {
-            this.form.contacts.splice(this.form.contacts.indexOf(item), 1)
-            this.form.contacts = [...this.form.contacts]
-        },
-        remove_tag(item) {
-            this.form.dc.subjects.splice(this.form.dc.subjects.indexOf(item), 1)
-            this.form.dc.subjects = [...this.form.dc.subjects]
-        },
-        reset() {
-            this.$refs.form.reset()
-        },
-        resetValidation() {
-            this.$refs.form.resetValidation()
+        remove_item(item, path){
+            var val = _.get(this, path);
+            console.log(val)
+            val.splice(val.indexOf(item),1)
+            _.set(this, path, [...val])
+            console.log(_.get(this, path));
         },
         update_markdown(v) {
             console.log(v)
@@ -152,7 +129,6 @@ desc:"This system allows for the registration of materials resources, bridging t
                         console.log(error.response);
                     })
                     .then(function () {
-                        console.log("always")
                         console.log(self)
                         // always executed
                     });
@@ -162,46 +138,21 @@ desc:"This system allows for the registration of materials resources, bridging t
             }
         },
         fill_dummy_data(){
-
             function makeid(length) {
                 var result           = '';
-                var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-                var charactersLength = characters.length;
+                var characters       = 'abcdefghijklmnopqrstuvwxyz0123456789';
                 for ( var i = 0; i < length; i++ ) {
-                   result += characters.charAt(Math.floor(Math.random() * charactersLength));
+                   result += characters.charAt(Math.floor(Math.random() * characters.length));
                 }
                 return result;
              }
-
-            // Dummy form
-            // Dummy form
-            this.form = {
-                "dc": { 
-                    "authors": [ "Einstein, Albert", "Marie S. Curie" ], 
-	                "affiliations": [ "ETH Zurich", "University of Paris" ], 
-	                "description": "", 
-	                "title": "Test Dataset "+makeid(10), 
-	                "subjects": [ "experiment", "relativity" ] }, 
-	                "services": { 
-                        "mdf_publish": true, 
-                        "mrr": false, 
-                        "citrine": false 
-                    }, 
-                    "contacts":["Albert Einstein <albert@ethz.ch>", 
-                                "Marie Curie <mariec@uparis.fr>"],
-                    "acl": "public",
-                    "data": [ "https://app.globus.org/file-manager?origin_id=e38ee745-6d04-11e5-ba46-22000b92c6ec&origin_path=%2Fcitrine_mdf_demo%2Falloy.pbe%2FAg%2FAg.F4%2F" ],
-	                "test": true,
-                    "passthrough": true,
-                    "update":false
-            }
 
             this.form = {
                 "dc": { 
                     "authors": [ "Emily Mayer", "Clayton S. Talbot", "Nunez, Victoria"], 
 	                "affiliations": [ "University of Chicago", "Argonne National Laboratory" ], 
 	                "description": "", 
-	                "title": "In Situ Observation Dendrite Formation in Cu-Sn Alloys", 
+	                "title": "In Situ Observation Dendrite Formation in Cu-Sn Alloys " + makeid(7), 
 	                "subjects": [ "experiment", "machine learning","metals and alloys"] }, 
 	                "services": { 
                         "mdf_publish": true, 
@@ -216,7 +167,7 @@ desc:"This system allows for the registration of materials resources, bridging t
                     "passthrough": false,
                     "update":false
             }
-            // END Dummy form
+
         }
     }
 })
