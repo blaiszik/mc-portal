@@ -1,32 +1,34 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/vuetify/1.5.16/vuetify.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vuetify/1.5.16/vuetify.js"></script>
+
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script src="https://unpkg.com/marked@0.3.6"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 </head>
 <body>
+{%include 'header.jinja2'%}
+
 <div id="app">
     <v-container>
         <v-app id="inspire">
                 <v-toolbar color="" :dark=false>
-                        <img 
-                            src="https://connect.materialsdatafacility.org/static/img/MDF-logo@2x.png"
-                            height="50">
-                        
-                            <v-toolbar-title>MDF Connect</v-toolbar-title>
-                        <v-spacer></v-spacer>
+                 <v-toolbar-title></v-toolbar-title>
+                 <v-spacer></v-spacer>
+                        <v-btn class="mr-2" href="/add"> Submit Another Dataset </v-btn>
                         <v-btn >
                           Browse Datasets
                         </v-btn>
-                        <v-btn >
-                          My Submissions
-                        </v-btn>
-                        
-                      </v-toolbar>
+                </v-toolbar>
 
             <v-content>
                 <v-layout left-justify>
@@ -67,23 +69,23 @@
   {% if status_res.success == true %}
 
   {% for result in status_res.status.status_list %}
-  <v-card>
-  <v-card-title> {{result.text}}</v-card-title>
+  <v-card class="ma-2">
+  <v-card-text> {{result.text}}</v-card-text>
   <v-card-actions>
    {% if result.signal == "success" %}
-      <v-chip label outline color="green">{{result.signal}}</v-chip>
+      <v-chip label outlined color="green">{{result.signal}}</v-chip>
   {% elif result.signal == "idle" %}
-    <v-chip label outline dark> {{result.signal}}</v-chip>
+    <v-chip label outlined dark> {{result.signal}}</v-chip>
   {% elif result.signal == "started" %}
-    <v-chip label outline color="blue">{{result.signal}}</v-chip>
+    <v-chip label outlined color="blue">{{result.signal}}</v-chip>
   {% elif result.signal == "warning" %}
-    <v-chip label outline color="orange">{{result.signal}}</v-chip>
+    <v-chip label outlined color="orange">{{result.signal}}</v-chip>
   {% elif result.signal == "failure" %}
-    <v-chip label outline color="red">{{result.signal}}</v-chip>
+    <v-chip label outlined color="red">{{result.signal}}</v-chip>
   {% else %}
-    <v-chip label outline dark">{{result.signal}}</v-chip>
+    <v-chip label outlined dark">{{result.signal}}</v-chip>
   {% endif %}
-  <a href="{{result.link}}">{{result.link}}</a>
+  <a href="result.link">{{result.link}}</a>
 
   </v-card-actions>
   </v-card>
@@ -92,22 +94,20 @@
   {% endfor %}
   {% endif %}
 
-
                         </v-container>
-
         </v-app>
     </div>
     </v-content>
     </v-container>
 
     <script>
-        new Vue({
-          el: "#app",
-          data: () => ({test:123})
-        })
-       
+    Vue.use(Vuetify)
+
+    new Vue({
+        el: '#app',
+        vuetify: new Vuetify()
+    })
     </script>
-{{ status_res }}
 </body>
 
 </html>

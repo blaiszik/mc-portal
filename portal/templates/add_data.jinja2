@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/vuetify/1.5.16/vuetify.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vuetify/1.5.16/vuetify.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
     <script src="https://unpkg.com/marked@0.3.6"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
@@ -25,7 +27,9 @@
     <v-container>
         <v-app id="inspire">
                 <v-toolbar color="" :dark=false>
-                        <v-btn href="https://petreldata.net/mdf/?q=*&filter-match-any.mdf.resource_type=dataset"> Browse Datasets </v-btn>
+                    <v-toolbar-title></v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <v-btn href="https://petreldata.net/mdf/?q=*&filter-match-any.mdf.resource_type=dataset"> Browse Datasets </v-btn>
                         
                 </v-toolbar>
             <v-content>
@@ -46,8 +50,8 @@
                                 Add authors in the form of Einstein, Albert or Marie S. Curie. Press 'Enter/Return' or ';'' to create a new entry.
                                 <v-combobox v-model="form.dc.authors" :delimiters="[';']" :rules="rules.combo" label="Authors" chips clearable solo multiple>
                                     <template v-slot:selection="data">
-                                        <v-chip outline color="primary" :selected="data.selected" close
-                                            @input="remove_item(data.item, 'form.dc.authors')">
+                                        <v-chip outlined color="primary" :input_value="data.selected" close
+                                            @click:close="remove_item(data.item, 'form.dc.authors')">
                                             <strong>{{ data.item }}</strong>&nbsp;
                                         </v-chip>
                                     </template>
@@ -60,8 +64,8 @@
                                 <v-combobox v-model="form.dc.affiliations" :delimiters="[';',',']" :rules="rules.combo" :items="options.affiliations"
                                     label="Affiliations" required chips clearable solo multiple>
                                     <template v-slot:selection="data">
-                                        <v-chip outline color="primary" :selected="data.selected" close
-                                            @input="remove_item(data.item, 'form.dc.affiliations')">
+                                        <v-chip outlined color="primary" :input_value="data.selected" close
+                                            @click:close="remove_item(data.item, 'form.dc.affiliations')">
                                             <strong>{{ data.item }}</strong>&nbsp;
                                         </v-chip>
                                     </template>
@@ -70,14 +74,45 @@
 
 
                                 <!-- Data Location Elements -->
-                                Add data locations: http://myhost.com/myfile.zip or globus://my_ep/my_path
-                                <v-btn outline color="primary" href="https://app.globus.org/file-manager" target="_blank">
-                                    Find data location with Globus
+                                Add data locations: http://myhost.com/myfile.zip or globus://my_ep/my_path<br>
+                                <v-btn outlined color="primary" href="https://app.globus.org/file-manager" target="_blank">
+                                    Find data  with Globus
                                 </v-btn>
+                                <v-btn outlined color="primary" href="https://drive.google.com" target="_blank">
+                                    Find data with Google Drive
+                                </v-btn>
+
+                                <v-alert
+                                    icon="mdi-shield-lock-outline"
+                                    prominent
+                                    text
+                                    type="info"
+                                >
+                            <h5> For Globus Data </h5>
+                            <ul>
+                                <li>
+                                    No additional permissions are required to share data from Globus endpoints
+                                </li>
+                                <li>
+                                    Paths with `~` characters are invalid, full paths must be used
+                                </li>
+                                <li>
+                                    Copy the link to your data with the `Get Link` button in the Globus web app
+                                </li>
+                            </ul>
+
+                            <h5> For Google Drive Data </h5>
+                            <ul>
+                                <li>
+                                Share the data path (read access) with materialsdatafacility@gmail.com
+                                </li>
+                            </ul>
+                            </v-alert>
+    
                                 <v-combobox v-model="form.data" :rules="rules.combo" :delimiters="[';',',']" label="Data locations" chips clearable solo multiple>
                                     <template v-slot:selection="data">
-                                        <v-chip outline color="primary" :selected="data.selected" close
-                                            @input="remove_item(data.item, 'form.data')">
+                                        <v-chip outlined color="primary" :input_value="data.selected" close
+                                            @click:close="remove_item(data.item, 'form.data')">
                                             <strong>{{ data.item }}</strong>&nbsp;
                                         </v-chip>
                                     </template>
@@ -90,8 +125,8 @@
                                 <v-combobox v-model="form.dc.subjects" :delimiters="[',',';']" label="Tags" chips :items="options.subjects"
                                     clearable solo multiple>
                                     <template v-slot:selection="data">
-                                        <v-chip outline label color="primary" :selected="data.selected" close
-                                            @input="remove_item(data.item, 'form.dc.subjects')">
+                                        <v-chip outlined label color="primary" :input_value="data.selected" close
+                                             @click:close="remove_item(data.item, 'form.dc.subjects')">
                                             <strong>{{ data.item }}</strong>&nbsp;
                                         </v-chip>
                                     </template>
@@ -103,8 +138,8 @@
 
                                 <v-combobox v-model="form.contacts" :rules="rules.combo" :delimiters="[';',',']" label="Contact information" chips clearable solo multiple>
                                     <template v-slot:selection="data">
-                                        <v-chip outline color="primary" :selected="data.selected" close
-                                            @input="remove_item(data.item, 'form.contacts')">
+                                        <v-chip outlined color="primary" :input_value="data.selected" close
+                                            @click:close="remove_item(data.item, 'form.contacts')">
                                             <strong>{{ data.item }}</strong>&nbsp;
                                         </v-chip>
                                     </template>
@@ -114,9 +149,9 @@
 
 
                                 <!-- Description Elements -->
-                                <v-textarea name="input-7-1" v-model="form.dc.description" box
+                                <v-textarea name="input-7-1" v-model="form.dc.description" filled
                                     label="Dataset description (accepts markdown)" auto-grow value=""
-                                    @input="update_markdown">
+                                    @click:close="update_markdown">
                                 </v-textarea>
                                 <!-- END Description Elements -->
 
@@ -186,29 +221,31 @@
                             <v-spacer></v-spacer>
                         </v-toolbar>
                         
-                        <v-card>
+                        <v-card class="pt-3">
                           <v-alert
                             v-if="form.test"
                             :value="true"
-                            color="warning"
-                            icon="priority_high"
-                            outline
+                            type="warning"
+                            dense
+                            outlined
                             >
                             This is a test submission.
                             </v-alert>
                             <v-alert
                             v-if="form.passthrough"
                             :value="true"
-                            color="warning"
-                            icon="priority_high"
-                            outline
+                            type="warning"
+                            dense
+                            outlined
                             >
                         Data extraction will be skipped.
                         </v-alert>
                             <v-card-title primary-title>
-                                <div>
                                     <h2 class="headline mb-0">{{form.dc.title}}</h2>
-                                    <i>{{ form.dc.authors.join('; ') }}</i>
+                            </v-card-title>
+
+                             <v-card-text>
+                             <i>{{ form.dc.authors.join('; ') }}</i>
                                     <ol>
                                     <li v-for="aff in form.dc.affiliations">
                                         {{ aff }}
@@ -222,14 +259,13 @@
                                     <div v-html="state.markdown"></div>
                                     </v-sheet>
 
-                                    <v-chip outline label color="primary" v-for="tag in form.dc.subjects">
+                                    <v-chip class="ma-1" outlined label color="primary" v-for="tag in form.dc.subjects">
                                         {{tag}}
                                     </v-chip>
 
                                     <h4>Data Locations</h4>
                                     <div> {{ form.data.join(', ') }} </div>
-                                </div>
-                            </v-card-title>
+                             </v-card-text>
 
                             <v-card-actions>
                                 <v-btn color="primary" @click="submit_dataset" v-if="state.response === null">Submit</v-btn>
@@ -253,7 +289,7 @@
                                 :value="true"
                                 color="error"
                                 icon="priority_high"
-                                outline
+                                outlined
                               >
                                 Submission failed, please contact support with the information below.
                                 <div>{{state.response.status}} - {{state.response.statusText}}</div>
@@ -264,7 +300,7 @@
                                 v-if="state.submit_success && state.response !== null"
                                 :value="true"
                                 color="success"
-                                outline
+                                outlined
                               >
                             <h1> Success! </h1>
                              <v-btn color="success" :href="/status/+state.response.data.source_id">

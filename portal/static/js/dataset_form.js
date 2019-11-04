@@ -1,5 +1,8 @@
+Vue.use(Vuetify)
+
 new Vue({
     el: '#app',
+    vuetify: new Vuetify(),
     data: () => ({
         options: {
             "subjects": ["simulation", "experiment", "machine learning",
@@ -35,7 +38,7 @@ new Vue({
                     title: 'Materials Resource Registry',
 desc:"This system allows for the registration of materials resources, bridging the gap between existing resources and the end users. The Materials Resource Registry functions as a centrally located service, making the registered information available for research to the materials community.",                            flex: 12,
                     label: "",
-                    img:"https://materials.registry.nist.gov/static/img/NIST_logo.svg",
+                    img:"/static/img/nist-dark.png",
                     value: "mrr"
                 },
                 {

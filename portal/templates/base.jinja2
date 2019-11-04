@@ -7,6 +7,11 @@
     <link rel="shortcut icon" type="image/x-icon" href="{{url_for('static', filename='img/favicon.ico')}}" />
     <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='img/favicon.ico')}}" />
 
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    
+
     <title>MDF Connect - {%block title%}{%endblock%}</title>
 
     {# CSS files #}
@@ -16,26 +21,26 @@
 
     {# BS 3 #}
      <style>
- @font-face {
-	font-family: 'museosans';
-	src: url("{{ url_for('static', filename='/fonts/221E91_4_0.woff') }}") format('woff');
-	font-weight: 100 ;
-}
-@font-face {
-	font-family: 'museosans';
-	src: url("{{ url_for('static', filename='/fonts/221E91_3_0.woff') }}") format('woff');
-	font-weight: 500 ;
-}
-@font-face {
-	font-family: 'museosans';
-	src: url("{{ url_for('static', filename='/fonts/221E91_1_0.woff') }}") format('woff');
-	font-weight: 300 ;
-}
-@font-face {
-	font-family: 'museosans';
-	src: url("{{ url_for('static', filename='/fonts/221E91_0_0.woff') }}") format('woff');
-	font-weight: 700 ;
-}
+      @font-face {
+        font-family: 'museosans';
+        src: url("{{ url_for('static', filename='/fonts/221E91_4_0.woff') }}") format('woff');
+        font-weight: 100 ;
+      }
+      @font-face {
+        font-family: 'museosans';
+        src: url("{{ url_for('static', filename='/fonts/221E91_3_0.woff') }}") format('woff');
+        font-weight: 500 ;
+      }
+      @font-face {
+        font-family: 'museosans';
+        src: url("{{ url_for('static', filename='/fonts/221E91_1_0.woff') }}") format('woff');
+        font-weight: 300 ;
+      }
+      @font-face {
+        font-family: 'museosans';
+        src: url("{{ url_for('static', filename='/fonts/221E91_0_0.woff') }}") format('woff');
+        font-weight: 700 ;
+      }
 
 body {
     font-family: museosans,"Helvetica Neue",Helvetica,Arial,sans-serif;
@@ -43,8 +48,6 @@ body {
     padding-top: 0px;
     font-size: 16px;
 }
-
-
 
 
  </style>
