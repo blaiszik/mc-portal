@@ -41,13 +41,15 @@
                         <v-container fluid fill-width>
                             <v-form ref="form" v-model="state.valid" lazy-validation>
                                 <!-- Title Elements -->
+                                <div class="title"> Set Title </div>
                                 <v-text-field v-model="form.dc.title" :rules="rules.title" label="Title" required>
                                 </v-text-field>
                                 <!-- END Title Elements -->
 
 
                                 <!-- Author Elements -->
-                                Add authors in the form of Einstein, Albert or Marie S. Curie. Press 'Enter/Return' or ';'' to create a new entry.
+                               <div class="title"> Add authors</div>
+                                Accepts author names of the form of Einstein, Albert or Marie S. Curie. Press 'Enter/Return' or ';'' to create a new entry.
                                 <v-combobox v-model="form.dc.authors" :delimiters="[';']" :rules="rules.combo" label="Authors" chips clearable solo multiple>
                                     <template v-slot:selection="data">
                                         <v-chip outlined color="primary" :input_value="data.selected" close
@@ -60,7 +62,8 @@
 
 
                                 <!-- Affiliation Elements -->
-                                Add affiliations. Press 'Enter/Return', ',', or ';'' to create a new entry or select from the pre-filled options.
+                                <div class="title"> Add affiliations</div>
+                                Press 'Enter/Return', ',', or ';'' to create a new entry or select from the pre-filled options.
                                 <v-combobox v-model="form.dc.affiliations" :delimiters="[';',',']" :rules="rules.combo" :items="options.affiliations"
                                     label="Affiliations" required chips clearable solo multiple>
                                     <template v-slot:selection="data">
@@ -74,14 +77,7 @@
 
 
                                 <!-- Data Location Elements -->
-                                Add data locations: http://myhost.com/myfile.zip or globus://my_ep/my_path<br>
-                                <v-btn outlined color="primary" href="https://app.globus.org/file-manager" target="_blank">
-                                    Find data  with Globus
-                                </v-btn>
-                                <v-btn outlined color="primary" href="https://drive.google.com" target="_blank">
-                                    Find data with Google Drive
-                                </v-btn>
-
+                                <div class="title">Add data locations.</div> 
                                 <v-alert
                                     icon="mdi-shield-lock-outline"
                                     prominent
@@ -101,6 +97,12 @@
                                 </li>
                             </ul>
 
+                            <h5> For HTTP Data </h5>
+                            <ul>
+                            <li>Specify an openly accessible archive of the dataset. e.g., http://myhost.com/myfile.zip</li>
+                            </ul>
+
+
                             <h5> For Google Drive Data </h5>
                             <ul>
                                 <li>
@@ -108,6 +110,12 @@
                                 </li>
                             </ul>
                             </v-alert>
+                             <v-btn outlined color="primary" href="https://app.globus.org/file-manager" target="_blank">
+                                    Find data  with Globus
+                                </v-btn>
+                                <v-btn outlined color="primary" href="https://drive.google.com" target="_blank">
+                                    Find data with Google Drive
+                                </v-btn>
     
                                 <v-combobox v-model="form.data" :rules="rules.combo" :delimiters="[';',',']" label="Data locations" chips clearable solo multiple>
                                     <template v-slot:selection="data">
@@ -121,7 +129,8 @@
 
 
                                 <!-- Tag Elements -->
-                                Add tags. Press 'Enter/Return', ',' or ';' to create a new entry or select from the pre-filled options.
+                                <div class="title">Add tags.</div> 
+                                Press 'Enter/Return', ',' or ';' to create a new entry or select from the pre-filled options.
                                 <v-combobox v-model="form.dc.subjects" :delimiters="[',',';']" label="Tags" chips :items="options.subjects"
                                     clearable solo multiple>
                                     <template v-slot:selection="data">
@@ -134,8 +143,8 @@
                                 <!-- END Tag Elements -->
 
                                  <!-- Contact  Elements -->
-                                Add dataset contacts
-
+                                <div class="title"> Add dataset contacts.</div> 
+                                Press 'Enter/Return', ',' or ';' to create a new entry.
                                 <v-combobox v-model="form.contacts" :rules="rules.combo" :delimiters="[';',',']" label="Contact information" chips clearable solo multiple>
                                     <template v-slot:selection="data">
                                         <v-chip outlined color="primary" :input_value="data.selected" close
@@ -149,23 +158,30 @@
 
 
                                 <!-- Description Elements -->
+                                <div class="title"> Set Description </div>
                                 <v-textarea name="input-7-1" v-model="form.dc.description" filled
                                     label="Dataset description (accepts markdown)" auto-grow value=""
                                     @click:close="update_markdown">
                                 </v-textarea>
                                 <!-- END Description Elements -->
 
-                                  <!-- Organization Elements -->
-                                Add organization. Organizations act as a template for how your dataset with be handled.
+                                <!-- Organization Elements -->
+                                <div class="title"> Add Organization </div>
+                                Organizations act as a template for how your dataset with be handled.
                                  <v-select v-model="form.organizations" :items="options.organizations"
                                 attach
                                 chips
                                 label="Organizations"
                                 multiple
                                 ></v-select>
-                                
-                         
-                                <!-- END Affiliation Elements -->
+                                <!-- END Organization Elements -->
+
+                                 <!-- Source Name Elements -->
+                                <div class="title"> Set Source Name </div>
+                                Source name is a unique identifier associated with your dataset. e.g., patel_my_dataset
+                                <v-text-field v-model="form.source_name" label="Source Name" required>
+                                </v-text-field>
+                                <!-- END Source Name Elements -->
 
 
                 </v-layout>
