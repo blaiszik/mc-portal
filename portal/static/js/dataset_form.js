@@ -69,6 +69,7 @@ desc:"This system allows for the registration of materials resources, bridging t
                 "citrine": false
             },
             contacts:[],
+            source_name:"",
             organizations: ["MDF Open"],
             acl: "public",
             data: [],

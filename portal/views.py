@@ -198,7 +198,9 @@ def convert():
                 raise TypeError("Invalid service entry ({}): {}".format(type(services), services))
         mdfcc.set_passthrough(metadata.get("passthrough", False))
         mdfcc.set_test(metadata.get("test", False))
-        mdfcc.add_organization(metadata.get("organizations", "AFRL Additive Manufacturing Challenge"))
+        mdfcc.add_organization(metadata.get("organizations", "MDF Open"))
+        mdfcc.set_source_name(metadata.get("source_name", ""))
+
     except Exception as e:
         logger.error("API Convert assembly: {}".format(repr(e)))
         return (jsonify({
