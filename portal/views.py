@@ -43,6 +43,41 @@ def add_data():
     return render_template('add_data.jinja2')
 
 
+@app.route('/submissions', methods=['GET'])
+@authenticated
+def submissions():
+     # Make MDFCC
+    try:
+        logger.debug("Creating MDFCC for status")
+        auth_client = globus_sdk.ConfidentialAppAuthClient(
+                       app.config['PORTAL_CLIENT_ID'], app.config['PORTAL_CLIENT_SECRET'])
+        mdf_authorizer = globus_sdk.RefreshTokenAuthorizer(
+                                        session["tokens"]["mdf_dataset_submission"]
+                                               ["refresh_token"],
+                                        auth_client)
+        mdfcc = mdf_connect_client.MDFConnectClient(service_instance=app.config["MDFCC_SERVICE"],
+                                                    authorizer=mdf_authorizer)
+    except Exception as e:
+        logger.error("Status MDFCC init: {}".format(repr(e)))
+        json_res = {
+            "success": False,
+            "error": "Unable to initialize client."
+        }
+    else:
+        try:
+            logger.debug("Requesting Submissions")
+            json_res = mdfcc.check_all_submissions(raw=True)
+        except Exception as e:
+            logger.error("Check Submissions request: {}".format(repr(e)))
+            json_res = {
+                "success": False,
+                "error": "Status request failed."
+            }
+
+    # return (jsonify(json_res), status_code)
+    return render_template("submissions.jinja2", res=json_res)
+    pass
+
 @app.route('/status/<source_name>', methods=['GET'])
 @authenticated
 def status(source_name):

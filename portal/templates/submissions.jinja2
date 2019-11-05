@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script src="https://unpkg.com/marked@0.3.6"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+</head>
+<body>
+{%include 'header.jinja2'%}
+<div id="app">
+    <v-container>
+        <v-app id="inspire">
+                <v-toolbar color="" :dark=false>
+                 <v-toolbar-title></v-toolbar-title>
+                 <v-spacer></v-spacer>
+                       <v-btn class="ma-2" href="/add"> Submit Another Dataset </v-btn>
+                       <v-btn class="ma-2" href="https://petreldata.net/mdf/?q=*&filter-match-any.mdf.resource_type=dataset" target="_blank"> Browse Datasets </v-btn>
+                        
+                </v-toolbar>
+
+            <v-content>
+                <v-layout left-justify>
+                    <v-flex xs20 sm12>
+                        <v-toolbar color="primary" dark>
+                            <v-toolbar-title>My Submissions</v-toolbar-title>
+      
+                            <v-spacer></v-spacer>
+                        </v-toolbar>
+                        <v-container fluid fill-width>
+
+  {% for r in res.submissions %}
+  <v-card class="ma-3">
+  <v-card-title>{{r.title}}</v-card-title>
+  <v-card-text> 
+ 
+    <h5> Submitted by {{r.submitter}} @ {{r.submission_time}} </h5>
+    <h4> Status </h4>
+    {{r.status_message}}
+
+  </v-card-text>
+
+  <v-card-actions>
+    <v-btn color="primary" href="/status/{{r.source_id}}">See Detailed Status</v-btn>
+     {% if r.active.active == true %}
+        <v-chip
+                    class="ma-2"
+                    color="primary"
+                    text-color="white"
+                    label
+                >
+                    Active
+                </v-chip>
+        {% else %}
+                <v-chip
+                    class="ma-2"
+                    color="red"
+                    text-color="white"
+                    label
+                >
+                    Inactive
+                </v-chip>
+        {% endif %}
+  </v-card-actions>
+  </v-card>
+  
+  {% endfor %}
+
+                        </v-container>
+        </v-app>
+    </div>
+    </v-content>
+    </v-container>
+
+    <script>
+    Vue.use(Vuetify)
+
+    new Vue({
+        el: '#app',
+        vuetify: new Vuetify()
+    })
+    </script>
+</body>
+
+</html>
