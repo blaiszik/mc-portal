@@ -29,6 +29,17 @@ logger.addHandler(logfile_handler)
 
 logger.info("\n\n==========Connect Portal started==========\n")
 
+def get_mdfcc(status=None):
+    auth_client = globus_sdk.ConfidentialAppAuthClient(
+                       app.config['PORTAL_CLIENT_ID'], app.config['PORTAL_CLIENT_SECRET'])
+    mdf_authorizer = globus_sdk.RefreshTokenAuthorizer(
+                                        session["tokens"]["mdf_dataset_submission"]
+                                               ["refresh_token"],
+                                        auth_client)
+    mdfcc = mdf_connect_client.MDFConnectClient(service_instance=app.config["MDFCC_SERVICE"],
+                                                    authorizer=mdf_authorizer)
+    return mdfcc
+
 
 @app.route('/', methods=['GET'])
 def home():
@@ -48,15 +59,7 @@ def add_data():
 def submissions():
      # Make MDFCC
     try:
-        logger.debug("Creating MDFCC for status")
-        auth_client = globus_sdk.ConfidentialAppAuthClient(
-                       app.config['PORTAL_CLIENT_ID'], app.config['PORTAL_CLIENT_SECRET'])
-        mdf_authorizer = globus_sdk.RefreshTokenAuthorizer(
-                                        session["tokens"]["mdf_dataset_submission"]
-                                               ["refresh_token"],
-                                        auth_client)
-        mdfcc = mdf_connect_client.MDFConnectClient(service_instance=app.config["MDFCC_SERVICE"],
-                                                    authorizer=mdf_authorizer)
+        mdfcc = get_mdfcc()
     except Exception as e:
         logger.error("Status MDFCC init: {}".format(repr(e)))
         json_res = {
@@ -83,15 +86,7 @@ def submissions():
 def status(source_name):
     # Make MDFCC
     try:
-        logger.debug("Creating MDFCC for status")
-        auth_client = globus_sdk.ConfidentialAppAuthClient(
-                       app.config['PORTAL_CLIENT_ID'], app.config['PORTAL_CLIENT_SECRET'])
-        mdf_authorizer = globus_sdk.RefreshTokenAuthorizer(
-                                        session["tokens"]["mdf_dataset_submission"]
-                                               ["refresh_token"],
-                                        auth_client)
-        mdfcc = mdf_connect_client.MDFConnectClient(service_instance=app.config["MDFCC_SERVICE"],
-                                                    authorizer=mdf_authorizer)
+        mdfcc = get_mdfcc()
     except Exception as e:
         logger.error("Status MDFCC init: {}".format(repr(e)))
         json_res = {
@@ -112,42 +107,58 @@ def status(source_name):
     # return (jsonify(json_res), status_code)
     return render_template("status.jinja2", status_res=json_res)
 
+@app.route('/api/tasks/', methods=['GET'])
+def tasks():
+# # Make MDFCC
+    try:
+        mdfcc = get_mdfcc()
+    except Exception as e:
+        logger.error("Status MDFCC init: {}".format(repr(e)))
+        json_res = {
+            "success": False,
+            "error": "Unable to initialize client."
+        }
+    else:
+        try:
+            logger.debug("Requesting Submissions")
+            json_res = mdfcc.get_available_curation_tasks(raw=True)
+        except Exception as e:
+            logger.error("Check Submissions request: {}".format(repr(e)))
+            json_res = {
+                "success": False,
+                "error": "Status request failed."
+            }
+    
+    return (jsonify(json_res), json_res["status_code"])
+
+
 
 @app.route('/curate/', methods=['GET'])
 @authenticated
 def curate():
     return render_template('curate.jinja2')
 
-    # # Make MDFCC
-    # try:
-    #     logger.debug("Creating MDFCC for status")
-    #     auth_client = globus_sdk.ConfidentialAppAuthClient(
-    #                    app.config['PORTAL_CLIENT_ID'], app.config['PORTAL_CLIENT_SECRET'])
-    #     mdf_authorizer = globus_sdk.RefreshTokenAuthorizer(
-    #                                     session["tokens"]["mdf_dataset_submission"]
-    #                                            ["refresh_token"],
-    #                                     auth_client)
-    #     mdfcc = mdf_connect_client.MDFConnectClient(service_instance=app.config["MDFCC_SERVICE"],
-    #                                                 authorizer=mdf_authorizer)
-    # except Exception as e:
-    #     logger.error("Status MDFCC init: {}".format(repr(e)))
-    #     json_res = {
-    #         "success": False,
-    #         "error": "Unable to initialize client."
-    #     }
-    # else:
-    #     try:
-    #         logger.debug("Requesting status")
-    #         json_res = mdfcc.check_status(source_name, raw=True)
-    #     except Exception as e:
-    #         logger.error("Status request: {}".format(repr(e)))
-    #         json_res = {
-    #             "success": False,
-    #             "error": "Status request failed."
-    #         }
+@app.route('/api/curate/', methods=['POST'])
+@authenticated
+def api_curate():
+    req = request.get_json()
+    action = req['action']
+    try:
+        mdfcc = get_mdfcc()
+        if action=="accept":
+            res = mdfcc.accept_curation_submission(req['source_id'], reason=None, prompt=False, raw=True)
+        elif action=="reject":
+            res = mdfcc.reject_curation_submission(req['source_id'], reason=None, prompt=False, raw=True)
+        else:
+            pass
+    except Exception as e:
+        logger.error("API Convert MDFCC init: {}".format(e))
+        return (jsonify({
+            "success": False,
+            "error": "Unable to initialize dataset submission client."
+        }), 500)
+    return jsonify(res, res['status_code'])
 
-    # # return (jsonify(json_res), status_code)
-    # return render_template("status.jinja2", status_res=json_res)
 
 @app.route('/api/convert', methods=['POST'])
 def convert():

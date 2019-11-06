@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <script src="https://unpkg.com/marked@0.3.6"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <title>MDF | Curation</title>
+</head>
+
+<body>
+{%include 'header.jinja2'%}
+{% raw %}
+  <div id="app">
+    <v-container>
+      <v-app id="inspire">
+        <v-content>
+          <v-layout left-justify>
+              <v-container fluid fill-width>
+                  <v-toolbar dense>
+                      <v-toolbar-title></v-toolbar-title>
+                      My Curation Tasks
+                      <v-spacer></v-spacer>
+                      <v-btn class="ma-2" href="/add"> Submit Another Dataset </v-btn>
+                      <v-btn class="ma-2" href="https://petreldata.net/mdf/?q=*&filter-match-any.mdf.resource_type=dataset"
+                        target="_blank"> Browse Datasets </v-btn>
+                </v-toolbar>
+                <p class="text-center ma-5">
+                      <v-progress-circular v-if="!res.curation_tasks"
+                                      :size="50"
+                                      color="primary"
+                                      indeterminate
+                                    ></v-progress-circular>
+                </p>
+             
+  
+               <v-card class="ma-2" v-for="task in res.curation_tasks">
+                  <v-card-title primary-title>
+                      {{task.dataset.dc.titles[0].title}}
+                  </v-card-title>
+                  <v-card-text>
+                      
+                      <div class="my-2 subtitle-1 black--text"> 
+                        Source ID: {{task.source_id}}
+                      </div>
+
+                      <div class="my-2 subtitle-1 black--text"> 
+                        Submitted by: {{task.submission_info.submitter}}
+                      </div>
+
+                      <div class="my-2 subtitle-1 black--text"> 
+                       Organizations: {{task.dataset.mdf.organizations}}
+                      </div>
+                       <div class="my-2 subtitle-1 black--text"> 
+                       Parsing Summary: {{task.parsing_summary}}
+                      </div>
+                      
+                      <div>
+                        <v-btn large class="ma-1" v-bind:href="task.dataset.data.link" color="primary"> View Data </v-btn>
+                      </div>
+                      <div>
+                        <v-chip class="ma-1" outlined label color="primary" v-for="tag in task.dataset.dc.subjects">
+                          {{tag.subject}} 
+                        </v-chip>
+                      </div>
+                      
+                  </v-card-text>
+                  <v-card-actions v-if="!completed[task.source_id]">
+                    <v-btn class="ma-1" large outlined color="success" @click="curate('accept', task.source_id)">Accept</v-btn>
+                    <v-btn class="ma-1" large outlined color="error" @click="curate('reject', task.source_id)">Reject</v-btn>
+                  </v-card-actions>
+                  
+                  <v-alert dense type="info" v-if="completed[task.source_id]"> Completed </v-alert>
+                  <v-overlay v-if="in_progress[task.source_id]" absolute color="#036358">
+                      <v-progress-circular :size="25" color="primary" indeterminate>
+                      </v-progress-circular>
+                  </v-overlay> 
+
+                </v-card>
+
+                <v-card v-if="error.text" class="ma-2" >
+                  <v-card-title>
+                  <v-alert type="error">
+                        An error occurred
+                      </v-alert>
+                  </v-card-title>
+                  <v-card-text>
+                    Please refresh the page. If the error persists, please contact blaiszik@uchicago.edu with the following information
+                    <div>
+                      {{error}}
+                    </div>
+                  </v-card-text>
+                    </v-card>
+              </v-container>
+        </v-content>
+      </v-app>
+  </v-container>
+</div>
+{% endraw %}
+
+
+  <script>
+    Vue.use(Vuetify)
+    new Vue({
+      el: '#app',
+      mounted:function(){
+        this.get_tasks() //method1 will execute at pageload
+      },
+      data: () => ({
+        "res":{},
+        "error":{},
+        "completed":{},
+        "in_progress":{}
+      }),
+      methods:{
+        get_tasks:function(){
+          var self = this;
+          //data =  JSON.parse('{"data":{"curation_tasks":[{"allowed_curators":["cc192dca-3751-11e8-90c1-0a7c735d220a"],"curation_start_date":"2019-11-06 20:47:24.883734","dataset":{"data":{"endpoint_path":"globus://82f1b5c6-6e9b-11e5-ba47-22000b92c6ec/mdf_open/_test_mayer_situ_observation_6wdtagb_v1.1/","link":"https://app.globus.org/file-manager?origin_id=82f1b5c6-6e9b-11e5-ba47-22000b92c6ec&origin_path=/mdf_open/_test_mayer_situ_observation_6wdtagb_v1.1/"},"dc":{"contributors":[{"contributorName":"Victoria Nunez <nunez.xyz@uchicago.edu>","contributorType":"ContactPerson"}],"creators":[{"affiliations":["University of Chicago","Argonne National Laboratory"],"creatorName":"Mayer, Emily","familyName":"Mayer","givenName":"Emily"},{"affiliations":["University of Chicago","Argonne National Laboratory"],"creatorName":"Talbot, Clayton S.","familyName":"Talbot","givenName":"Clayton S."},{"affiliations":["University of Chicago","Argonne National Laboratory"],"creatorName":"Nunez, Victoria","familyName":"Nunez","givenName":"Victoria"}],"publicationYear":"2019","publisher":"Materials Data Facility","resourceType":{"resourceType":"Dataset","resourceTypeGeneral":"Dataset"},"subjects":[{"subject":"experiment"},{"subject":"machine learning"},{"subject":"metals and alloys"}],"titles":[{"title":"In Situ Observation Dendrite Formation in Cu-Sn Alloys 6wdtagb"}]},"mdf":{"acl":["public"],"ingest_date":"2019-11-06T20:47:18.676584Z","organizations":["MDF Open"],"resource_type":"dataset","scroll_id":0,"source_id":"_test_mayer_situ_observation_6wdtagb_v1.1","source_name":"_test_mayer_situ_observation_6wdtagb","version":1},"services":{}},"parsing_summary":"0 records were parsed out of 0 groups from 0 files","sample_records":[],"source_id":"_test_mayer_situ_observation_6wdtagb_v1.1","submission_info":{"acl":["public"],"canon_destination":"globus://82f1b5c6-6e9b-11e5-ba47-22000b92c6ec/mdf_open/_test_mayer_situ_observation_6wdtagb_v1.1/","conversion_config":{},"curation":true,"data_destinations":[],"data_sources":["https://app.globus.org/file-manager?origin_id=e38ee745-6d04-11e5-ba46-22000b92c6ec&origin_path=%2Fcitrine_mdf_demo%2Falloy.pbe%2FAg%2FAg.F4%2F"],"index":{"file":{"globus_host":"globus://82f1b5c6-6e9b-11e5-ba47-22000b92c6ec/mdf_open/_test_mayer_situ_observation_6wdtagb_v1.1/","http_host":"https://data.materialsdatafacility.org","local_path":"/home/ubuntu/data/_test_mayer_situ_observation_6wdtagb_v1.1/"}},"no_convert":true,"permission_groups":["cc192dca-3751-11e8-90c1-0a7c735d220a"],"services":{"citrine":false,"mdf_publish":{"doi_test":true,"publication_location":"globus://82f1b5c6-6e9b-11e5-ba47-22000b92c6ec/mdf_open/"},"mdf_search":{"index":"mdf-test"},"mrr":false},"submitter":"Ben Blaiszik","test":true,"update":false}}],"status_code":200,"success":true},"status":200,"statusText":"OK","headers":{"content-length":"4352","content-type":"application/json","date":"Wed, 06 Nov 2019 20:48:51 GMT","server":"Werkzeug/0.15.4 Python/3.7.3","vary":"Cookie"},"config":{"url":"/api/tasks","method":"get","headers":{"Accept":"application/json, text/plain, */*"},"transformRequest":[null],"transformResponse":[null],"timeout":0,"xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN","maxContentLength":-1},"request":{}}')
+          //self.res = data.data
+          axios.get('/api/tasks')
+            .then(function (res) {
+              self.res = res.data
+              console.log(res)
+            })
+            .catch(function (error) {
+                // handle error
+                self.error = error
+                console.log(error)
+            })
+          },
+          curate:function(action, source_id){
+            var self = this;
+            self.$set(self.in_progress, source_id, true)
+            axios.post('/api/curate',
+                      {action:action, source_id:source_id})
+            .then(function (res) {
+              self.$set(self.completed, source_id, action)
+              self.$set(self.in_progress, source_id, false)
+              console.log(res)
+            })
+            .catch(function (error) {
+                // handle error
+                self.error = error
+                console.log(error)
+            })
+          }
+     },
+      vuetify: new Vuetify()
+    })
+  </script>
+
+</body>
+
+</html>
