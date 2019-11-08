@@ -359,9 +359,17 @@
                     <v-toolbar color="primary" dark>
                             <v-toolbar-title>Debug</v-toolbar-title>
                     </v-toolbar>
+                    <v-btn color="primary" @click="fetch_doi">Fetch DOI</v-btn>
                     <v-btn color="primary" @click="fill_dummy_data">Fill Dummy Data</v-btn>
                             <pre><code class="json"> {{form}} </code></pre>
                     </div>
+                    DOI
+                    {{this.state.doi}}
+
+                    </div>
+
+
+
                     <!-- END Debug Elements -->
 
 
