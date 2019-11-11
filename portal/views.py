@@ -45,22 +45,18 @@ def get_mdfcc(status=None):
 
 ## DOI Helpers
 def fetch_datacite(doi):
-    print("Datacite: "+doi)
     dc = {"authors":None, "title":None}
     r = requests.get('https://api.datacite.org/dois/{doi}'.format(doi=doi))
     r = r.json()
-    print(r)
-    
     
     authors = [contributor['name'] for contributor in r['data']['attributes'].get('contributors', [])]    
     creators = [contributor['name'] for contributor in r['data']['attributes'].get('creators', [])]    
     dc['authors'] = list(set(authors + creators))
-
     dc['title'] = r['data']['attributes'].get('titles', [])[0]['title']
+
     return dc
 
 def fetch_crossref(doi):
-    print("Crossref: "+doi)
     dc = {"authors":None, "title":None}
     works = Works()
     r = works.doi(doi)
@@ -70,27 +66,21 @@ def fetch_crossref(doi):
 
     return dc
 
-
 def fetch_doi(doi):
     success = False
     
     try:
         print("Trying Datacite")
         r = fetch_datacite(doi)
-        print(r)
         success = True
     except Exception as e:
-        print(e)
         success = False
     
     if not success:
         try:
-            print("Trying Crossref")
             r = fetch_crossref(doi)
-            print(r)
             success = True
         except Exception as e:
-            print(e)
             success = False
     
     if  success:
