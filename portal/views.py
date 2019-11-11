@@ -5,6 +5,9 @@ from flask import (flash, Flask, jsonify, redirect, render_template,
 import globus_sdk
 import mdf_connect_client
 import json
+import requests
+
+from crossref.restful import Works
 
 from portal.decorators import authenticated
 
@@ -40,6 +43,56 @@ def get_mdfcc(status=None):
                                                     authorizer=mdf_authorizer)
     return mdfcc
 
+## DOI Helpers
+def fetch_datacite(doi):
+    print("Datacite: "+doi)
+    dc = {"authors":None, "title":None}
+    r = requests.get('https://api.datacite.org/dois/{doi}'.format(doi=doi))
+    r = r.json()
+    
+    dc['authors'] = [contributor['name'] for contributor in r['data']['attributes'].get('contributors', [])]    
+    dc['title'] = r['data']['attributes'].get('titles', [])[0]['title']
+    return dc
+
+def fetch_crossref(doi):
+    print("Crossref: "+doi)
+    dc = {"authors":None, "title":None}
+    works = Works()
+    r = works.doi(doi)
+    
+    dc['title'] = r['title'][0]
+    dc['authors'] = ["{}, {}".format(author['family'],author['given']) for author in r['author']]
+
+    return dc
+
+
+def fetch_doi(doi):
+    success = False
+    
+    try:
+        print("Trying Datacite")
+        r = fetch_datacite(doi)
+        print(r)
+        success = True
+    except:
+        success = False
+    
+    if not success:
+        try:
+            print("Trying Crossref")
+            r = fetch_crossref(doi)
+            print(r)
+            success = True
+        except:
+            success = False
+    
+    if  success:
+        return r
+    else:
+        return {"title":"", "authors":[]}    
+
+### End DOI Helpers
+
 
 @app.route('/', methods=['GET'])
 def home():
@@ -52,6 +105,31 @@ def home():
 def add_data():
     """Route for adding data"""
     return render_template('add_data.jinja2')
+
+@app.route('/api/doi', methods=['POST'])
+@authenticated
+def get_doi():
+    req = request.get_json()
+    doi = req['doi']
+    print(doi)
+    r = fetch_doi(doi)
+    print(r)
+
+    return jsonify(r, 200)
+
+
+
+
+    #  "dc": { 
+    #     "authors": [ "Emily Mayer", "Clayton S. Talbot", "Nunez, Victoria"], 
+    #     "affiliations": [ "University of Chicago", "Argonne National Laboratory" ], 
+    #     "description": "", 
+    #     "title": "In Situ Observation Dendrite Formation in Cu-Sn Alloys " + makeid(7), 
+    #     "subjects": [ "experiment", "machine learning","metals and alloys"] }, 
+    #     "contacts":["Victoria Nunez <nunez.xyz@uchicago.edu>"]
+    # }
+
+
 
 
 @app.route('/submissions', methods=['GET'])
@@ -80,6 +158,12 @@ def submissions():
     # return (jsonify(json_res), status_code)
     return render_template("submissions.jinja2", res=json_res)
     pass
+
+@app.route('/check_group', methods=['GET'])
+@authenticated
+def check_group():
+    pass
+
 
 @app.route('/status/<source_name>', methods=['GET'])
 @authenticated
