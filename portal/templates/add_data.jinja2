@@ -43,16 +43,37 @@
                         </v-toolbar>
                         <v-container fluid fill-width>
                             <v-form ref="form" v-model="state.valid" lazy-validation>
+                                <!-- DOI Fill -->
+                                <v-card tile class="mb-2">
+                                    <v-card-title>Fill via DOI</v-card-title>
+                                    <v-card-text>
+                                        <p> Use an existing DOI to pre-populate some fields </p>
+                                         <v-text-field v-model="state.doi" label="DOI" required>
+                                    </v-text-field>
+                                    <v-btn small color="primary" @click="fetch_doi">Go</v-btn>
+                                    </v-card-text>
+                                </v-card>
+
+                                
+                                <!-- -->
+
                                 <!-- Title Elements -->
-                                <div class="title"> Set Title </div>
-                                <v-text-field v-model="form.dc.title" :rules="rules.title" label="Title" required>
+                                <v-card tile class="mb-2">
+                                    <v-card-title>Set Title</v-card-title>
+                                    <v-card-text>
+                                         <v-text-field v-model="form.dc.title" :rules="rules.title" label="Title" required>
                                 </v-text-field>
+                                    </v-card-text>
+                               
+                                </v-card>
                                 <!-- END Title Elements -->
 
 
                                 <!-- Author Elements -->
-                               <div class="title"> Add authors</div>
-                                Accepts author names of the form of Einstein, Albert or Marie S. Curie. Press 'Enter/Return' or ';'' to create a new entry.
+                                <v-card tile class="mb-2">
+                                    <v-card-title>Add authors</v-card-title>
+                                <v-card-text>
+                                    Accepts author names of the form of Einstein, Albert or Marie S. Curie. Press 'Enter/Return' or ';'' to create a new entry.
                                 <v-combobox v-model="form.dc.authors" :delimiters="[';']" :rules="rules.combo" label="Authors" chips clearable solo multiple>
                                     <template v-slot:selection="data">
                                         <v-chip outlined color="primary" :input_value="data.selected" close
@@ -61,12 +82,15 @@
                                         </v-chip>
                                     </template>
                                 </v-combobox>
+                            </v-card-text></v-card>
                                 <!-- END Author Elements -->
 
 
                                 <!-- Affiliation Elements -->
-                                <div class="title"> Add affiliations</div>
-                                Press 'Enter/Return', ',', or ';'' to create a new entry or select from the pre-filled options.
+                                <v-card tile class="mb-2">
+                                    <v-card-title> Add affiliations</v-card-title>
+                                    <v-card-text>
+                                        Press 'Enter/Return', ',', or ';'' to create a new entry or select from the pre-filled options.
                                 <v-combobox v-model="form.dc.affiliations" :delimiters="[';',',']" :rules="rules.combo" :items="options.affiliations"
                                     label="Affiliations" required chips clearable solo multiple>
                                     <template v-slot:selection="data">
@@ -76,11 +100,19 @@
                                         </v-chip>
                                     </template>
                                 </v-combobox>
+                                    </v-card-text>
+                                </v-card>
+                                
                                 <!-- END Affiliation Elements -->
 
 
+
+
                                 <!-- Data Location Elements -->
-                                <div class="title">Add data locations.</div> 
+                                <v-card tile class="mb-2">
+                                    <v-card-title>Add data locations.</v-card-title>
+                                    <v-card-text>
+
                                 <v-alert
                                     icon="mdi-shield-lock-outline"
                                     prominent
@@ -128,11 +160,15 @@
                                         </v-chip>
                                     </template>
                                 </v-combobox>
+                                </v-card-text>
+                            </v-card>
                                 <!-- END Data Elements -->
 
 
                                 <!-- Tag Elements -->
-                                <div class="title">Add tags.</div> 
+                                <v-card tile class="mb-2">
+                                    <v-card-title>Add tags.</v-card-title>
+                                    <v-card-text>
                                 Press 'Enter/Return', ',' or ';' to create a new entry or select from the pre-filled options.
                                 <v-combobox v-model="form.dc.subjects" :delimiters="[',',';']" label="Tags" chips :items="options.subjects"
                                     clearable solo multiple>
@@ -143,10 +179,14 @@
                                         </v-chip>
                                     </template>
                                 </v-combobox>
+                            </v-card-text>
+                            </v-card>
                                 <!-- END Tag Elements -->
 
                                  <!-- Contact  Elements -->
-                                <div class="title"> Add dataset contacts.</div> 
+                                <v-card tile class="mb-2">
+                                    <v-card-title> Add dataset contacts.</v-card-title>
+                                    <v-card-text>
                                 Press 'Enter/Return', ',' or ';' to create a new entry.
                                 <v-combobox v-model="form.contacts" :rules="rules.combo" :delimiters="[';',',']" label="Contact information" chips clearable solo multiple>
                                     <template v-slot:selection="data">
@@ -156,20 +196,28 @@
                                         </v-chip>
                                     </template>
                                 </v-combobox>
+                            </v-card-text>
+                            </v-card>
                                 <!-- END Data Elements -->
 
 
 
                                 <!-- Description Elements -->
-                                <div class="title"> Set Description </div>
+                                <v-card tile class="mb-2">
+                                    <v-card-title> Set Description </v-card-title>
+                                    <v-card-text>
                                 <v-textarea name="input-7-1" v-model="form.dc.description" filled
                                     label="Dataset description (accepts markdown)" auto-grow value=""
                                     @click:close="update_markdown">
                                 </v-textarea>
+                            </v-card-text>
+                        </v-card>
                                 <!-- END Description Elements -->
 
                                 <!-- Organization Elements -->
-                                <div class="title"> Add Organization </div>
+                                <v-card tile class="mb-2">
+                                    <v-card-title> Add Organization </v-card-title>
+                                    <v-card-text>
                                 Organizations act as a template for how your dataset with be handled.
                                  <v-select v-model="form.organizations" :items="options.organizations"
                                 attach
@@ -177,13 +225,18 @@
                                 label="Organizations"
                                 multiple
                                 ></v-select>
+                            </v-card-text>
+                        </v-card>
                                 <!-- END Organization Elements -->
 
                                  <!-- Source Name Elements -->
-                                <div class="title"> Set Source Name </div>
+                                <v-card tile class="mb-2">
+                                    <v-card-title> Set Source Name </v-card-title>
+                                    <v-card-text>
                                 Source name is a unique identifier associated with your dataset. e.g., patel_my_dataset
                                 <v-text-field v-model="form.source_name" label="Source Name" required>
                                 </v-text-field>
+                            </v-card-text></v-card>
                                 <!-- END Source Name Elements -->
 
 
@@ -359,12 +412,9 @@
                     <v-toolbar color="primary" dark>
                             <v-toolbar-title>Debug</v-toolbar-title>
                     </v-toolbar>
-                    <v-btn color="primary" @click="fetch_doi">Fetch DOI</v-btn>
                     <v-btn color="primary" @click="fill_dummy_data">Fill Dummy Data</v-btn>
                             <pre><code class="json"> {{form}} </code></pre>
                     </div>
-                    DOI
-                    {{this.state.doi}}
 
                     </div>
 

@@ -77,6 +77,7 @@ desc:"This system allows for the registration of materials resources, bridging t
             passthrough: true
         },
         state: {
+            "doi":"",
             "spinner":false,
             "valid": true,
             "submit_success":false,
@@ -140,6 +141,17 @@ desc:"This system allows for the registration of materials resources, bridging t
                 self.state.valid = false
                 console.log("INVALID")
             }
+        },
+        fetch_doi(){
+            console.log("Fetching DOI")
+            self = this
+            console.log(this.state)
+            axios.post('/api/doi', {"doi":this.state.doi})
+            .then(function(response){
+                console.log(response)
+                self.form.dc.authors = response.data[0].authors
+                self.form.dc.title = response.data[0].title
+            })
         },
         fill_dummy_data(){
             function makeid(length) {

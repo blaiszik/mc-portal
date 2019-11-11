@@ -74,7 +74,8 @@ def fetch_doi(doi):
         r = fetch_datacite(doi)
         print(r)
         success = True
-    except:
+    except Exception as e:
+        print(e)
         success = False
     
     if not success:
@@ -83,7 +84,8 @@ def fetch_doi(doi):
             r = fetch_crossref(doi)
             print(r)
             success = True
-        except:
+        except Exception as e:
+            print(e)
             success = False
     
     if  success:
