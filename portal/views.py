@@ -49,8 +49,13 @@ def fetch_datacite(doi):
     dc = {"authors":None, "title":None}
     r = requests.get('https://api.datacite.org/dois/{doi}'.format(doi=doi))
     r = r.json()
+    print(r)
     
-    dc['authors'] = [contributor['name'] for contributor in r['data']['attributes'].get('contributors', [])]    
+    
+    authors = [contributor['name'] for contributor in r['data']['attributes'].get('contributors', [])]    
+    creators = [contributor['name'] for contributor in r['data']['attributes'].get('creators', [])]    
+    dc['authors'] = list(set(authors + creators))
+
     dc['title'] = r['data']['attributes'].get('titles', [])[0]['title']
     return dc
 
