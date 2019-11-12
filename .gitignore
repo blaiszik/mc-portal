@@ -71,3 +71,6 @@ typings/
 
 # dotenv environment variables file
 .env
+
+# Icon set
+portal/static/icons/

@@ -345,6 +345,16 @@
 
                                     <h4>Data Locations</h4>
                                     <div> {{ form.data.join(', ') }} </div>
+                            
+                            <v-alert
+                            v-if="!state.valid"
+                            type="error"
+                            dense
+                            outlined
+                            >
+                            The submission is missing required inputs.
+                            </v-alert>
+                                   
                              </v-card-text>
 
                             <v-card-actions>
