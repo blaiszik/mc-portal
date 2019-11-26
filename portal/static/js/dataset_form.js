@@ -61,7 +61,8 @@ desc:"This system allows for the registration of materials resources, bridging t
                 "affiliations": [],
                 "description": "",
                 "title": "",
-                "subjects": []
+                "subjects": [],
+                "related_dois":[]
             },
             "services":{
                 "mdf_publish": false,
@@ -146,11 +147,12 @@ desc:"This system allows for the registration of materials resources, bridging t
             console.log("Fetching DOI")
             self = this
             console.log(this.state)
-            axios.post('/api/doi', {"doi":this.state.doi})
+            axios.post('/api/doi', {"doi":self.state.doi})
             .then(function(response){
                 console.log(response)
                 self.form.dc.authors = response.data[0].authors
                 self.form.dc.title = response.data[0].title
+                self.form.dc.related_dois.push(self.state.doi)
             })
         },
         fill_dummy_data(){
@@ -161,27 +163,72 @@ desc:"This system allows for the registration of materials resources, bridging t
                    result += characters.charAt(Math.floor(Math.random() * characters.length));
                 }
                 return result;
-             }
+            }
 
             this.form = {
-                "dc": { 
-                    "authors": [ "Emily Mayer", "Clayton S. Talbot", "Nunez, Victoria"], 
-	                "affiliations": [ "University of Chicago", "Argonne National Laboratory" ], 
-	                "description": "", 
-	                "title": "In Situ Observation Dendrite Formation in Cu-Sn Alloys " + makeid(7), 
-	                "subjects": [ "experiment", "machine learning","metals and alloys"] }, 
-	                "services": { 
-                        "mdf_publish": true, 
-                        "mrr": false, 
-                        "citrine": false 
-                    }, 
-                    "contacts":["Victoria Nunez <nunez.xyz@uchicago.edu>"],
-                    "acl": "public",
-                    "data": [ "https://app.globus.org/file-manager?origin_id=e38ee745-6d04-11e5-ba46-22000b92c6ec&origin_path=%2Fcitrine_mdf_demo%2Falloy.pbe%2FAg%2FAg.F4%2F" ],
-                    "organizations":"MDF Open",
-                    "test": true,
-                    "passthrough": false,
-                    "update":false
+               "dc": {
+                  "authors": [
+                    "Su-Yang Ma",
+                    "Qiong Ma",
+                    "Yang Gao",
+                    "Anshul Kogar",
+                    "Guo Alfred Zong",
+                    "Mier Valdivia, Andres M.",
+                    "Thao H. Dinh",
+                    "Shin-Ming Huang",
+                    "Bahadur Singh",
+                    "Chuang-Han Hsu",
+                    "Tay-Rong Chang",
+                    "Jacob P.C. Ruff",
+                    "Kenji Watanabe",
+                    "Takashi Taniguchi",
+                    "Hsin Lin",
+                    "Goran Karapetrov",
+                    "Di Xiao",
+                    "Pablo Jarillo-Herrero",
+                    "Nuh Gedik"
+                  ],
+                  "affiliations": [
+                    "Massachusetts Institute of Technology",
+                    "National Sun Yat-sen University",
+                    "Shenzhen University",
+                    "Northeastern University",
+                    "National University of Singapore",
+                    "National Cheng Kung University",
+                    "National Institute for Materials Science Japan",
+                    "Academica Sinica",
+                    "Drexel University",
+                    "Carnegie Mellon University"
+                  ],
+                  "description": "Experimental data accompanying publication (Nature) \"Optical detection and manipulation of spontaneous gyrotropic electronic order in a transition-metal dichalcogenide semimetal\"\nThe experimental data were collected from four samples, grouped into their individual folders. *.ibw is Igor binary file and .pxp is Igor Packed Experiment file that contains Igor waves. They need to be opened with Igor Pro. Simple description of the data can be found from the name of the file and folder.",
+                  "title": "Data sets for \"Optical detection and manipulation of spontaneous gyrotropic 1 electronic order in a transition-metal dichalcogenide semimetal\" Nature paper",
+                  "subjects": [
+                    "experiment",
+                    "2D Material",
+                    "Chiral photogalvanic current",
+                    "Chiral electronic phases"
+                  ]
+                },
+                "services": {
+                  "mdf_publish": true,
+                  "mrr": false,
+                  "citrine": false
+                },
+                "contacts": [
+                  "qiongm@mit.edu",
+                  "heinonen@anl.gov"
+                ],
+                "source_name": "Qiong_TiSe2_Nature_20191120",
+                "organizations": [
+                  "MDF Open"
+                ],
+                "acl": "public",
+                "data": [
+                  "https://app.globus.org/file-manager?origin_id=17ddaece-20be-11e9-9835-0262a1f2f698"
+                ],
+                "test": false,
+                "passthrough": false,
+                "update": true
             }
 
         }

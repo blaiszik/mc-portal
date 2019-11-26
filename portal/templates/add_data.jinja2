@@ -32,7 +32,7 @@
                     <v-spacer></v-spacer>
                     <v-btn class="ma-2" href="https://petreldata.net/mdf/?q=*&filter-match-any.mdf.resource_type=dataset" target="_blank"> Browse Datasets </v-btn>
                     <v-btn class="ma-2" href="/submissions"> My Submissions </v-btn>
-                  
+                    <v-btn class="ma-2" href="/curate"> My Tasks </v-btn>
                 </v-toolbar>
             <v-content>
            
@@ -130,11 +130,14 @@
                                 <li>
                                     Copy the link to your data with the `Get Link` button in the Globus web app
                                 </li>
+                                <li>
+                                    Add this link as a data location
+                                </li>
                             </ul>
 
                             <h5> For HTTP Data </h5>
                             <ul>
-                            <li>Specify an openly accessible archive of the dataset. e.g., http://myhost.com/myfile.zip</li>
+                            <li>Specify a public archive of the dataset. e.g., http://host.com/file.zip as a data location</li>
                             </ul>
 
 
@@ -142,6 +145,9 @@
                             <ul>
                                 <li>
                                 Share the data path (read access) with materialsdatafacility@gmail.com
+                                </li>
+                                <li>
+                                Add google:///my_path as a data location (note triple `/`)
                                 </li>
                             </ul>
                             </v-alert>
@@ -408,7 +414,7 @@
                         </v-toolbar>
                         <v-checkbox v-model="form.update" label="Submit New Version"
                         :value=false></v-checkbox>
-                        <v-checkbox v-model="form.test" label="Test Submission"
+                        <v-checkbox v-model="form.test" label="Submit as Test Submission"
                         :value=false></v-checkbox>
                         <v-checkbox v-model="form.passthrough" label="Skip Data Extraction"
                         :value=false></v-checkbox>
