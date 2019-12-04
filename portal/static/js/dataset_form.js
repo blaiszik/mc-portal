@@ -104,11 +104,7 @@ desc:"This system allows for the registration of materials resources, bridging t
             console.log(_.get(this, path));
         },
         update_markdown(v) {
-            console.log(v)
-            this.state.markdown = marked(v, {
-                sanitize: true
-            })
-            console.log(this.state.markdown)
+            this.state.markdown = marked(v)
         },
         submit_dataset(v) {
             var self = this;

@@ -9,9 +9,10 @@
     
     <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
-    <script src="https://unpkg.com/marked@0.3.6"></script>
+    <script src="https://unpkg.com/marked@0.7.0"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+    
 
     <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/default.min.css">
     <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/highlight.min.js"></script>
@@ -214,7 +215,7 @@
                                     <v-card-text>
                                 <v-textarea name="input-7-1" v-model="form.dc.description" filled
                                     label="Dataset description (accepts markdown)" auto-grow value=""
-                                    @click:close="update_markdown">
+                                    @blur="update_markdown(form.dc.description)">
                                 </v-textarea>
                             </v-card-text>
                         </v-card>
