@@ -111,7 +111,7 @@
 
                                 <!-- Data Location Elements -->
                                 <v-card tile class="mb-2">
-                                    <v-card-title>Add data locations.</v-card-title>
+                                    <v-card-title>Add data locations</v-card-title>
                                     <v-card-text>
 
                                 <v-alert
@@ -174,7 +174,7 @@
 
                                 <!-- Tag Elements -->
                                 <v-card tile class="mb-2">
-                                    <v-card-title>Add tags.</v-card-title>
+                                    <v-card-title>Add tags</v-card-title>
                                     <v-card-text>
                                 Press 'Enter/Return', ',' or ';' to create a new entry or select from the pre-filled options.
                                 <v-combobox v-model="form.dc.subjects" :delimiters="[',',';']" label="Tags" chips :items="options.subjects"
@@ -192,7 +192,7 @@
 
                                  <!-- Contact  Elements -->
                                 <v-card tile class="mb-2">
-                                    <v-card-title> Add dataset contacts.</v-card-title>
+                                    <v-card-title> Add dataset contacts</v-card-title>
                                     <v-card-text>
                                 Press 'Enter/Return', ',' or ';' to create a new entry.
                                 <v-combobox v-model="form.contacts" :rules="rules.combo" :delimiters="[';',',']" label="Contact information" chips clearable solo multiple>
@@ -409,20 +409,54 @@
                             </v-layout>
                     </div>
                     
-                    <!-- Advanced Options Elements -->
+                    <!-- Dataset Options Elements -->
                      <v-toolbar color="primary" dark>
-                            <v-toolbar-title>Advanced Options</v-toolbar-title>
+                            <v-toolbar-title>Dataset Options</v-toolbar-title>
                             <v-spacer></v-spacer>
                         </v-toolbar>
-                        <v-checkbox v-model="form.update" label="Submit New Version"
-                        :value=false></v-checkbox>
-                        <v-checkbox v-model="form.test" label="Submit as Test Submission"
-                        :value=false></v-checkbox>
-                        <v-checkbox v-model="form.passthrough" label="Skip Data Extraction"
-                        :value=false></v-checkbox>
-                        <v-checkbox v-model="state.debug" label="Debug Mode"
-                        :value=false></v-checkbox>
-                    <!-- END Advanced Options Elements -->
+
+                        <v-card tile class="mb-2">
+                                    <v-card-title mb-0>
+                                       <v-checkbox v-model="form.update" v-on="on" label="Submit a Dataset Revision"
+                        :value=false></v-checkbox></v-card-title>
+                                    <v-card-subtitle>
+                                    To submit a dataset revision, check this box, and ensure your source name matches your previous submission. 
+                                    This is only necessary if you have submitted the same dataset previously and would like to create a new version.
+                                    </v-card-subtitle>
+                        </v-card>
+
+                        <v-card tile class="mb-2">
+                                    <v-card-title>
+                                      <v-checkbox v-model="form.test" label="Submit Dataset as a Test Submission"
+                        :value=false></v-checkbox> </v-card-title>
+                                    <v-card-subtitle>
+                                    To submit a this dataset as a test submission, check this box. 
+                                    Test submissions enable testing of dataset extractions and more without creating permanent datasets or identifiers (e.g., DOIs). 
+                                    </v-card-subtitle>
+                        </v-card>
+
+                        <v-card tile class="mb-2">
+                                    <v-card-title>
+                                        <v-checkbox v-model="form.passthrough" label="Skip Data Extraction"
+                                :value=false></v-checkbox></v-card-title>
+                                    <v-card-subtitle>
+                                    If your data are larger than 50 GB, please check this box.
+                                    </v-card-subtitle>
+                        </v-card>
+
+                         <v-card tile class="mb-2">
+                                    <v-card-title>
+                                        <v-checkbox v-model="state.debug" label="Debug Mode"
+                        :value=false></v-checkbox></v-card-title>
+                                    <v-card-subtitle>
+                                    To enable Debug mode, check this box.
+                                    </v-card-subtitle>
+                        </v-card>
+
+                        
+                        
+                    <!-- END Dataset Options Elements -->
+
                     
 
                     <!-- Debug Elements -->
@@ -430,6 +464,7 @@
                     <v-toolbar color="primary" dark>
                             <v-toolbar-title>Debug</v-toolbar-title>
                     </v-toolbar>
+                    
                     <v-btn color="primary" @click="fill_dummy_data">Fill Dummy Data</v-btn>
                             <pre><code class="json"> {{form}} </code></pre>
                     </div>
