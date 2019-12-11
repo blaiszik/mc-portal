@@ -1,6 +1,8 @@
 {%extends "base.jinja2"%}
 
-{%block title%}Home{%endblock%}
+
+
+{%block title%}MDF - Home{%endblock%}
 
 {%block body%}
 
@@ -59,13 +61,9 @@
                             <img class="mb-3" src="{{url_for('static', filename='icons/primary/numbers-2.svg')}}" height="64px">
                             <h3 class="h5 mb-2 mr-4">Collect<span> <img src="{{url_for('static', filename='icons/primary/science-20.svg')}}" class="mb-1" height="32px"> </span></h3>
                             <p> Collect the data into your preferred file structure, preferably in openly accessible formats. Feel free to nest files as deeply as necessary for your use case, our indexers will find them! </p>
-                            <ul class="list-unstyled mb-2">
-                                <li class="mb-2">
-                                    <i class="fa fa-chevron-circle-right mr-2"></i>
-                                    <a class="btn btn-lg btn-outline-dark mr-2" href="https://app.globus.org/endpoints">
-                                        Set up an endpoint</a>
-                                </li>
-                            </ul>
+                           <p> MDF Supports data collection from:
+                        Globus endpoints, Google Drive, HTTPS accessible data (e.g., Zenodo, Figshare, group web server)
+                            
                         </div>
                         <div class="col-lg-4 col-md-6 col-sm-12 text-left pt-2">
                             <img class="mb-3" src="{{url_for('static', filename='icons/primary/numbers-3.svg')}}" height="64px">
@@ -84,10 +82,60 @@
                             </ul>
                         </div>
                     </div>
-
+<div id="app">
+  <v-app id="inspire">
+                    <v-card>
+      <v-toolbar flat color="primary" dark>
+        <v-toolbar-title>Publish Quick-start Videos</v-toolbar-title>
+      </v-toolbar>
+      <v-tabs vertical>
+       
+        <v-tab>
+          Publish Data with Globus
+        </v-tab>
+        <v-tab>
+          Publish Data with Google Drive
+        </v-tab>
+         <v-tab>
+          Easier Form Completion
+        </v-tab>
+  
+    
+       
+        <v-tab-item>
+          <v-card flat>
+            <v-card-text>
                 <video class="js--quickdemo" playsinline="" muted="" autoplay="" loop="" style="width: 100%; height: auto;">
+        <source src="{{url_for('static', filename='movies/globus-publish.mp4')}}" type="video/mp4">
+      </video>
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+
+        <v-tab-item>
+          <v-card flat>
+            <v-card-text>
+              <video class="js--quickdemo" playsinline="" muted="" autoplay="" loop="" style="width: 100%; height: auto;">
+        <source src="{{url_for('static', filename='movies/google-publish.mp4')}}" type="video/mp4">
+      </video>
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+            <v-tab-item>
+          <v-card flat>
+            <v-card-text>
+              <video class="js--quickdemo" playsinline="" muted="" autoplay="" loop="" style="width: 100%; height: auto;">
         <source src="{{url_for('static', filename='movies/fill_doi.mp4')}}" type="video/mp4">
       </video>
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+      </v-tabs>
+    </v-card>
+    </v-app>
+    </div>
+
+                
                
                 <hr>
                     <div class="row mb-1">
@@ -179,6 +227,13 @@
         </footer>
         <!-- Footer -->
 
+<script type="text/javascript">
+new Vue({
+  el: '#app',
+  vuetify: new Vuetify(),
+  
+})
+</script>
 
 
 {%endblock%}
