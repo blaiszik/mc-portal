@@ -365,7 +365,7 @@
                              </v-card-text>
 
                             <v-card-actions>
-                                <v-btn color="primary" @click="submit_dataset" v-if="state.response === null || !state.submit_success">Submit</v-btn>
+                                <v-btn color="primary" @click="submit_dataset">Submit</v-btn>
                                 <v-progress-circular
                                     indeterminate
                                     color="primary"
@@ -395,13 +395,13 @@
                               </v-alert>
 
                               <v-alert
-                                v-if="state.submit_success && state.response !== null"
+                                v-if="state.submit_success"
                                 :value="true"
                                 color="success"
                                 outlined
                               >
                             <h1> Success! </h1>
-                             <v-btn color="success" :href="/status/+state.response.data.source_id">
+                             <v-btn color="success" :href="/status/+state.response.data.source_id" target="_blank">
                                Track the status of your submission
                             </v-btn>
                               </v-alert>
