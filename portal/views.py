@@ -6,11 +6,14 @@ import globus_sdk
 import mdf_connect_client
 import json
 import requests
+from mdf_forge.forge import Forge
+
 
 from crossref.restful import Works
 
 from portal.decorators import authenticated
 
+forge = Forge(anonymous=True)
 
 app = Flask(__name__)
 app.config.from_pyfile("portal.conf")
@@ -187,6 +190,16 @@ def status(source_name):
 
     # return (jsonify(json_res), status_code)
     return render_template("status.jinja2", status_res=json_res)
+
+@app.route('/api/organizations/', methods=['GET'])
+def api_organizations():
+    res = forge.describe_organization("all", raw=True)
+    return (jsonify(res), 200)
+
+@app.route('/organizations/', methods=['GET'])
+@authenticated
+def organizations():
+    return render_template('organizations.jinja2')
 
 @app.route('/api/tasks/', methods=['GET'])
 def tasks():

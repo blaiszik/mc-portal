@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <script src="https://unpkg.com/marked@0.3.6"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <title>MDF - Curation</title>
+</head>
+
+<body>
+{%include 'header.jinja2'%}
+{% raw %}
+  <div id="app">
+    <v-container>
+      <v-app id="inspire">
+        <v-content>
+          <v-layout left-justify>
+              <v-container fluid fill-width>
+                  <v-toolbar dense>
+                      <v-toolbar-title></v-toolbar-title>
+                      Organizations
+                      <v-spacer></v-spacer>
+                      <v-btn class="ma-2" href="/add"> Submit Another Dataset </v-btn>
+                      <v-btn class="ma-2" href="https://petreldata.net/mdf/?q=*&filter-match-any.mdf.resource_type=dataset"
+                        target="_blank"> Browse Datasets </v-btn>
+                </v-toolbar>
+                <p class="text-center ma-5">
+                      <v-progress-circular v-if="!completed"
+                                      :size="50"
+                                      color="primary"
+                                      indeterminate
+                                    ></v-progress-circular>
+                </p>
+             
+               <v-card class="ma-2" v-for="org in res.organization">
+                  <v-card-title primary-title>
+                    {{org.canonical_name}}
+                  </v-card-title>
+                  <v-card-text>
+                    <div>
+                      Aliases: {{org.aliases}}
+                    </div>
+                    <div>
+                      Services: {{org.services}}
+                    </div>
+                      <p>
+                      {{org.description}}
+                      </p>
+                      
+                  </v-card-text>
+                  
+
+                </v-card>
+
+                <v-card v-if="error.text" class="ma-2" >
+                  <v-card-title>
+                  <v-alert type="error">
+                        An error occurred
+                      </v-alert>
+                  </v-card-title>
+                  <v-card-text>
+                    Please refresh the page. If the error persists, please contact blaiszik@uchicago.edu with the following information
+                    <div>
+                      {{error}}
+                    </div>
+                  </v-card-text>
+                    </v-card>
+              </v-container>
+        </v-content>
+      </v-app>
+  </v-container>
+</div>
+{% endraw %}
+
+  <script>
+    Vue.use(Vuetify)
+    new Vue({
+      el: '#app',
+      mounted:function(){
+        this.get_tasks() //method1 will execute at pageload
+      },
+      data: () => ({
+        "res":{},
+        "error":{},
+        "completed":{},
+        "in_progress":{}
+      }),
+      methods:{
+        get_tasks:function(){
+          var self = this;
+          axios.get('/api/organizations')
+            .then(function (res) {
+              self.res = res.data
+              self.$set(self.completed, true)
+              console.log(res)
+            })
+            .catch(function (error) {
+                // handle error
+                self.error = error
+                console.log(error)
+            })
+          }
+     },
+      vuetify: new Vuetify()
+    })
+  </script>
+
+</body>
+</html>
