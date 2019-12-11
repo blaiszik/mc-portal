@@ -86,7 +86,8 @@ desc:"This system allows for the registration of materials resources, bridging t
             "items": [],
             "markdown": "",
             "response":null,
-            "debug":false
+            "debug":false,
+            "form_json":""
         }
     }),
 
@@ -182,6 +183,9 @@ desc:"This system allows for the registration of materials resources, bridging t
                     "update":false
             }
 
+        },
+        fill_form_data(json){
+            this.form = JSON.parse(json)
         }
     }
 })

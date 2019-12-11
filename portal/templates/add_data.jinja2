@@ -464,9 +464,16 @@
                     <v-toolbar color="primary" dark>
                             <v-toolbar-title>Debug</v-toolbar-title>
                     </v-toolbar>
-                    
+                    <h1> Current Form Info </h1>
                     <v-btn color="primary" @click="fill_dummy_data">Fill Dummy Data</v-btn>
                             <pre><code class="json"> {{form}} </code></pre>
+                    <h1> Fill Form with JSON (not recommended!) </h1>
+                    <v-textarea name="input-7-2" v-model="state.form_json" filled
+                                    auto-grow value=""
+                                    @blur="fill_form_data(state.form_json)">
+                                </v-textarea>
+
+                    
                     </div>
 
                     </div>
