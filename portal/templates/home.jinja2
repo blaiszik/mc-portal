@@ -1,7 +1,5 @@
 {%extends "base.jinja2"%}
 
-
-
 {%block title%}MDF - Home{%endblock%}
 
 {%block body%}
@@ -82,7 +80,8 @@
                             </ul>
                         </div>
                     </div>
-<div id="app">
+
+<div id="app" pa-0>
   <v-app id="inspire">
                     <v-card>
       <v-toolbar flat color="primary" dark>
@@ -99,15 +98,13 @@
          <v-tab>
           Easier Form Completion
         </v-tab>
-  
-    
-       
+        
         <v-tab-item>
           <v-card flat>
             <v-card-text>
                 <video class="js--quickdemo" playsinline="" muted="" autoplay="" loop="" style="width: 100%; height: auto;">
-        <source src="{{url_for('static', filename='movies/globus-publish.mp4')}}" type="video/mp4">
-      </video>
+                    <source src="{{url_for('static', filename='movies/globus-publish.mp4')}}" type="video/mp4">
+                </video>
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -115,30 +112,26 @@
         <v-tab-item>
           <v-card flat>
             <v-card-text>
-              <video class="js--quickdemo" playsinline="" muted="" autoplay="" loop="" style="width: 100%; height: auto;">
-        <source src="{{url_for('static', filename='movies/google-publish.mp4')}}" type="video/mp4">
-      </video>
+                <video class="js--quickdemo" playsinline="" muted="" autoplay="" loop="" style="width: 100%; height: auto;">
+                    <source src="{{url_for('static', filename='movies/google-publish.mp4')}}" type="video/mp4">
+                </video>
             </v-card-text>
           </v-card>
         </v-tab-item>
-            <v-tab-item>
+
+        <v-tab-item>
           <v-card flat>
             <v-card-text>
-              <video class="js--quickdemo" playsinline="" muted="" autoplay="" loop="" style="width: 100%; height: auto;">
-        <source src="{{url_for('static', filename='movies/fill_doi.mp4')}}" type="video/mp4">
-      </video>
+                <video class="js--quickdemo" playsinline="" muted="" autoplay="" loop="" style="width: 100%; height: auto;">
+                    <source src="{{url_for('static', filename='movies/fill_doi.mp4')}}" type="video/mp4">
+                </video>
             </v-card-text>
           </v-card>
         </v-tab-item>
+
       </v-tabs>
     </v-card>
-    </v-app>
-    </div>
-
-                
-               
-                <hr>
-                    <div class="row mb-1">
+ <div class="row mb-1">
                             <div class="col-lg-4 col-md-10 col-sm-12 mx-auto text-left">
                                 <h3 class="h5 mb-1">Publish Large Datasets </h3>
                                 <p class="mb-0 text-secondary">
@@ -159,8 +152,14 @@
                     </div>
                   
                 </div>
-                
             </div>
+
+            
+    </v-app>
+    </div>
+
+           
+       
         
             <div class="py-2 bg-transparent" id="content-stats">
                 <div class="container py-2">
