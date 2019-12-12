@@ -101,7 +101,31 @@
         
         <v-tab-item>
           <v-card flat>
+          <v-card-title>Publish Data with Globus</v-card-title>
             <v-card-text>
+             <v-alert
+                icon="mdi-cloud-download"
+                prominent
+                text
+                type="info"
+            >
+                <p>           
+                    <ul>
+                        <li>
+                            No additional permissions are required to share data from Globus endpoints
+                        </li>
+                        <li>
+                            Paths with `~` characters are invalid, full paths must be used
+                        </li>
+                        <li>
+                            Copy the link to your data with the `Get Link` button in the Globus web app
+                        </li>
+                        <li>
+                            Add this link as a data location
+                        </li>
+                    </ul>
+                </p>
+                </v-alert>
                 <video class="js--quickdemo" playsinline="" muted="" autoplay="" loop="" style="width: 100%; height: auto;">
                     <source src="{{url_for('static', filename='movies/globus-publish.mp4')}}" type="video/mp4">
                 </video>
@@ -112,6 +136,24 @@
         <v-tab-item>
           <v-card flat>
             <v-card-text>
+            
+            <v-alert
+                icon="mdi-cloud-download"
+                prominent
+                text
+                type="info"
+            >
+            <p>
+            <ul>
+                <li>
+                Share the data path (read access) with materialsdatafacility@gmail.com
+                </li>
+                <li>
+                Add google:///my_path as a data location (note triple `/`)
+                </li>
+            </ul>
+            </p>
+            </v-alert>
                 <video class="js--quickdemo" playsinline="" muted="" autoplay="" loop="" style="width: 100%; height: auto;">
                     <source src="{{url_for('static', filename='movies/google-publish.mp4')}}" type="video/mp4">
                 </video>
@@ -131,7 +173,7 @@
 
       </v-tabs>
     </v-card>
- <div class="row mb-1">
+ <div class="row mb-0">
                             <div class="col-lg-4 col-md-10 col-sm-12 mx-auto text-left">
                                 <h3 class="h5 mb-1">Publish Large Datasets </h3>
                                 <p class="mb-0 text-secondary">
