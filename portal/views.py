@@ -285,7 +285,7 @@ def convert():
         if metadata.get("dc"):
             mdfcc.create_dc_block(**metadata["dc"])
         if metadata.get("acl"):
-            mdfcc.set_acl(metadata["acl"])
+            mdfcc.set_base_acl(metadata["acl"])
         if metadata.get("source_name"):
             mdfcc.set_source_name(metadata["source_name"])
         if metadata.get("repositories"):
