@@ -56,7 +56,7 @@
                                 </v-card>
 
                                   <v-toolbar color="green lighten-2" dark flat>
-                                    <v-toolbar-title>Required Inputs</v-toolbar-title>
+                                    <v-toolbar-title>Required Steps</v-toolbar-title>
                                 </v-toolbar>
                                 <!-- -->
 
@@ -188,7 +188,7 @@
                                 <!-- END Contact Elements -->
 
                                 <v-toolbar color="green lighten-2" dark flat>
-                                    <v-toolbar-title>Optional Inputs</v-toolbar-title>
+                                    <v-toolbar-title>Optional Steps</v-toolbar-title>
                                 </v-toolbar>
                                 <!-- Tag Elements -->
                                 <v-card tile class="mb-2">
@@ -383,7 +383,7 @@
                              </v-card-text>
 
                             <v-card-actions>
-                                <v-btn color="primary" @click="submit_dataset">Submit</v-btn>
+                                <v-btn color="primary" @click="submit_dataset" v-bind:disabled="state.spinner">Submit</v-btn>
                                 <v-progress-circular
                                     indeterminate
                                     color="primary"
