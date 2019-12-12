@@ -55,7 +55,9 @@
                                     </v-card-text>
                                 </v-card>
 
-                                
+                                  <v-toolbar color="green lighten-2" dark flat>
+                                    <v-toolbar-title>Required Inputs</v-toolbar-title>
+                                </v-toolbar>
                                 <!-- -->
 
                                 <!-- Title Elements -->
@@ -168,7 +170,26 @@
                             </v-card>
                                 <!-- END Data Elements -->
 
+                                <!-- Contact  Elements -->
+                                <v-card tile class="mb-2">
+                                    <v-card-title> Add dataset contacts</v-card-title>
+                                    <v-card-text>
+                                Press 'Enter/Return', ',' or ';' to create a new entry.
+                                <v-combobox v-model="form.contacts" :rules="rules.combo" :delimiters="[';',',']" label="Contact information" chips clearable solo multiple>
+                                    <template v-slot:selection="data">
+                                        <v-chip outlined color="primary" :input_value="data.selected" close
+                                            @click:close="remove_item(data.item, 'form.contacts')">
+                                            <strong>{{ data.item }}</strong>&nbsp;
+                                        </v-chip>
+                                    </template>
+                                </v-combobox>
+                            </v-card-text>
+                            </v-card>
+                                <!-- END Contact Elements -->
 
+                                <v-toolbar color="green lighten-2" dark flat>
+                                    <v-toolbar-title>Optional Inputs</v-toolbar-title>
+                                </v-toolbar>
                                 <!-- Tag Elements -->
                                 <v-card tile class="mb-2">
                                     <v-card-title>Add tags</v-card-title>
@@ -187,7 +208,7 @@
                             </v-card>
                                 <!-- END Tag Elements -->
 
-                                <!-- Tag Elements -->
+                                <!-- Related Work Elements -->
                                 <v-card tile class="mb-2">
                                     <v-card-title>Add links to related works</v-card-title>
                                     <v-card-text>
@@ -204,26 +225,7 @@
                                 </v-combobox>
                             </v-card-text>
                             </v-card>
-                                <!-- END Tag Elements -->
-
-                                 <!-- Contact  Elements -->
-                                <v-card tile class="mb-2">
-                                    <v-card-title> Add dataset contacts</v-card-title>
-                                    <v-card-text>
-                                Press 'Enter/Return', ',' or ';' to create a new entry.
-                                <v-combobox v-model="form.contacts" :rules="rules.combo" :delimiters="[';',',']" label="Contact information" chips clearable solo multiple>
-                                    <template v-slot:selection="data">
-                                        <v-chip outlined color="primary" :input_value="data.selected" close
-                                            @click:close="remove_item(data.item, 'form.contacts')">
-                                            <strong>{{ data.item }}</strong>&nbsp;
-                                        </v-chip>
-                                    </template>
-                                </v-combobox>
-                            </v-card-text>
-                            </v-card>
-                                <!-- END Data Elements -->
-
-
+                                <!-- END Related Work Elements -->
 
                                 <!-- Description Elements -->
                                 <v-card tile class="mb-2">
