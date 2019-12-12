@@ -106,9 +106,6 @@
                                 
                                 <!-- END Affiliation Elements -->
 
-
-
-
                                 <!-- Data Location Elements -->
                                 <v-card tile class="mb-2">
                                     <v-card-title>Add data locations</v-card-title>
@@ -182,6 +179,25 @@
                                     <template v-slot:selection="data">
                                         <v-chip outlined label color="primary" :input_value="data.selected" close
                                              @click:close="remove_item(data.item, 'form.dc.subjects')">
+                                            <strong>{{ data.item }}</strong>&nbsp;
+                                        </v-chip>
+                                    </template>
+                                </v-combobox>
+                            </v-card-text>
+                            </v-card>
+                                <!-- END Tag Elements -->
+
+                                <!-- Tag Elements -->
+                                <v-card tile class="mb-2">
+                                    <v-card-title>Add links to related works</v-card-title>
+                                    <v-card-text>
+                                    Add DOIs associated with journal publications, other related datasets, etc. Entries should be DOIs.
+                                Press 'Enter/Return', ',' or ';' to create a new entry or select from the pre-filled options.
+                                <v-combobox v-model="form.dc.related_dois" :delimiters="[',',';']" label="DOIs" chips
+                                    clearable solo multiple>
+                                    <template v-slot:selection="data">
+                                        <v-chip outlined label color="primary" :input_value="data.selected" close
+                                             @click:close="remove_item(data.item, 'form.dc.related_dois')">
                                             <strong>{{ data.item }}</strong>&nbsp;
                                         </v-chip>
                                     </template>
