@@ -43,22 +43,13 @@
                         <v-container fluid fill-width>
                         {% if status_res.status.active == true %}
                         <v-chip
-                                  class="ma-2"
-                                  color="primary"
-                                  text-color="white"
-                                  label
-                                >
-                                  Active
-                                </v-chip>
-                        {% else %}
-                                <v-chip
-                                  class="ma-2"
-                                  color="red"
-                                  text-color="white"
-                                  label
-                                >
-                                  Inactive
-                                </v-chip>
+                                    class="ma-2"
+                                    color="primary"
+                                    text-color="white"
+                                    label
+                                  >
+                                    Processing
+                                  </v-chip>
                         {% endif %}
 
                          {% if status_res.success == true %}
