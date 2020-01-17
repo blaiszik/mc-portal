@@ -24,7 +24,8 @@ new Vue({
             "organizations": ["MDF Open", 
                               "Center for Hierarchical Materials Design (CHiMaD)", 
                               "Center for Predictive Simulation of Functional Materials (CPSFM)",
-                              "AFRL Additive Manufacturing Challenge"
+                              "AFRL Additive Manufacturing Challenge",
+                              "Hersam Group"
                             ],
             "services": [{
                     title: 'MDF Publish',
