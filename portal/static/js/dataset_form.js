@@ -75,7 +75,7 @@ desc:"This system allows for the registration of materials resources, bridging t
             organizations: ["MDF Open"],
             acl: "public",
             data: [],
-            test: true,
+            test: false,
             passthrough: true
         },
         state: {

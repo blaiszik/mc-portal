@@ -391,6 +391,7 @@
                                     color="primary"
                                     v-if="state.spinner"
                                 ></v-progress-circular>
+                                   
                             </v-card-actions>
                         </v-card>
                       
@@ -409,7 +410,11 @@
                                 type="error"
                                 elevation="2"
                                 >
-                                Submission failed, please contact the MDF team (blaiszik@uchicago.edu) with the information below.
+                                <div> If you haven't already, please <a class="btn btn-lg btn-outline-dark mr-2" 
+                                href="https://app.globus.org/groups/cc192dca-3751-11e8-90c1-0a7c735d220a/about" target="_blank">
+                                        Join this Group</a> and re-submit.</div>
+
+                                <div> Submission failed, please contact the MDF team (blaiszik@uchicago.edu) with the information below. </div>
                                 <div>{{state.response.status}} - {{state.response.statusText}}</div>
                                 <div> {{state.response.data.error}} </div>
                               </v-alert>
