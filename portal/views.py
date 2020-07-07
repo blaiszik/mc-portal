@@ -1,7 +1,17 @@
 import logging
 
-from flask import (flash, Flask, jsonify, redirect, render_template,
-                   request, session, url_for)
+from flask import (
+    flash,
+    Flask,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
+from flask_cors import CORS
+
 import globus_sdk
 import mdf_connect_client
 import json
@@ -18,152 +28,160 @@ forge = Forge(anonymous=True)
 app = Flask(__name__)
 app.config.from_pyfile("portal.conf")
 app.url_map.strict_slashes = False
+CORS(app)
+
 
 # Set up root logger
 logger = logging.getLogger("mc_portal")
 logger.setLevel(app.config["LOG_LEVEL"])
 logger.propagate = False
 # Set up formatters
-logfile_formatter = logging.Formatter("[{asctime}] [{levelname}] {name}: {message}",
-                                      style='{',
-                                      datefmt="%Y-%m-%d %H:%M:%S")
+logfile_formatter = logging.Formatter(
+    "[{asctime}] [{levelname}] {name}: {message}",
+    style="{",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 # Set up handlers
-logfile_handler = logging.FileHandler(app.config["LOG_FILE"], mode='a')
+logfile_handler = logging.FileHandler(app.config["LOG_FILE"], mode="a")
 logfile_handler.setFormatter(logfile_formatter)
 
 logger.addHandler(logfile_handler)
 
 logger.info("\n\n==========Connect Portal started==========\n")
 
+
 def get_mdfcc(status=None):
     auth_client = globus_sdk.ConfidentialAppAuthClient(
-                       app.config['PORTAL_CLIENT_ID'], app.config['PORTAL_CLIENT_SECRET'])
+        app.config["PORTAL_CLIENT_ID"], app.config["PORTAL_CLIENT_SECRET"]
+    )
     mdf_authorizer = globus_sdk.RefreshTokenAuthorizer(
-                                        session["tokens"]["mdf_dataset_submission"]
-                                               ["refresh_token"],
-                                        auth_client)
-    mdfcc = mdf_connect_client.MDFConnectClient(service_instance=app.config["MDFCC_SERVICE"],
-                                                    authorizer=mdf_authorizer)
+        session["tokens"]["mdf_dataset_submission"]["refresh_token"], auth_client
+    )
+    mdfcc = mdf_connect_client.MDFConnectClient(
+        service_instance=app.config["MDFCC_SERVICE"], authorizer=mdf_authorizer
+    )
     return mdfcc
+
 
 ## DOI Helpers
 def fetch_datacite(doi):
-    dc = {"authors":None, "title":None}
-    r = requests.get('https://api.datacite.org/dois/{doi}'.format(doi=doi))
+    dc = {"authors": None, "title": None}
+    r = requests.get("https://api.datacite.org/dois/{doi}".format(doi=doi))
     r = r.json()
-        
-    dc['authors'] = [contributor['name'] for contributor in r['data']['attributes'].get('creators', [])]   
-    dc['title'] = r['data']['attributes'].get('titles', [])[0]['title']
+
+    dc["authors"] = [
+        contributor["name"]
+        for contributor in r["data"]["attributes"].get("creators", [])
+    ]
+    dc["title"] = r["data"]["attributes"].get("titles", [])[0]["title"]
 
     return dc
+
 
 def fetch_crossref(doi):
-    dc = {"authors":None, "title":None}
+    dc = {"authors": None, "title": None}
     works = Works()
     r = works.doi(doi)
-    
-    dc['title'] = r['title'][0]
-    dc['authors'] = ["{}, {}".format(author['family'],author['given']) for author in r['author']]
+
+    dc["title"] = r["title"][0]
+    dc["authors"] = [
+        "{}, {}".format(author["family"], author["given"]) for author in r["author"]
+    ]
 
     return dc
+
 
 def fetch_doi(doi):
     success = False
-    
+
     try:
         print("Trying Datacite")
         r = fetch_datacite(doi)
         success = True
     except Exception as e:
         success = False
-    
+
     if not success:
         try:
             r = fetch_crossref(doi)
             success = True
         except Exception as e:
             success = False
-    
-    if  success:
+
+    if success:
         return r
     else:
-        return {"title":"", "authors":[]}    
+        return {"title": "", "authors": []}
+
 
 ### End DOI Helpers
 
 
-@app.route('/', methods=['GET'])
+@app.route("/", methods=["GET"])
 def home():
     """Home page - play with it if you must!"""
-    return render_template('home.jinja2')
+    return render_template("home.jinja2")
 
 
-@app.route('/add', methods=['GET'])
+@app.route("/add", methods=["GET"])
 @authenticated
 def add_data():
     """Route for adding data"""
-    return render_template('add_data.jinja2')
+    req = request.get_json()
+    print(req)
+    return render_template("add_data.jinja2", params=req)
 
-@app.route('/api/doi', methods=['POST'])
+
+@app.route("/api/doi", methods=["POST"])
 @authenticated
 def get_doi():
     req = request.get_json()
-    doi = req['doi']
+    doi = req["doi"]
     print(doi)
     r = fetch_doi(doi)
     print(r)
 
     return jsonify(r, 200)
 
-
-
-
-    #  "dc": { 
-    #     "authors": [ "Emily Mayer", "Clayton S. Talbot", "Nunez, Victoria"], 
-    #     "affiliations": [ "University of Chicago", "Argonne National Laboratory" ], 
-    #     "description": "", 
-    #     "title": "In Situ Observation Dendrite Formation in Cu-Sn Alloys " + makeid(7), 
-    #     "subjects": [ "experiment", "machine learning","metals and alloys"] }, 
+    #  "dc": {
+    #     "authors": [ "Emily Mayer", "Clayton S. Talbot", "Nunez, Victoria"],
+    #     "affiliations": [ "University of Chicago", "Argonne National Laboratory" ],
+    #     "description": "",
+    #     "title": "In Situ Observation Dendrite Formation in Cu-Sn Alloys " + makeid(7),
+    #     "subjects": [ "experiment", "machine learning","metals and alloys"] },
     #     "contacts":["Victoria Nunez <nunez.xyz@uchicago.edu>"]
     # }
 
 
-
-
-@app.route('/submissions', methods=['GET'])
+@app.route("/submissions", methods=["GET"])
 @authenticated
 def submissions():
-     # Make MDFCC
+    # Make MDFCC
     try:
         mdfcc = get_mdfcc()
     except Exception as e:
         logger.error("Status MDFCC init: {}".format(repr(e)))
-        json_res = {
-            "success": False,
-            "error": "Unable to initialize client."
-        }
+        json_res = {"success": False, "error": "Unable to initialize client."}
     else:
         try:
             logger.debug("Requesting Submissions")
             json_res = mdfcc.check_all_submissions(raw=True)
         except Exception as e:
             logger.error("Check Submissions request: {}".format(repr(e)))
-            json_res = {
-                "success": False,
-                "error": "Status request failed."
-            }
+            json_res = {"success": False, "error": "Status request failed."}
 
     # return (jsonify(json_res), status_code)
     return render_template("submissions.jinja2", res=json_res)
     pass
 
-@app.route('/check_group', methods=['GET'])
+
+@app.route("/check_group", methods=["GET"])
 @authenticated
 def check_group():
     pass
 
 
-@app.route('/status/<source_name>', methods=['GET'])
+@app.route("/status/<source_name>", methods=["GET"])
 @authenticated
 def status(source_name):
     # Make MDFCC
@@ -171,111 +189,182 @@ def status(source_name):
         mdfcc = get_mdfcc()
     except Exception as e:
         logger.error("Status MDFCC init: {}".format(repr(e)))
-        json_res = {
-            "success": False,
-            "error": "Unable to initialize client."
-        }
+        json_res = {"success": False, "error": "Unable to initialize client."}
     else:
         try:
             logger.debug("Requesting status")
             json_res = mdfcc.check_status(source_name, raw=True)
         except Exception as e:
             logger.error("Status request: {}".format(repr(e)))
-            json_res = {
-                "success": False,
-                "error": "Status request failed."
-            }
+            json_res = {"success": False, "error": "Status request failed."}
 
     # return (jsonify(json_res), status_code)
     return render_template("status.jinja2", status_res=json_res)
 
-@app.route('/api/organizations/', methods=['GET'])
-def api_organizations():
-    res = forge.describe_organization("all", raw=True)
-    return (jsonify(res), 200)
 
-@app.route('/organizations/', methods=['GET'])
+@app.route("/api/status/<source_name>", methods=["GET"])
 @authenticated
-def organizations():
-    return render_template('organizations.jinja2')
-
-@app.route('/api/tasks/', methods=['GET'])
-def tasks():
-# # Make MDFCC
+def api_status(source_name):
+    # Make MDFCC
     try:
         mdfcc = get_mdfcc()
     except Exception as e:
         logger.error("Status MDFCC init: {}".format(repr(e)))
-        json_res = {
-            "success": False,
-            "error": "Unable to initialize client."
-        }
+        json_res = {"success": False, "error": "Unable to initialize client."}
+    else:
+        try:
+            logger.debug("Requesting status")
+            json_res = mdfcc.check_status(source_name, raw=True)
+            json_res["status"]["original_submission"] = json.loads(
+                json_res["status"]["original_submission"]
+            )
+            submission = json_res["status"]["original_submission"]
+
+            json_res["status"]["authors"] = [
+                c["creatorName"] for c in submission["dc"]["creators"]
+            ]
+
+            json_res["status"]["tags"] = [
+                t["subject"] for t in submission["dc"]["subjects"]
+            ]
+
+            try:
+                json_res["status"]["contacts"] = [
+                    c["contributorName"] for c in submission["dc"]["contributors"]
+                ]
+            except Exception as e:
+                pass
+
+            json_res["status"]["affiliations"] = list(
+                set(
+                    [
+                        item
+                        for c in submission["dc"]["creators"]
+                        for item in c["affiliations"]
+                    ]
+                )
+            )
+
+            try:
+                json_res["status"]["description"] = submission["dc"]["descriptions"][0][
+                    "description"
+                ]
+            except Exception as e:
+                pass
+
+            try:
+                json_res["status"]["related_dois"] = [
+                    r["relatedIdentifier"]
+                    for r in submission["dc"]["relatedIdentifiers"]
+                ]
+            except Exception as e:
+                pass
+
+        except Exception as e:
+            print(repr(e))
+            logger.error("Status request: {}".format(repr(e)))
+            json_res = {"success": False, "error": "Status request failed."}
+    print(json_res)
+    return jsonify(json_res)
+
+
+@app.route("/api/organizations/", methods=["GET"])
+def api_organizations():
+    res = forge.describe_organization("all", raw=True)
+    return (jsonify(res), 200)
+
+
+@app.route("/organizations/", methods=["GET"])
+@authenticated
+def organizations():
+    return render_template("organizations.jinja2")
+
+
+@app.route("/api/tasks/", methods=["GET"])
+def tasks():
+    # # Make MDFCC
+    try:
+        mdfcc = get_mdfcc()
+    except Exception as e:
+        logger.error("Status MDFCC init: {}".format(repr(e)))
+        json_res = {"success": False, "error": "Unable to initialize client."}
     else:
         try:
             logger.debug("Requesting Submissions")
             json_res = mdfcc.get_available_curation_tasks(raw=True)
         except Exception as e:
             logger.error("Check Submissions request: {}".format(repr(e)))
-            json_res = {
-                "success": False,
-                "error": "Status request failed."
-            }
-    
+            json_res = {"success": False, "error": "Status request failed."}
+
     return (jsonify(json_res), json_res["status_code"])
 
 
-
-@app.route('/curate/', methods=['GET'])
+@app.route("/curate/", methods=["GET"])
 @authenticated
 def curate():
-    return render_template('curate.jinja2')
+    return render_template("curate.jinja2")
 
-@app.route('/api/curate/', methods=['POST'])
+
+@app.route("/api/curate/", methods=["POST"])
 @authenticated
 def api_curate():
     req = request.get_json()
-    action = req['action']
+    action = req["action"]
     try:
         mdfcc = get_mdfcc()
-        if action=="accept":
-            res = mdfcc.accept_curation_submission(req['source_id'], reason=None, prompt=False, raw=True)
-        elif action=="reject":
-            res = mdfcc.reject_curation_submission(req['source_id'], reason=None, prompt=False, raw=True)
+        if action == "accept":
+            res = mdfcc.accept_curation_submission(
+                req["source_id"], reason=None, prompt=False, raw=True
+            )
+        elif action == "reject":
+            res = mdfcc.reject_curation_submission(
+                req["source_id"], reason=None, prompt=False, raw=True
+            )
         else:
             pass
     except Exception as e:
         logger.error("API Convert MDFCC init: {}".format(e))
-        return (jsonify({
-            "success": False,
-            "error": "Unable to initialize dataset submission client."
-        }), 500)
-    return jsonify(res, res['status_code'])
+        return (
+            jsonify(
+                {
+                    "success": False,
+                    "error": "Unable to initialize dataset submission client.",
+                }
+            ),
+            500,
+        )
+    return jsonify(res, res["status_code"])
 
 
-@app.route('/api/convert', methods=['POST'])
+@app.route("/api/convert", methods=["POST"])
 def convert():
     # Make MDFCC
     logger.debug(request.get_json())
-    logger.debug(request.get_json().get('test'))
-    logger.debug(request.get_json().get('passthrough'))
-
+    logger.debug(request.get_json().get("test"))
+    logger.debug(request.get_json().get("passthrough"))
 
     try:
         logger.debug("Creating MDFCC for submission")
         auth_client = globus_sdk.ConfidentialAppAuthClient(
-                       app.config['PORTAL_CLIENT_ID'], app.config['PORTAL_CLIENT_SECRET'])
+            app.config["PORTAL_CLIENT_ID"], app.config["PORTAL_CLIENT_SECRET"]
+        )
         mdf_authorizer = globus_sdk.RefreshTokenAuthorizer(
-                                        session["tokens"]["mdf_dataset_submission"]
-                                               ["refresh_token"],
-                                        auth_client)
-        mdfcc = mdf_connect_client.MDFConnectClient(service_instance=app.config["MDFCC_SERVICE"],
-                                                    authorizer=mdf_authorizer)
+            session["tokens"]["mdf_dataset_submission"]["refresh_token"], auth_client
+        )
+        mdfcc = mdf_connect_client.MDFConnectClient(
+            service_instance=app.config["MDFCC_SERVICE"], authorizer=mdf_authorizer
+        )
     except Exception as e:
         logger.error("API Convert MDFCC init: {}".format(e))
-        return (jsonify({
-            "success": False,
-            "error": "Unable to initialize dataset submission client."
-        }), 500)
+        return (
+            jsonify(
+                {
+                    "success": False,
+                    "error": "Unable to initialize dataset submission client.",
+                }
+            ),
+            500,
+        )
 
     try:
         logger.debug("Assembling submission")
@@ -296,20 +385,26 @@ def convert():
         if metadata.get("custom"):
             mdfcc.set_custom_block(metadata["custom"])
         if metadata.get("custom_descriptions") or metadata.get("custom_desc"):
-            mdfcc.set_custom_descriptions(metadata.get("custom_descriptions",
-                                                       metadata.get("custom_desc", {})))
+            mdfcc.set_custom_descriptions(
+                metadata.get("custom_descriptions", metadata.get("custom_desc", {}))
+            )
         if metadata.get("data"):
             mdfcc.add_data_source(metadata["data"])
-        
+
         if metadata.get("contacts"):
+
             def format_contacts(contacts):
                 formatted_contacts = []
                 if type(contacts) is list:
-                    formatted_contacts = [{"contributorName":str(c), "contributorType":"ContactPerson"} for c in contacts]
+                    formatted_contacts = [
+                        {"contributorName": str(c), "contributorType": "ContactPerson"}
+                        for c in contacts
+                    ]
                 else:
                     formatted_contacts = []
                 return formatted_contacts
-            contacts = {"contributors":format_contacts(metadata.get("contacts"))}
+
+            contacts = {"contributors": format_contacts(metadata.get("contacts"))}
             logger.error(contacts)
             logger.error(metadata.get("contacts"))
             mdfcc.dc.update(contacts)
@@ -333,7 +428,9 @@ def convert():
                 for key, val in services.items():
                     mdfcc.add_service(key, val)
             else:
-                raise TypeError("Invalid service entry ({}): {}".format(type(services), services))
+                raise TypeError(
+                    "Invalid service entry ({}): {}".format(type(services), services)
+                )
         mdfcc.set_passthrough(metadata.get("passthrough", False))
         mdfcc.set_test(metadata.get("test", False))
         mdfcc.add_organization(metadata.get("organizations", "MDF Open"))
@@ -341,10 +438,12 @@ def convert():
 
     except Exception as e:
         logger.error("API Convert assembly: {}".format(repr(e)))
-        return (jsonify({
-            "success": False,
-            "error": "Dataset submission invalid: {}".format(e)
-        }), 400)
+        return (
+            jsonify(
+                {"success": False, "error": "Dataset submission invalid: {}".format(e)}
+            ),
+            400,
+        )
 
     try:
         logger.debug(json.dumps(mdfcc.get_submission()))
@@ -353,27 +452,32 @@ def convert():
         logger.debug(res)
     except Exception as e:
         logger.error("API Convert submission: {}".format(repr(e)))
-        return (jsonify({
-            "success": False,
-            "error": "Submission to MDF Connect failed: {}".format(e)
-        }), 500)
+        return (
+            jsonify(
+                {
+                    "success": False,
+                    "error": "Submission to MDF Connect failed: {}".format(e),
+                }
+            ),
+            500,
+        )
 
     return (jsonify(res), res["status_code"])
 
 
-@app.route('/signup', methods=['GET'])
+@app.route("/signup", methods=["GET"])
 def signup():
     """Send the user to Globus Auth with signup=1."""
-    return redirect(url_for('authcallback', signup=1))
+    return redirect(url_for("authcallback", signup=1))
 
 
-@app.route('/login', methods=['GET'])
+@app.route("/login", methods=["GET"])
 def login():
     """Send the user to Globus Auth."""
-    return redirect(url_for('authcallback'))
+    return redirect(url_for("authcallback"))
 
 
-@app.route('/logout', methods=['GET'])
+@app.route("/logout", methods=["GET"])
 @authenticated
 def logout():
     """
@@ -385,86 +489,101 @@ def logout():
 
     try:
         auth_client = globus_sdk.ConfidentialAppAuthClient(
-                    app.config['PORTAL_CLIENT_ID'], app.config['PORTAL_CLIENT_SECRET'])
+            app.config["PORTAL_CLIENT_ID"], app.config["PORTAL_CLIENT_SECRET"]
+        )
 
         # Revoke the tokens with Globus Auth
         for token, token_type in (
-                (token_info[ty], ty)
-                # get all of the token info dicts
-                for token_info in session['tokens'].values()
-                # cross product with the set of token types
-                for ty in ('access_token', 'refresh_token')
-                # only where the relevant token is actually present
-                if token_info[ty] is not None):
+            (token_info[ty], ty)
+            # get all of the token info dicts
+            for token_info in session["tokens"].values()
+            # cross product with the set of token types
+            for ty in ("access_token", "refresh_token")
+            # only where the relevant token is actually present
+            if token_info[ty] is not None
+        ):
             auth_client.oauth2_revoke_token(
-                token, additional_params={'token_type_hint': token_type})
+                token, additional_params={"token_type_hint": token_type}
+            )
 
         # Destroy the session state
         session.clear()
 
-        redirect_uri = url_for('home', _external=True)
+        redirect_uri = url_for("home", _external=True)
         print(redirect_uri)
 
         ga_logout_url = []
-        ga_logout_url.append(app.config['GLOBUS_AUTH_LOGOUT_URI'])
-        ga_logout_url.append('?client={}'.format(app.config['PORTAL_CLIENT_ID']))
-        ga_logout_url.append('&redirect_uri={}'.format(redirect_uri))
-        ga_logout_url.append('&redirect_name=Globus Sample Data Portal')
+        ga_logout_url.append(app.config["GLOBUS_AUTH_LOGOUT_URI"])
+        ga_logout_url.append("?client={}".format(app.config["PORTAL_CLIENT_ID"]))
+        ga_logout_url.append("&redirect_uri={}".format(redirect_uri))
+        ga_logout_url.append("&redirect_name=Globus Sample Data Portal")
     except Exception as e:
         logger.error("Unable to logout user: {}".format(repr(e)))
         flash("Unable to log you out of Globus.")
 
     # Redirect the user to the Globus Auth logout page
-    return redirect(''.join(ga_logout_url))
+    return redirect("".join(ga_logout_url))
 
 
-@app.route('/authcallback', methods=['GET'])
+@app.route("/authcallback", methods=["GET"])
 def authcallback():
     """Handles the interaction with Globus Auth."""
     try:
         # If we're coming back from Globus Auth in an error state, the error
         # will be in the "error" query string parameter.
-        if 'error' in request.args:
-            err_text = request.args.get('error_description', request.args['error'])
+        if "error" in request.args:
+            err_text = request.args.get("error_description", request.args["error"])
             logger.debug("Authcallback error: {}".format(err_text))
             flash("You could not be logged into the portal: {}".format(err_text))
-            return redirect(url_for('home'))
+            return redirect(url_for("home"))
 
         # Set up our Globus Auth/OAuth2 state
-        requested_scopes = ["openid", "profile", "email",
-                            ("https://auth.globus.org/scopes/"
-                             "c17f27bb-f200-486a-b785-2a25e82af505/connect")]
+        requested_scopes = [
+            "openid",
+            "profile",
+            "email",
+            (
+                "https://auth.globus.org/scopes/"
+                "c17f27bb-f200-486a-b785-2a25e82af505/connect"
+            ),
+        ]
 
         auth_client = globus_sdk.ConfidentialAppAuthClient(
-                       app.config['PORTAL_CLIENT_ID'], app.config['PORTAL_CLIENT_SECRET'])
-        auth_client.oauth2_start_flow(requested_scopes=requested_scopes,
-                                      redirect_uri=app.config["REDIRECT_URI"], refresh_tokens=True)
+            app.config["PORTAL_CLIENT_ID"], app.config["PORTAL_CLIENT_SECRET"]
+        )
+        auth_client.oauth2_start_flow(
+            requested_scopes=requested_scopes,
+            redirect_uri=app.config["REDIRECT_URI"],
+            refresh_tokens=True,
+        )
     except Exception as e:
         flash("Sorry, we've run into an error logging you in.")
         logger.error("Authcallback init: {}".format(repr(e)))
-        return redirect(url_for('home'))
+        return redirect(url_for("home"))
 
     # If there's no "code" query string parameter, we're in this route
     # starting a Globus Auth login flow.
-    if 'code' not in request.args:
+    if "code" not in request.args:
         try:
             logger.debug("Starting Auth login flow")
             additional_authorize_params = (
-                {'signup': 1} if request.args.get('signup') else {})
+                {"signup": 1} if request.args.get("signup") else {}
+            )
 
             auth_uri = auth_client.oauth2_get_authorize_url(
-                            additional_params=additional_authorize_params)
+                additional_params=additional_authorize_params
+            )
             return redirect(auth_uri)
         except Exception as e:
             flash("Sorry, we've run into an error logging you in with Globus Auth.")
             logger.error("Authcallback no code: {}".format(repr(e)))
-            return redirect(url_for('home'))
+            return redirect(url_for("home"))
     else:
         try:
             # If we do have a "code" param, we're coming back from Globus Auth
             # and can start the process of exchanging an auth code for a token.
             logger.debug("Returning from Auth, fetching tokens")
-            code = request.args.get('code')
+            code = request.args.get("code")
             token_response = auth_client.oauth2_exchange_code_for_tokens(code)
             id_token = token_response.decode_id_token(auth_client)
             tokens = token_response.by_resource_server
@@ -472,16 +591,17 @@ def authcallback():
             session.update(
                 tokens=tokens,
                 is_authenticated=True,
-                name=id_token.get('name', ''),
-                email=id_token.get('email', ''),
-                institution=id_token.get('institution', ''),
-                primary_username=id_token.get('preferred_username'),
-                primary_identity=id_token.get('sub'),
+                name=id_token.get("name", ""),
+                email=id_token.get("email", ""),
+                institution=id_token.get("institution", ""),
+                primary_username=id_token.get("preferred_username"),
+                primary_identity=id_token.get("sub"),
             )
         except Exception as e:
             flash("Sorry, we were unable to authenticate you with Globus Auth.")
             logger.error("Authcallback return tokens: {}".format(repr(e)))
-            return redirect(url_for('home'))
+            return redirect(url_for("home"))
 
         logger.debug("Authcallback success")
-        return redirect(url_for('home'))
+        return redirect(url_for("home"))
+
