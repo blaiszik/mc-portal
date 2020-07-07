@@ -1,8 +1,54 @@
+
 Vue.use(Vuetify)
 
+var router = new VueRouter({
+    mode: 'history',
+    routes: []
+});
+
 new Vue({
+    router,
     el: '#app',
     vuetify: new Vuetify(),
+    mounted() {
+        var self = this;
+        q = this.$route.query
+        console.log(q)
+        if (q.source_id) {
+            axios.get('/api/status/'+q.source_id)
+                    .then(function (response) {
+                        // Pre-fill form with the prior submission
+                        self.form.dc.title = response.data.status.title
+                        self.form.dc.authors = response.data.status.authors
+                        self.form.dc.subjects = response.data.status.tags
+                        self.form.dc.description = response.data.status.original_submission.description
+                        self.form.dc.contacts = response.data.status.contacts
+                        self.form.dc.affiliations = response.data.status.affiliations
+                        self.form.dc.description = response.data.status.description
+                        self.form.dc.related_dois = response.data.status.related_dois
+                        self.form.contacts = response.data.status.contacts
+                        self.form.source_name = response.data.status.original_submission.mdf.source_name
+                        self.form.test = response.data.status.original_submission.test
+                        self.form.services.mdf_publish = response.data.status.original_submission.services.mdf_publish
+                        self.form.services.citrine = response.data.status.original_submission.services.citrine
+                        self.form.services.mrr = response.data.status.original_submission.services.mrr
+                        self.form.data = response.data.status.original_submission.data_sources
+                        self.form.organizations = response.data.status.original_submission.mdf.organizations
+                        // Since this will necessarily be an update, pre-toggle the box.
+                        self.form.update = true
+                    })
+                    .catch(function (error) {
+                        // handle error
+                        console.log("Error")
+                       
+                    })
+                    .then(function () {
+                        console.log('always exec')
+                        // always executed
+                    });
+        }  
+        
+    },
     data: () => ({
         options: {
             "subjects": ["simulation", "experiment", "machine learning",
@@ -141,7 +187,8 @@ desc:"This system allows for the registration of materials resources, bridging t
                 console.log("INVALID")
             }
         },
-        fetch_doi(){
+       
+        fetch_doi() {
             console.log("Fetching DOI")
             self = this
             console.log(this.state)
