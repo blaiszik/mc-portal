@@ -68,11 +68,10 @@ new Vue({
                              "North Carolina State", 
                              "Oak Ridge National Laboratory"],
             "organizations": ["MDF Open", 
-                              "Center for Hierarchical Materials Design (CHiMaD)", 
-                              "Center for Predictive Simulation of Functional Materials (CPSFM)",
-                              "AFRL Additive Manufacturing Challenge",
+                              "Center for Hierarchical Materials Design", 
+                              "Center for Predictive Simulation of Functional Materials",
                               "Hersam Group"
-                            ],
+            ],
             "services": [{
                     title: 'MDF Publish',
                     desc: "MDF Publish is a service that enables users to receive a citable identifier (e.g., DOI) and to automatically move data to long-term storage for ease of access by other users. ",
