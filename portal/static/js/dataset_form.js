@@ -22,7 +22,7 @@ new Vue({
                         self.form.dc.authors = response.data.status.authors
                         self.form.dc.subjects = response.data.status.tags
                         self.form.dc.description = response.data.status.original_submission.description
-                        self.form.dc.contacts = response.data.status.contacts
+                        //self.form.dc.contacts = response.data.status.contacts
                         self.form.dc.affiliations = response.data.status.affiliations
                         self.form.dc.description = response.data.status.description
                         self.form.dc.related_dois = response.data.status.related_dois
@@ -66,7 +66,42 @@ new Vue({
                              "Argonne National Laboratory", 
                              "University of Illinois at Urbana-Champaign", 
                              "North Carolina State", 
-                             "Oak Ridge National Laboratory"],
+                "Oak Ridge National Laboratory",
+            "Air Force Institute of Technology",
+"American University",
+"Arizona State University",
+"Arkansas State University",
+"Auburn University",
+"Azusa Pacific University",
+"Ball State University",
+"Baylor University",
+"Binghamton University",
+"Boise State University",
+"Boston College",
+"Boston University",
+"Bowling Green State University",
+"Brandeis University",
+"Brigham Young University",
+"Brown University",
+"California Institute of Technology",
+"Carnegie Mellon University",
+"Case Western Reserve University",
+"Catholic University of America",
+"Central Michigan University",
+"Chapman University",
+"Claremont Graduate University",
+"Clark Atlanta University",
+"Clark University",
+"Clarkson University",
+"Clemson University",
+"Cleveland State University",
+"College of William and Mary",
+"Colorado School of Mines",
+"Colorado State University",
+"Columbia University in the City of New York",
+"Cornell University",
+"CUNY City College",
+"CUNY Graduate School and University Center"],
             "organizations": ["MDF Open", 
                               "Center for Hierarchical Materials Design", 
                               "Center for Predictive Simulation of Functional Materials",
