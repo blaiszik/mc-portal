@@ -105,7 +105,8 @@ new Vue({
             "organizations": ["MDF Open", 
                               "Center for Hierarchical Materials Design", 
                               "Center for Predictive Simulation of Functional Materials",
-                              "Hersam Group"
+                              "Hersam Group",
+                              "Lauhon Group"
             ],
             "services": [{
                     title: 'MDF Publish',
