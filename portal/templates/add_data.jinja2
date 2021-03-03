@@ -57,13 +57,13 @@
                                     </v-card-text>
                                 </v-card>
 
-                                  <v-toolbar color="green lighten-2" dark flat>
+                                <v-toolbar color="green lighten-2" dark flat>
                                     <v-toolbar-title>Required Steps</v-toolbar-title>
                                 </v-toolbar>
                                 <!-- -->
 
                                 <!-- Title Elements -->
-                                <v-card tile class="mb-2">
+                                <v-card elevation=0 class="mb-2">
                                     <v-card-title>Set Title</v-card-title>
                                     <v-card-text>
                                          <v-text-field v-model="form.dc.title" :rules="rules.title" label="Title" required>
@@ -73,9 +73,10 @@
                                 </v-card>
                                 <!-- END Title Elements -->
 
+                                <v-divider></v-divider>
 
                                 <!-- Author Elements -->
-                                <v-card tile class="mb-2">
+                                <v-card elevation=0 class="mb-2">
                                     <v-card-title>Add authors</v-card-title>
                                 <v-card-text>
                                     Accepts author names of the form of Einstein, Albert or Marie S. Curie. Press 'Enter/Return' or ';'' to create a new entry.
@@ -88,11 +89,13 @@
                                     </template>
                                 </v-combobox>
                             </v-card-text></v-card>
-                                <!-- END Author Elements -->
+                            
+                            <!-- END Author Elements -->
 
+                                 <v-divider></v-divider>
 
                                 <!-- Affiliation Elements -->
-                                <v-card tile class="mb-2">
+                                <v-card elevation=0 class="mb-2">
                                     <v-card-title> Add affiliations</v-card-title>
                                     <v-card-text>
                                         Press 'Enter/Return', ',', or ';'' to create a new entry or select from the pre-filled options.
@@ -109,58 +112,75 @@
                                 </v-card>
                                 
                                 <!-- END Affiliation Elements -->
+                            <v-divider></v-divider>
 
-                                <!-- Data Location Elements -->
-                                <v-card tile class="mb-2">
-                                    <v-card-title>Add data locations</v-card-title>
+                            <v-card elevation=0 class="mb-2">
+                                    <v-card-title> Add data locations</v-card-title>
                                     <v-card-text>
-
-                                <v-alert
-                                    icon="mdi-shield-lock-outline"
-                                    prominent
-                                    text
-                                    type="info"
-                                >
-                            <h5> For Globus Data </h5>
-                            <ul>
-                                <li>
-                                    No additional permissions are required to share data from Globus endpoints
-                                </li>
-                                <li>
-                                    Paths with `~` characters are invalid, full paths must be used
-                                </li>
-                                <li>
-                                    Copy the link to your data with the `Get Link` button in the Globus web app
-                                </li>
-                                <li>
-                                    Add this link as a data location
-                                </li>
-                            </ul>
-
-                            <h5> For HTTP Data </h5>
-                            <ul>
-                            <li>Specify a public archive of the dataset. e.g., http://host.com/file.zip as a data location</li>
-                            </ul>
-
-
-                            <h5> For Google Drive Data </h5>
-                            <ul>
-                                <li>
-                                Share the data path (read access) with materialsdatafacility@gmail.com
-                                </li>
-                                <li>
-                                Add google:///my_path as a data location (note triple `/`). 
-                                <b><br> Example: A user shares the folder "abc" from their "My Drive" folder.
-                                <br> The data location below would be google:///abc </b>
-                                </li>
-                            </ul>
-                            </v-alert>
-                             <v-btn outlined color="primary" href="https://app.globus.org/file-manager" target="_blank">
-                                    Find data  with Globus
-                                </v-btn>
-                                <v-btn outlined color="primary" href="https://drive.google.com" target="_blank">
-                                    Find data with Google Drive
-                                </v-btn>
+                                                                <v-tabs vertical>
+                                        <v-tab>
+                                        Globus
+                                        </v-tab>
+                                        <v-tab>
+                                        HTTPS
+                                        </v-tab>
+                                        <v-tab>
+                                        Google Drive
+                                        </v-tab>
+                                
+                                        <v-tab-item>
+                                        <v-card flat>
+                                            <v-card-text>
+                                                    <h5> Instructions to Publish via Globus </h5>
+                                                    <ol>
+                                                        <li>
+                                                            No additional permissions are required to share data from Globus endpoints
+                                                        </li>
+                                                        <li>
+                                                            Copy the link to your data with the `Get Link` button in the Globus web app
+                                                        </li>
+                                                        <li>
+                                                            Add this link as a data location
+                                                        </li>
+                                                    </ol>
+                                                    <v-btn outlined color="primary" href="https://app.globus.org/file-manager" target="_blank">
+                                                                    Find data  with Globus
+                                                    </v-btn>
+                                            </v-card-text>
+                                        </v-card>
+                                        </v-tab-item>
+                                        <v-tab-item>
+                                        <v-card flat>
+                                            <v-card-text>
+                                                <h5> Instructions to Publish via HTTPS </h5>
+                                                <ol>
+                                                <li>Specify a public archive of the dataset. e.g., http://host.com/file.zip as a data location</li>
+                                                </ol>
+                                            </v-card-text>
+                                        </v-card>
+                                        </v-tab-item>
+                                        <v-tab-item>
+                                        <v-card flat>
+                                            <v-card-text>
+                                            <h5> Instructions to Publish via Google Drive </h5>
+                                                <ol>
+                                                    <li>
+                                                    Share the data path (read access) with materialsdatafacility@gmail.com
+                                                    </li>
+                                                    <li>
+                                                    <p> Add google:///my_path as a data location (note triple `/`). </p>
+                                                    <p> <b>Example:</b> A user shares the folder "abc" from their "My Drive" folder. </p>
+                                                    <p> The data location below would be google:///abc </p>
+                                                    </li>
+                                                </ol>
+                                                <v-btn outlined color="primary" href="https://drive.google.com" target="_blank">
+                                                                    Find data with Google Drive
+                                                                </v-btn>
+                                            </v-card-text>
+                                        </v-card>
+                                        </v-tab-item>
+                                    </v-tabs>
+                                    
     
                                 <v-combobox v-model="form.data" :rules="rules.combo" :delimiters="[';',',']" label="Data locations" chips clearable solo multiple>
                                     <template v-slot:selection="data">
@@ -174,8 +194,10 @@
                             </v-card>
                                 <!-- END Data Elements -->
 
+                                <v-divider></v-divider>
+
                                 <!-- Contact  Elements -->
-                                <v-card tile class="mb-2">
+                                <v-card elevation=0 class="mb-2">
                                     <v-card-title> Add dataset contacts</v-card-title>
                                     <v-card-text>
                                 Press 'Enter/Return', ',' or ';' to create a new entry.
@@ -191,11 +213,13 @@
                             </v-card>
                                 <!-- END Contact Elements -->
 
+                                <v-divider></v-divider>
+
                                 <v-toolbar color="green lighten-2" dark flat>
                                     <v-toolbar-title>Optional Steps</v-toolbar-title>
                                 </v-toolbar>
                                 <!-- Tag Elements -->
-                                <v-card tile class="mb-2">
+                                <v-card elevation=0 class="mb-2">
                                     <v-card-title>Add tags</v-card-title>
                                     <v-card-text>
                                 Press 'Enter/Return', ',' or ';' to create a new entry or select from the pre-filled options.
@@ -212,8 +236,10 @@
                             </v-card>
                                 <!-- END Tag Elements -->
 
+                                <v-divider></v-divider>
+
                                 <!-- Related Work Elements -->
-                                <v-card tile class="mb-2">
+                                <v-card elevation=0 class="mb-2">
                                     <v-card-title>Add links to related works</v-card-title>
                                     <v-card-text>
                                     Add DOIs associated with journal publications, other related datasets, etc. Entries should be DOIs.
@@ -230,9 +256,10 @@
                             </v-card-text>
                             </v-card>
                                 <!-- END Related Work Elements -->
+                                <v-divider></v-divider>
 
                                 <!-- Description Elements -->
-                                <v-card tile class="mb-2">
+                                <v-card elevation=0 class="mb-2">
                                     <v-card-title> Set Description </v-card-title>
                                     <v-card-text>
                                 <v-textarea name="input-7-1" v-model="form.dc.description" filled
@@ -243,8 +270,10 @@
                         </v-card>
                                 <!-- END Description Elements -->
 
+                                <v-divider></v-divider>
+
                                 <!-- Organization Elements -->
-                                <v-card tile class="mb-2">
+                                <v-card elevation=0 class="mb-2">
                                     <v-card-title> Add Organization </v-card-title>
                                     
                                     <v-card-text>
@@ -259,8 +288,10 @@
                         </v-card>
                                 <!-- END Organization Elements -->
 
+                                <v-divider></v-divider>
+
                                  <!-- Source Name Elements -->
-                                <v-card tile class="mb-2">
+                                <v-card elevation=0 class="mb-2">
                                     <v-card-title> Set Source Name </v-card-title>
                                     <v-card-text>
                                 Source name is a unique identifier associated with your dataset. e.g., patel_my_dataset
@@ -268,51 +299,7 @@
                                 </v-text-field>
                             </v-card-text></v-card>
                                 <!-- END Source Name Elements -->
-
-
                 </v-layout>
-
-
-                <!-- Choose Data Destination Elements -->
-                <div>
-                    <v-layout left-justify>
-                        <v-flex xs20 sm12>
-                            <v-toolbar color="primary" dark>
-                                <v-toolbar-title>Choose Data Destinations</v-toolbar-title>
-                            </v-toolbar>
-                            <v-card>
-                                <v-container fluid grid-list-sm>
-                                    <v-layout row wrap>
-                                        <v-flex v-for="card in options.services" :key="card.title"
-                                            v-bind="{ [`xs${card.flex}`]: true }">
-                                            <v-card>
-                                             <v-card-title>
-                                                <span class="title font-weight-heavy">{{card.title}}</span>
-                                                <v-spacer></v-spacer>
-                                                <v-img :src="card.img" max-width="200" ></v-img>
-                                            </v-card-title>
-                                                <v-container fluid pa-2>
-                                                    <v-layout >
-                                                        <v-flex xs12 align-end flexbox>
-                                                            <p>{{card.desc}}</p>
-                                                             <v-checkbox v-model="form.services[card.value]" :label="card.label"
-                                                        :value="!form.services[card.value]"></v-checkbox>
-                                                        </v-flex>
-                                                    </v-layout>
-                                                </v-container>
-                                                <v-card-actions>
-                                                   
-                                                </v-card-actions>
-                                            </v-card>
-                                        </v-flex>
-                                    </v-layout>
-                                </v-container>
-                            </v-card>
-                        </v-flex>
-                </div>
-                <!-- END Choose Data Destination Title Elements -->
-
-
             </v-form>
 
             <!-- Warning Elements -->
@@ -372,9 +359,6 @@
                                     <v-chip class="ma-1" outlined label color="primary" v-for="tag in form.dc.subjects">
                                         {{tag}}
                                     </v-chip>
-
-                                    <h4>Data Locations</h4>
-                                    <div> {{ form.data.join(', ') }} </div>
                             
                             <v-alert
                             v-if="!state.valid"
