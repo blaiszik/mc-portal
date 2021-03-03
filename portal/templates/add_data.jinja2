@@ -46,9 +46,14 @@
                         </v-toolbar>
                         <v-container fluid fill-width>
                             <v-form ref="form" v-model="state.valid" lazy-validation>
-                                <!-- DOI Fill -->
+                            <v-expansion-panels>
+                            <v-expansion-panel >
+                            <v-expansion-panel-header>
+                            Quick Fill via Digitial Object Identifier (DOI)
+                            </v-expansion-panel-header>
+                            <v-expansion-panel-content>
+                            <!-- DOI Fill -->
                                 <v-card tile class="mb-2">
-                                    <v-card-title>Fill via DOI</v-card-title>
                                     <v-card-text>
                                         <p> Use an existing DOI to pre-populate some fields </p>
                                          <v-text-field v-model="state.doi" label="DOI" required>
@@ -56,6 +61,13 @@
                                     <v-btn small color="primary" @click="fetch_doi">Go</v-btn>
                                     </v-card-text>
                                 </v-card>
+                            </v-expansion-panel-content>
+                        </v-expansion-panel>
+                        </v-expansion-panels>
+
+<v-divider></v-divider>
+
+                                
 
                                 <v-toolbar color="green lighten-2" dark flat>
                                     <v-toolbar-title>Required Steps</v-toolbar-title>
